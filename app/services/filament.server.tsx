@@ -60,12 +60,11 @@ export async function getFilamentById(id: number) {
 
 // Create a new filament
 export async function createFilament( brand: string, material: string, color: string, diameter: number, weight_grams: number, price: number, purchase_date: Date ) {
-  const upperCaseColor = color.toUpperCase();
   return await prisma.filament.create({
      data: {
-        brand,
-        material,
-        color: upperCaseColor,
+        brand: brand.toUpperCase(),
+        material: material.toUpperCase(),
+        color: color.toUpperCase(),
         diameter,
         weight_grams,
         price,

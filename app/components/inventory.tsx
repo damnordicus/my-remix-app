@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import BarcodeScanner from "./BarcodeScanner";
 import Navbar from "./Navbar";
 import { AddFilament } from "./AddFilament";
+import Badge from "./Badge";
 
 export default function Inventory({ filaments, brands, colors, materials }) {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -63,9 +64,11 @@ export default function Inventory({ filaments, brands, colors, materials }) {
 
   return (
     <div className="">
+      <div className="bg-slate-800 w-[300px] h-[35px] rounded-ee-2xl border-b-4 border-r-4 border-slate-600">
       <p className="bg-opacity-0 text-white text-xl pl-3 ">
         Filament Inventory Manager
       </p>
+      </div>
       <div className="flex justify-center py-4 gap-1 ">
         <AddFilament />
         <Navbar
@@ -79,10 +82,10 @@ export default function Inventory({ filaments, brands, colors, materials }) {
           setFilterVisible={setFilterVisible}
         />
       </div>
-      <div className="w-9/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
+      <div className="w-5/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
         <div className="max-h-[800px] overflow-y-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed  ">
-            <thead className="sticky top-0 z-3 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
+            <thead className="sticky top-0 z-3 text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
               <tr className="rounded-t-lg ">
                 <th scope="col" className="pl-6 py-3 w-1/4">
                   Brand
@@ -114,13 +117,13 @@ export default function Inventory({ filaments, brands, colors, materials }) {
                   onClick={() => handleItemClick(filament.id)}
                 >
                   <td className="">
-                    <p className="text-xl pl-2">{filament.brand}</p>
+                    <p className=" text-lg pl-2">{filament.brand}</p>
                   </td>
                   <td className="text-center">
                     <p>{filament.material}</p>
                   </td>
-                  <td className="text-center">
-                    <p>{filament.color}</p>
+                  <td className={`text-cente `}>
+                    <p><Badge>{filament.color}</Badge></p>
                   </td>
                   <td className="text-center">
                     <p>{filament.stock_level}</p>

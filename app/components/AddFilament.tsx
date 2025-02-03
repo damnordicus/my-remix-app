@@ -25,7 +25,7 @@ export const AddFilament = () => {
       >Add New Filament</button>
       {addVisible && (
        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-       <div className="flex flex-col mt-2 p-2 bg-slate-500 w-[400px] h-[400px] rounded-2xl shadow-lg border-2 border-slate-300">
+       <div className="flex flex-col mt-2 p-2 bg-slate-500 w-[400px] h-[410px] rounded-2xl shadow-lg border-2 border-slate-300">
         <div className="absolute " ><XCircleIcon className="hover:cursor-pointer size-6" onClick={toggleView} /></div>
          <h2 className="text-center mb-4 text-white font-semibold text-lg">Add New Filament</h2>
          
