@@ -1,0 +1,101 @@
+import { useState } from 'react';
+
+const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list, filterVisible, setFilterVisible}) => {
+
+  const handleFilterChange = (e) => {
+    const { name, value, checked } = e.target;
+    setSelectedFilters((prevFilters) => {
+      const updatedFilters = { ...prevFilters };
+      if (checked) {
+        if(!updatedFilters[name].includes(value)){
+            updatedFilters[name] = [...updatedFilters[name], value];
+        }
+        
+      } else {
+        updatedFilters[name] = updatedFilters[name].filter((v) => v !== value);
+      }
+      return updatedFilters;
+    });
+  };
+
+   return (
+    <nav className="navbar relative">
+      <button
+        onClick={() => setFilterVisible((prev) => !prev)}
+        className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-e-full border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400 "
+      >
+        Filter
+      </button>
+      {filterVisible && (
+        <div className="absolute top-full left-0 mt-2 p-4 w-60 bg-slate-500 shadow-lg rounded border z-10">
+          <div className="mb-4">
+            <h3 className="font-bold text-lg">Brand</h3>
+            <div className="flex flex-col">
+              {brands.map((brand) => (
+                <label key={brand.brand}>
+                  <input
+                    type="checkbox"
+                    name="brand"
+                    value={brand.brand}
+                    onChange={handleFilterChange}
+                    className="mr-2"
+                    checked={list?.brand?.includes(brand.brand) ?? false}
+                  />
+                  {brand.brand}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <h3 className="font-bold text-lg">Material</h3>
+            <div className="flex flex-col">
+              {materials.map((material) => (
+                <label key={material.material}>
+                  <input
+                    type="checkbox"
+                    name="material"
+                    value={material.material}
+                    onChange={handleFilterChange}
+                    className="mr-2"
+                    checked={list?.material?.includes(material.material) ?? false}
+                  />
+                  {material.material}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <h3 className="font-bold text-lg">Color</h3>
+            <div className="flex flex-col">
+              {colors.map((color) => (
+                <label key={color.color}>
+                  <input
+                    type="checkbox"
+                    name="color"
+                    value={color.color}
+                    onChange={handleFilterChange}
+                    className="mr-2"
+                    checked={list?.color?.includes(color.color) ?? false}
+                  />
+                  {color.color}
+                </label>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={filterList}
+            className="bg-green-500 text-white py-2 px-4 rounded "
+          >
+            Apply Filters
+          </button>
+        </div>
+      )}
+    </nav>
+  );
+};
+
+export default Navbar;

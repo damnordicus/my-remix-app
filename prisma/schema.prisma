@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Filament {
+  id          Int      @id @default(autoincrement())
+  brand       String
+  material    String
+  color       String
+  diameter    Float
+  weight_grams Int
+  price       Float
+  purchase_date DateTime
+  stock_level Int?
+  notes       String?
+
+  printJobs   PrintJob[]
+
+  Supplier Supplier[]
+}
+
+model PrintJob {
+  id          Int      @id @default(autoincrement())
+  filament_id Int
+  print_date  DateTime
+  grams_used  Int
+  success     Boolean
+  notes       String?
+
+  filament    Filament @relation(fields: [filament_id], references: [id])
+}
+
+model Supplier {
+  id          Int      @id @default(autoincrement())
+  name        String
+  website     String?
+  contact_info String?
+
+  filaments   Filament[]
+}
