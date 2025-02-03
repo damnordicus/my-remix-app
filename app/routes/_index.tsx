@@ -47,7 +47,7 @@ export default function Index() {
   const { filaments, brands, colors, materials } = useLoaderData<typeof loader>();
   
   return (
-    <div className="bg-slate-600 min-h-screen">
+    <div className="bg-[url('/public/filament.jpg')] bg-cover min-h-screen ">
      <Inventory filaments={filaments} brands={brands} colors={colors} materials={materials}/>
     </div>
   );

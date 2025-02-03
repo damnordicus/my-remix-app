@@ -77,12 +77,11 @@ export async function createFilament( brand: string, material: string, color: st
 
 // Update filament stock
 export async function updateFilamentStock(id: number, newLevel: number) {
-  const inc = !newLevel ? 0 : newLevel
   return await prisma.filament.update({
      where: { id },
      data: { 
       stock_level: {
-        increment: inc
+        increment: !newLevel ? 0 : newLevel
      }}
  });
 }

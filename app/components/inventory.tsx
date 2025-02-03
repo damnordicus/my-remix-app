@@ -62,7 +62,7 @@ export default function Inventory({ filaments, brands, colors, materials }) {
   const filamentList = !isFiltered ? filaments : list ?? filaments;
 
   return (
-    <div>
+    <div className="">
       <p className="bg-opacity-0 text-white text-xl pl-3 ">
         Filament Inventory Manager
       </p>
@@ -79,10 +79,10 @@ export default function Inventory({ filaments, brands, colors, materials }) {
           setFilterVisible={setFilterVisible}
         />
       </div>
-      <div className="w-9/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z">
+      <div className="w-9/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
         <div className="max-h-[800px] overflow-y-auto">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixd ">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed  ">
+            <thead className="sticky top-0 z-3 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
               <tr className="rounded-t-lg ">
                 <th scope="col" className="pl-6 py-3 w-1/4">
                   Brand
@@ -100,7 +100,7 @@ export default function Inventory({ filaments, brands, colors, materials }) {
             <th scope="col" className="px-6 py-3">Delete</th> */}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="">
               {filamentList.map((filament) => (
                 <tr
                   key={filament.id}
