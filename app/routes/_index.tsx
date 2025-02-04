@@ -45,9 +45,34 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   const { filaments, brands, colors, materials } = useLoaderData<typeof loader>();
+  let pic = '';
+  const rand = Math.floor(Math.random() * 7);
+  switch(rand){
+    case 0:
+      pic = 'fil1.jpg';
+      break;
+    case 1:
+      pic = 'fil2.jpg';
+      break;
+    case 2:
+      pic = 'fil3.jpg';
+      break;
+    case 3:
+      pic = 'fil4.jpg';
+      break;
+    case 4:
+      pic = 'fil5.jpg';
+      break;
+    case 5:
+      pic = 'fil6.jpg';
+      break;
+    case 6:
+      pic = 'filament.jpg';
+      break;
+  }
   
   return (
-    <div className="bg-[url('/public/filament.jpg')] bg-cover min-h-screen ">
+    <div className={`bg-[url('/public/${pic}')] bg-cover min-h-screen `}>
      <Inventory filaments={filaments} brands={brands} colors={colors} materials={materials}/>
     </div>
   );
