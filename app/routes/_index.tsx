@@ -46,7 +46,7 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const { filaments, brands, colors, materials } = useLoaderData<typeof loader>();
   let pic = '';
-  const rand = Math.floor(Math.random() * 7);
+  const rand = Math.floor(Math.random() * 15);
   switch(rand){
     case 0:
       pic = 'fil1.jpg';
@@ -66,14 +66,38 @@ export default function Index() {
     case 5:
       pic = 'fil6.jpg';
       break;
-    case 6:
-      pic = 'filament.jpg';
+    case 7:
+      pic = 'fil7.jpg';
+      break;
+    case 8:
+      pic = 'fil8.jpg';
+      break;
+    case 9:
+      pic = 'fil9.jpg';
+      break;
+    case 10:
+      pic = 'fil0.jpg';
+      break;
+    case 11:
+      pic = 'fil11.jpg';
+      break;
+    case 12:
+      pic = 'fil12.jpg';
+      break;
+    case 13:
+      pic = 'fil13.jpg';
+      break;
+    case 14:
+      pic = 'fil14.jpg';
       break;
   }
   
   return (
-    <div className={`bg-[url('/public/${pic}')] bg-cover min-h-screen `}>
-     <Inventory filaments={filaments} brands={brands} colors={colors} materials={materials}/>
+    <div className={`bg-[url('/public/fil3.jpg')] bg-cover min-h-screen `}>
+      {(filaments && filaments.length > 0) ? (<Inventory filaments={filaments} brands={brands} colors={colors} materials={materials}/>):(
+        <p>No filament in databse.</p>
+      )}
+     
     </div>
   );
 }

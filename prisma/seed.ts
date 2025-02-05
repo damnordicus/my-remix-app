@@ -8,7 +8,7 @@ async function main() {
   const materials = ['PETG', 'PLA', 'TPU', 'ABS', 'NYLON'];
   const brands = ['SUNLU', 'ESUN', 'HATCHBOX', 'CREALITY'];
   const colors = ['BLACK', 'RED', 'BLUE', 'GREEN', 'ORANGE', 'YELLOW', 'PURPLE', 'GRAY', 'WHITE', 'RAINBOW'];
-  for (let i = 1; i <= 50; i++) {
+  for (let i = 1; i <= 20; i++) {
     await prisma.filament.create({
       data: {
         brand: brands[Math.floor(Math.random() * brands.length)].toUpperCase(),
@@ -18,7 +18,7 @@ async function main() {
         purchase_date: new Date(),
         diameter: 1.75,
         price: 0.00,
-        stock_level: Math.floor(Math.random() * 100),
+        stock_level: Math.floor(Math.random() * 20),
       },
     });
   }

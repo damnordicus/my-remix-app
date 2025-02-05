@@ -19,6 +19,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
   };
 
    return (
+    
     <nav className="navbar relative">
       <button
         onClick={() => setFilterVisible((prev) => !prev)}
@@ -27,8 +28,10 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
         Filter
       </button>
       {filterVisible && (
-        <div className="absolute top-full left-0 mt-2 p-4 w-60 bg-slate-500 shadow-lg rounded border z-10">
-          <div className="mb-4">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
+        <div className="p-4 w-[420px] bg-slate-500 shadow-lg rounded border z-30">
+          <div className="flex justify-between">
+          <div className=" mb-4">
             <h3 className="font-bold text-lg">Brand</h3>
             <div className="flex flex-col">
               {brands.map((brand) => (
@@ -84,17 +87,29 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
               ))}
             </div>
           </div>
-
+          </div>
+          <div className="w-full text-center ">
           <button
             type="button"
             onClick={filterList}
-            className="bg-green-500 text-white py-2 px-4 rounded "
+            className="bg-amber-500 text-white py-2 px-4 rounded-xl shadow-xl border-2 border-amber-600"
           >
             Apply Filters
           </button>
+          <button
+            type="button"
+            onClick={() => setFilterVisible(false)}
+            className="bg-red-500 text-white py-2 px-4 ml-2 rounded-xl shadow-xl border-2 border-red-600"
+          >
+            Cancel
+          </button>
+          </div>
+          
+        </div>
         </div>
       )}
     </nav>
+    
   );
 };
 
