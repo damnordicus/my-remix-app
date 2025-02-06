@@ -4,9 +4,22 @@ import { useEffect, useState } from "react";
 
 export const AddFilament = () => {
     const [addVisible, setAddVisible] = useState(false);
+    const [selectedColor, setSelectedColor] = useState('');
     const navigation = useNavigation();
-    const inputClass = 'w-3/4 p-2 border-2 rounded-md border-orange-500 bg-black shadow-md shadow-gray-700'
+    const inputClass = 'w-3/4 p-2 border-2 rounded-md border-orange-500 bg-black shadow-md shadow-gray-700';
+    const materialTypes: string[] = ['PLA', 'PLA+', 'PETG', 'TPU', 'ABS', 'NYLON']
+    const FILAMENT_COLORS: string[] = [ "", "Add Color",
+      "BLACK", "WHITE", "GRAY", "SILVER", "TRANSPARENT",
+      "RED", "ORANGE", "YELLOW", "GREEN", "BLUE", "PURPLE", "PINK",
+      "BROWN", "BEIGE", "TAN", "GOLD", "COPPER", "BRONZE",
+      "TEAL", "CYAN", "MAGENTA", "LAVENDER", "MAROON", "BURGUNDY",
+      "LIME", "MINT", "AQUA", "NAVY", "OLIVE", "CHARCOAL",
+      "CHAMPAGNE", "IVORY", "PEACH", "CORAL", "AMBER",
+      "NEON GREEN", "NEON ORANGE", "NEON PINK", "NEON YELLOW",
+      "GLOW-IN-THE-DARK", "MULTICOLOR", "RAINBOW"
+    ];
 
+    
     useEffect(() => {
         if(navigation.state === 'idle'){
             setAddVisible(false);
@@ -14,8 +27,15 @@ export const AddFilament = () => {
     },[navigation.state]);
 
     const toggleView = () => {
+        setSelectedColor('');
         setAddVisible(!addVisible);
     };
+
+    const handleChange = (e) => {
+      setSelectedColor(e.target.value);
+    };
+
+    console.log(selectedColor)
 
     return(
         <>
@@ -31,8 +51,16 @@ export const AddFilament = () => {
          
          <Form method="post" className="flex flex-col items-center space-y-3">
            <input className={inputClass} type="text" name="brand" placeholder="Brand" required />
-           <input className={inputClass} type="text" name="material" placeholder="Material" required />
-           <input className={inputClass} type="text" name="color" placeholder="Color" required />
+           <select className={inputClass} name="material" required >
+            {materialTypes.map(x => (
+              <option value={x}>{x}</option>
+            ))}
+            </select>
+           {selectedColor !== 'Add Color' ? <select className={inputClass} name="color" onChange={(e) => handleChange(e)} required >
+            {FILAMENT_COLORS.map(x => (
+              <option value={x}>{x}</option>
+            ))}
+            </select> : <input className={inputClass} name="color" type="text" required/>}
            <input className={inputClass} type="number" name="diameter" placeholder="Diameter (mm)" step="0.01" required />
            <input className={inputClass} type="number" name="weight_grams" placeholder="Weight (g)" required />
            <input className={inputClass} type="number" name="price" placeholder="Price ($)" step="0.01" required />

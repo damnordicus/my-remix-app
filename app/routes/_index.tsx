@@ -23,7 +23,7 @@ export const action: ActionFunction = async ({ request }) => {
     const weight = parseInt(formData.get("weight_grams") as string, 10);
     const price = parseFloat(formData.get("price") as string);
     const purchase_date = formData.get("purchaseDate") as unknown as Date;
-    return await createFilament(brand, material, color, diameter, weight, price, purchase_date );
+    return await createFilament(brand, material, color, diameter, weight, price, purchase_date);
   }
 
   if (actionType === "update") {

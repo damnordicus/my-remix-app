@@ -112,8 +112,8 @@ export default function Inventory({ filaments, brands, colors, materials }) {
                     filament.stock_level > 9
                       ? "dark:bg-gray-800 dark:border-gray-700"
                       : filament.stock_level > 5
-                      ? "bg-yellow-500 text-black"
-                      : "bg-red-500 text-black"
+                      ? "bg-yellow-400 text-black"
+                      : "bg-red-400 text-black"
                   } border-b border-gray-200 hover:bg-gray-600`}
                   onClick={() => handleItemClick(filament.id)}
                 >

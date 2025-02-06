@@ -1,3 +1,4 @@
+import { BriefcaseIcon } from "@heroicons/react/24/outline";
 import { prisma } from "~/utils/db.server";
 
 // Fetch all filaments
@@ -59,8 +60,8 @@ export async function getFilamentById(id: number) {
 }
 
 // Create a new filament
-export async function createFilament( brand: string, material: string, color: string, diameter: number, weight_grams: number, price: number, purchase_date: Date ) {
-  return await prisma.filament.create({
+export async function createFilament( brand: string, material: string, color: string, diameter: number, weight_grams: number, price: number, purchase_date: Date) {
+ return await prisma.filament.create({
      data: {
         brand: brand.toUpperCase(),
         material: material.toUpperCase(),

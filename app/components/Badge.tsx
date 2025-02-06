@@ -1,5 +1,12 @@
-export default function Badge({children}) {
+export default function Badge({children, size}) {
     let pillDetails = '';
+    const BG_COLORS: string[] = ["RED","ORANGE","AMBER","YELLOW","LIME","GREEN","EMERALD","TEAL","CYAN","SKY","BLUE","INDIGO","VIOLET","PURPLE","FUCSHIA","PINK","ROSE","SLATE","GRAY","ZINC","NEUTRAL","STONE"]
+
+   
+    //const foundColor = BG_COLORS.find(color => color === children)?.toLowerCase() ?? 'gray';
+
+    //pillDetails = `text-${'black'} bg-${(foundColor === 'black' || foundColor === 'white') ? foundColor : `${foundColor}-400`} border-${foundColor}-300 p-1`;
+
     switch(children){
         case 'BLACK':
             pillDetails = 'text-white bg-black border-black p-1';
@@ -17,7 +24,7 @@ export default function Badge({children}) {
             pillDetails = 'text-gray-400 bg-white border-gray-300 p-1';
             break;
         case 'RED':
-            pillDetails = 'text-red-800 bg-red-400 border-red-500 p-1';
+            pillDetails = 'text-red-800 bg-red-500 border-red-600 p-1';
             break;
         case 'YELLOW':
             pillDetails = 'text-yellow-600 bg-yellow-200 border-yellow-300 p-1';
@@ -31,10 +38,13 @@ export default function Badge({children}) {
         case 'RAINBOW':
             pillDetails = 'bg-slate-800 border-slate-700 text-lg ';
             break;
+        default:
+            pillDetails = 'bg-slate-800 border-slate-700 text-lg text-slate-300';
+            break;
         
     }
     return (
-        <div className={` rounded-full text-center border-4 ${pillDetails}`}>
+        <div className={` rounded-full text-center border-4 ${size ? 'h-[25px] w-[80px]' : ''} ${pillDetails}`}>
             {children === 'RAINBOW' ? (
                 <>
                     <span className=" text-red-500">R</span>
@@ -45,7 +55,7 @@ export default function Badge({children}) {
                     <span className=" text-indigo-500">O</span>
                     <span className=" text-violet-500">W</span>
                 </>
-            ): children}
+            ): !size ? children : <></>}
         
         </div>
     );
