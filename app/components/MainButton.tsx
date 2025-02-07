@@ -5,7 +5,7 @@ export default function MainButton ({text, link}) {
 
     return (
         <div 
-        className="flex items-center justify-center w-[200px] h-[150px] bg-amber-500 bodrer border-4 border-amber-600 rounded-xl shadow-lg shadow-gray-800 "
+        className="flex items-center justify-center w-[200px] h-[150px] bg-slate-500 bodrer border-2 border-slate-400 rounded-xl shadow-lg shadow-gray-800 "
         onClick={() => navigate(link)}>
             <p>{text}</p>
         </div>

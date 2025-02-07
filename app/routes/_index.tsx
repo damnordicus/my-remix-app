@@ -1,67 +1,44 @@
+import { ClientLoaderFunctionArgs, useLoaderData } from "@remix-run/react";
+import Layout from "~/components/Layout";
 import MainButton from "~/components/MainButton";
 
+export const clientLoader = async ({
+  request,
+  params,
+  serverLoader,
+}: ClientLoaderFunctionArgs) => {
+  // call the server loader
+  // const serverData = await serverLoader();
+  // And/or fetch data on the client
+  // const data = getDataFromClient();
+  // Return the data to expose through useLoaderData()  
+  const randomBuffer = new Uint8Array(1);
+  crypto.getRandomValues(randomBuffer);
+
+  // Scale the random number to the range 1-15
+  const randomNumber = 1 + (randomBuffer[0] % 14);
+  
+  console.log(randomNumber)
+  return {rand: randomNumber};
+};
+export function HydrateFallback() {
+  return <p>Loading...</p>;
+}
 export default function Index() {
-  let pic = '';
-  const rand = Math.floor(Math.random() * 15);
-  switch(rand){
-    case 0:
-      pic = 'fil1.jpg';
-      break;
-    case 1:
-      pic = 'fil2.jpg';
-      break;
-    case 2:
-      pic = 'fil3.jpg';
-      break;
-    case 3:
-      pic = 'fil4.jpg';
-      break;
-    case 4:
-      pic = 'fil5.jpg';
-      break;
-    case 5:
-      pic = 'fil6.jpg';
-      break;
-    case 7:
-      pic = 'fil7.jpg';
-      break;
-    case 8:
-      pic = 'fil8.jpg';
-      break;
-    case 9:
-      pic = 'fil9.jpg';
-      break;
-    case 10:
-      pic = 'fil0.jpg';
-      break;
-    case 11:
-      pic = 'fil11.jpg';
-      break;
-    case 12:
-      pic = 'fil12.jpg';
-      break;
-    case 13:
-      pic = 'fil13.jpg';
-      break;
-    case 14:
-      pic = 'fil14.jpg';
-      break;
-  }
+
+  const {rand} = useLoaderData();
+  const backgroundUrl = `/fil${rand}.jpg`;
   
   return (
-    <div className={`bg-[url('/public/fil3.jpg')] bg-cover min-h-screen flex items-center justify-center `}>
-      <div className="w-[465px] h-[360px] justify-center bg-slate-700 border-4 border-amber-500 rounded-xl flex flex-row flex-wrap items-center  gap-4 p-4">
+    <Layout backgroundUrl={backgroundUrl}>
+      <div className="w-[465px] h-[360px] justify-center bg-slate-700 border-2 border-gray-600 bg-opacity-50 backdrop-blur-sm rounded-xl flex flex-row flex-wrap items-center  gap-4 p-4">
         <MainButton text="Pull From Stock" link="pullFilament"/>
         <MainButton text="Return To Stock" link="returnFilament"/>
         <MainButton text="View Stock" link="inventory" />
-        <div className="flex items-center justify-center w-[200px] h-[150px] bg-gray-600 bodrer-2 rounded-xl ">
+        <div className="flex items-center justify-center w-[200px] h-[150px] bg-gray-600 border-2 border-gray-500 rounded-xl ">
 
         </div>
-      </div>
-      {/* {(filaments && filaments.length > 0) ? (<Inventory filaments={filaments} brands={brands} colors={colors} materials={materials}/>):(
-        <p>No filament in databse.</p>
-      )} */}
-     
-    </div>
+      </div>   
+    </Layout>
   );
 }

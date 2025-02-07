@@ -24,10 +24,15 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const actionType = formData.get("_action");
 
+  console.log('actionType: ', actionType)
+
   if(actionType === 'submit'){
     const barcode = formData.get("barcode") as string;
-    const id = formData.get("id") as unknown as number;
+    const id = Number(formData.get("id"));
     return await pullFromStockByBarcode(barcode, id);
+  }
+  else {
+    return null;
   }
 };
 
@@ -51,6 +56,14 @@ export default function  PullFromStock() {
     }
   };
 
+  const handleSubmit = (e) => {
+
+    e.preventDefault();
+
+    fetcher.submit(e.target);
+
+  };
+
 
   return (
     <>
@@ -59,7 +72,8 @@ export default function  PullFromStock() {
       </div>
       <div className="min-h-screen flex justify-center items-center">
         <div className="w-1/6 h-[315px] flex justify-center bg-slate-600 border-2 border-amber-500 rounded-xl p-4">
-          <form className="flex flex-col items-center gap-4 w-full">
+          <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
+            <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl ">
               Select Roll From Inventory
             </p>
@@ -68,6 +82,7 @@ export default function  PullFromStock() {
               className="w-full p-2 border border-gray-300 rounded-lg"
               type="text"
               placeholder="Barcode"
+              name="barcode"
               onChange={(e) => handleBarcode(e)}
             />
             <input
@@ -90,11 +105,12 @@ export default function  PullFromStock() {
             />
             <button
               className="w-full p-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
-              type="submit"
+              value="submit"
+              name="_action"
             >
               Submit
             </button>
-          </form>
+          </fetcher.Form>
         </div>
       </div>
     </>

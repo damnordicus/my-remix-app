@@ -32,6 +32,18 @@ export async function getFilamentByBarcode(barcode: string){
 }
 
 export async function pullFromStockByBarcode(barcode: string, id: number){
+  const filament = await prisma.filament.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  if(!filament){
+    throw new Error("Filament not found");
+  }
+
+  const updatedBarcodes = filament.barcode.filter((existingBarcode) => existingBarcode !== barcode);
+
   const updatedFilament = await prisma.filament.updateMany({
     where: {
       barcode: {
@@ -39,6 +51,7 @@ export async function pullFromStockByBarcode(barcode: string, id: number){
       },
     },
     data: {
+      barcode: updatedBarcodes,
       stock_level: {
         decrement: 1, // Decrease quantity, or you can set it to zero to remove the item
       },
