@@ -21,6 +21,34 @@ export async function getAllFilaments() {
   });
 }
 
+export async function getFilamentByBarcode(barcode: string){
+  return await prisma.filament.findFirstOrThrow({
+    where: {
+      barcode:{
+        has: barcode,
+      }
+    }
+  });
+}
+
+export async function pullFromStockByBarcode(barcode: string, id: number){
+  const updatedFilament = await prisma.filament.updateMany({
+    where: {
+      barcode: {
+        has: barcode, // Ensure the barcode exists in the array
+      },
+    },
+    data: {
+      stock_level: {
+        decrement: 1, // Decrease quantity, or you can set it to zero to remove the item
+      },
+    },
+  });
+  console.log('updated: ', updatedFilament)
+
+  return updatedFilament;
+}
+
 export async function getAllBrands(){
   const brands = await prisma.filament.findMany({
     distinct: 'brand',

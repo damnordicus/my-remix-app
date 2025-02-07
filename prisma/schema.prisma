@@ -14,38 +14,17 @@ datasource db {
 }
 
 model Filament {
-  id          Int      @id @default(autoincrement())
-  brand       String
-  material    String
-  color       String
-  diameter    Float
+  id           Int      @id @default(autoincrement())
+  barcode      String[] @default([])   // Not unique because cases may share the same barcode
+  brand        String
+  material     String
+  color        String
+  diameter     Float
   weight_grams Int
-  price       Float
+  price        Float
   purchase_date DateTime
-  stock_level Int?
-  notes       String?
+  stock_level  Int?     // Nullable in case tracking is optional
+  notes        String?
 
-  printJobs   PrintJob[]
-
-  Supplier Supplier[]
-}
-
-model PrintJob {
-  id          Int      @id @default(autoincrement())
-  filament_id Int
-  print_date  DateTime
-  grams_used  Int
-  success     Boolean
-  notes       String?
-
-  filament    Filament @relation(fields: [filament_id], references: [id])
-}
-
-model Supplier {
-  id          Int      @id @default(autoincrement())
-  name        String
-  website     String?
-  contact_info String?
-
-  filaments   Filament[]
+  @@index([barcode]) // Indexing barcode for efficient lookup
 }
