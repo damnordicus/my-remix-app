@@ -1,13 +1,19 @@
 import {
+  ClientLoaderFunctionArgs,
+  isRouteErrorResponse,
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useRouteError,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
+import { default as RootLayout } from "./components/Layout";
 
 import "./tailwind.css";
+import { useCallback, useMemo } from "react";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -23,6 +29,30 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+
+  const getNumber = useMemo(() => {
+    const randomBuffer = new Uint8Array(1);
+    crypto.getRandomValues(randomBuffer);
+
+    // Scale the random number to the range 1-15
+    const randomNumber = 1 + (randomBuffer[0] % 14);
+    return randomNumber
+  }, [])
+
+  const get2 = useCallback(() => {
+    const randomBuffer = new Uint8Array(1);
+    crypto.getRandomValues(randomBuffer);
+
+    // Scale the random number to the range 1-15
+    const randomNumber = 1 + (randomBuffer[0] % 14);
+    return randomNumber
+  }, [])
+
+  console.log(get2())
+
+  // const { rand } = useLoaderData<typeof clientLoader>();
+  const backgroundUrl = `/fil${getNumber}.jpg`;
+  
   return (
     <html lang="en">
       <head>
@@ -32,7 +62,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+
+    <RootLayout backgroundUrl={backgroundUrl}>
         {children}
+        </RootLayout>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -42,4 +75,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
+}
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return (
+      <>
+        <h1>
+          {error.status} {error.statusText}
+        </h1>
+        <p>{error.data}</p>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <h1>Error!</h1>
+      <p>{error?.message ?? "Unknown error"}</p>
+    </>
+  );
 }

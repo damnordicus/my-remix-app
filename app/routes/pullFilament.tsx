@@ -67,9 +67,9 @@ export default function  PullFromStock() {
 
   return (
     <>
-      <div className="absolute" onClick={() => navigate("/")}>
+      <button className="absolute" onClick={() => navigate("/")}>
         Back
-      </div>
+      </button>
       <div className="min-h-screen flex justify-center items-center">
         <div className="w-1/6 h-[315px] flex justify-center bg-slate-600 border-2 border-amber-500 rounded-xl p-4">
           <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
@@ -79,7 +79,7 @@ export default function  PullFromStock() {
             </p>
             <input type="hidden" name="id" value={filament?.id}/>
             <input
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border border-gray-300 rounded-lg placeholder-white"
               type="text"
               placeholder="Barcode"
               name="barcode"
@@ -88,19 +88,22 @@ export default function  PullFromStock() {
             <input
               className="w-full p-2 border border-gray-300 rounded-lg"
               type="text"
-              value={filament?.brand ?? 'Brand'}
+              placeholder="Brand"
+              value={filament?.brand ?? null}
               disabled
             />
             <input
               className="w-full p-2 border border-gray-300 rounded-lg"
               type="text"
-              value={filament?.material ?? 'Type'}
+              placeholder="Type"
+              value={filament?.material ?? null}
               disabled
             />
             <input
               className="w-full p-2 border border-gray-300 rounded-lg"
               type="text"
-              value={filament?.weight_grams ? `${filament.weight_grams} g` : 'Weight'}
+              placeholder="Weight (g)"
+              value={filament?.weight_grams ? `${filament.weight_grams} g` : ''}
               disabled
             />
             <button

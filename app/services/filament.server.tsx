@@ -79,7 +79,9 @@ export async function getAllMaterials(){
       material: true,
     },
   })
-  return [...materials]
+
+  const result = materials.map(x => x.material);
+  return [...result]
 }
 
 export async function getAllColors(){
