@@ -16,6 +16,10 @@ export default function SelectedItem({ selectedItem, onClose }){
     },[navigation.state, onClose])
 
     const [ scannedBarcode, setScannedBarcode ] = useState(null);
+    const [ discardVisible, setDiscardVisible ] = useState(false);
+    const [ addVisible, setAddVisible] = useState(false);
+
+    console.log(selectedItem.barcode)
     
 
     function handleScan(barcode) {
@@ -26,10 +30,20 @@ export default function SelectedItem({ selectedItem, onClose }){
     function handleChange(e){
       setQuantity(parseInt(e.target.value));
     }
-    console.log('q: ', typeof quantity)
+
+    function handleDiscard(){
+      setDiscardVisible(!discardVisible);
+      setAddVisible(false);
+    };
+
+    function handleAdd(){
+      setAddVisible(!addVisible);
+      setDiscardVisible(false);
+    }
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className={`w-[400px] h-[250px] bg-slate-600 rounded-2xl shadow-xl p-6 relative border-2 border-slate-300 `}>
+          <div className={`w-[400px]  bg-slate-600 rounded-2xl shadow-xl p-6 relative border-2 border-slate-300 `}>
             <p
               className="absolute top-2 right-2 cursor-pointer text-white text-xl"
               onClick={onClose}
@@ -49,14 +63,43 @@ export default function SelectedItem({ selectedItem, onClose }){
               {scannedBarcode && (
                 <p>Scanned code: {scannedBarcode}</p>
               )} */}
-              <p>Current Quantity: {selectedItem.stock_level} </p>
-              <input
+              <p>Number of Rolls: {selectedItem.stock_level} </p>
+              {/* <input
                 type="number"
                 name="stock_level"
                 placeholder="Increae or decrease total stock"
                 onChange={(e) => handleChange(e)}
                 className={`w-full p-2 mt-1 rounded-md ${quantity > 0 ? 'text-green-500': quantity === 0 ? 'text-white' : 'text-red-500'}  bg-black border-2 border-amber-500 shadow-lg`}
-              />
+              /> */}
+              <div className="w-full flex justify-around pt-2 ">
+                <div
+                className="bg-red-500 px-2 py-1 mb-2 rounded-lg"
+                onClick={handleDiscard}>
+                - Discard A Roll
+              </div>
+              <div
+                className="bg-green-500 px-2 py-1 mb-2 rounded-lg"
+                onClick={handleAdd}>
+                + Add A Roll
+              </div>
+
+              </div>
+              {(discardVisible && selectedItem.barcode.length > 0) && (
+                <div>
+                  <p>Select the barcode to remove:</p>
+                  <select>
+                    {selectedItem.barcode.map((x) => (
+                      <option key={x} value={x}>{x}</option>
+                    ))}
+                    
+                  </select>
+                </div>
+              )}
+              {(addVisible) && (
+                <div>
+                  <p>Enter barcode: </p>
+                </div>
+              )}
               <div className="flex mt-5 justify-center gap-2">
               <button
                 type="submit"

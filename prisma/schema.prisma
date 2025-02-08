@@ -13,12 +13,22 @@ model Filament {
   material      String
   color         String
   diameter      Float
-  weight_grams  Int
-  price         Float
-  purchase_date DateTime
   stock_level   Int?
   notes         String?
   barcode       String[] @default([])
 
   @@index([barcode])
+  rolls Roll[]
 }
+
+model Roll {
+  id         Int      @id @default(autoincrement())
+  barcode    String   @unique  // Each roll has its own unique barcode
+  filamentId Int     
+  weight     Int      // Weight in grams
+  price      Float?
+  purchase_date DateTime?
+
+  filament   Filament @relation(fields: [filamentId], references: [id])
+}
+

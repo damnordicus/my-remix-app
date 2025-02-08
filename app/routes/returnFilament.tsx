@@ -5,7 +5,7 @@ import { CameraEnhancer } from "dynamsoft-camera-enhancer";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
 import { useEffect, useState } from "react";
 import BarcodeScanner from "~/components/BarcodeScanner";
-import { getAllMaterials, getFilamentByBarcode, pullFromStockByBarcode } from "~/services/filament.server";
+import { getAllMaterials, getFilamentByBarcode, pullFromStockByBarcode, returnFilamentToStock } from "~/services/filament.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
 //   const url = new URL(request.url);
@@ -27,9 +27,11 @@ export const action: ActionFunction = async ({ request }) => {
   console.log('actionType: ', actionType)
 
   if(actionType === 'submit'){
-    const barcode = formData.get("barcode") as string;
-    const id = Number(formData.get("id"));
-    return await pullFromStockByBarcode(barcode, id);
+    const barcodeObject = formData.get("barcode") as string;
+    const weight = formData.get("weight") as unknown as number;
+    const decoded = atob(barcodeObject);
+    const parsed = JSON.parse(decoded);
+    return await returnFilamentToStock(parsed);
   }
   else {
     return null;
@@ -71,17 +73,18 @@ export default function  ReturnToStock() {
     setIsActive(!isActive);
   };
 
+  const test = {brand:"ESUN", color:"GOLD", material:"PLA"}
+  const stringify = JSON.stringify(test);
+  const encoded = btoa(stringify);
+  console.log(encoded);
 
   return (
     <>
-      <div className="absolute" onClick={() => navigate("/")}>
-        Back
-      </div>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="w-1/6 h-[315px] flex justify-center bg-slate-600 border-2 border-amber-500 rounded-xl p-4">
+        <div className="w-1/6 h-[225px] flex justify-center bg-slate-600 border-2 bg-opacity-80 border-slate-500 rounded-xl p-4">
           <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
             <input type="hidden" name="_action" value="submit"/>
-            <p className="text-amber-500 text-xl ">
+            <p className="text-amber-500 text-xl mb-4">
               Return Roll to Inventory
             </p>
             <input type="hidden" name="id" value={filament?.id}/>
@@ -91,29 +94,21 @@ export default function  ReturnToStock() {
               type="text"
               placeholder="Barcode"
               name="barcode"
-              onChange={() => null}
+              required
             />
-            <div onClick={handleCamera}><CameraIcon className="size-7 ml-4 text-amber-400"/></div>
+            <div onClick={handleCamera}><CameraIcon className="size-7 ml-4 text-amber-500"/></div>
             </div>
             
-            <div className="flex items-center w-full gap-2">
-            <p>Type: </p>
-            <select
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              value={filament?.material ?? 'Type'}
-            >
-                {materials.map((x) => (
-                    <option key={x} value={x}>{x}</option>
-                ))}
-            </select>
-            </div>
+            
             <input
               className="w-full p-2 border border-gray-300 rounded-lg"
               placeholder="Estimated weight (g)"
+              name="weight"
               value={filament?.weight_grams ? `${filament.weight_grams} g` : null}
+              required
             />
             <button
-              className="w-full p-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
+              className="w-1/2 p-2 mt-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
               value="submit"
               name="_action"
             >

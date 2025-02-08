@@ -2790,6 +2790,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^11.0.0":
+  version: 11.1.0
+  resolution: "commander@npm:11.1.0"
+  checksum: 10c0/13cc6ac875e48780250f723fb81c1c1178d35c5decb1abb1b628b3177af08a8554e76b2c0f29de72d69eef7c864d12613272a71fabef8047922bc622ab75a179
+  languageName: node
+  linkType: hard
+
 "commander@npm:^4.0.0":
   version: 4.1.1
   resolution: "commander@npm:4.1.1"
@@ -6396,6 +6403,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mkcert@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "mkcert@npm:3.2.0"
+  dependencies:
+    commander: "npm:^11.0.0"
+    node-forge: "npm:^1.3.1"
+  bin:
+    mkcert: dist/cli.js
+  checksum: 10c0/331a5be54aa16f1cff9ab2cbb626a7ba27a06432d2f65a20a6b9275b2188d2807fd4082535a19ce5a1c368bc603ce1a700cab0ae2db3d8f301f3983167b16eb1
+  languageName: node
+  linkType: hard
+
 "mkdirp-classic@npm:^0.5.2":
   version: 0.5.3
   resolution: "mkdirp-classic@npm:0.5.3"
@@ -6506,6 +6525,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.33.2"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     isbot: "npm:^4.1.0"
+    mkcert: "npm:^3.2.0"
     pg: "npm:^8.13.1"
     postcss: "npm:^8.4.38"
     prisma: "npm:^6.3.0"
@@ -6564,6 +6584,13 @@ __metadata:
   version: 0.6.4
   resolution: "negotiator@npm:0.6.4"
   checksum: 10c0/3e677139c7fb7628a6f36335bf11a885a62c21d5390204590a1a214a5631fcbe5ea74ef6a610b60afe84b4d975cbe0566a23f20ee17c77c73e74b80032108dea
+  languageName: node
+  linkType: hard
+
+"node-forge@npm:^1.3.1":
+  version: 1.3.1
+  resolution: "node-forge@npm:1.3.1"
+  checksum: 10c0/e882819b251a4321f9fc1d67c85d1501d3004b4ee889af822fd07f64de3d1a8e272ff00b689570af0465d65d6bf5074df9c76e900e0aff23e60b847f2a46fbe8
   languageName: node
   linkType: hard
 

@@ -1,4 +1,5 @@
 import { BriefcaseIcon } from "@heroicons/react/24/outline";
+import { parse } from "path";
 import { prisma } from "~/utils/db.server";
 
 // Fetch all filaments
@@ -9,11 +10,9 @@ export async function getAllFilaments() {
         brand: true,
         material: true,
         color: true,
-        weight_grams: true,
         diameter: true,
-        price: true,
-        purchase_date: true,
         stock_level: true,
+        barcode: true,
     },
     orderBy:{
       stock_level: 'asc'
@@ -29,6 +28,40 @@ export async function getFilamentByBarcode(barcode: string){
       }
     }
   });
+}
+
+export async function returnFilamentToStock(parsedObject: object) {
+  const existingFilament = await prisma.filament.findFirstOrThrow({
+    where:{
+      brand: parsedObject.brand,
+      color: parsedObject.color,
+      material: parsedObject.material,
+    },
+    select:{
+      id: true,
+      barcode: true,
+    }
+  });
+  const existingId = existingFilament.id;
+  const existingBarcodes = [...existingFilament.barcode, btoa(JSON.stringify(parsedObject))];
+
+  return await prisma.filament.update({
+    where:{
+      brand: parsedObject.brand,
+      color: parsedObject.color,
+      material: parsedObject.material,
+      id: existingId,
+    },
+    data:{
+      stock_level: {
+        increment: 1,
+      },
+      barcode:{
+        set: existingBarcodes,
+      }
+    }
+  })
+
 }
 
 export async function pullFromStockByBarcode(barcode: string, id: number){

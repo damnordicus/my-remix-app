@@ -50,7 +50,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function Inventory() {
-    const {filaments, brands, colors, materials} = useLoaderData<typeof loader>();
+  const {filaments, brands, colors, materials} = useLoaderData<typeof loader>();
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [scannedBarcode, setScannedBarcode] = useState(null);
@@ -62,6 +62,8 @@ export default function Inventory() {
   const [filterVisible, setFilterVisible] = useState(false);
 
   const [list, setList] = useState(null);
+  const WARNING_AMOUNT = 5;
+  const CRITICAL_AMOUNT = 2;
 
   useEffect(() => {
     setList(filaments);
@@ -124,7 +126,7 @@ export default function Inventory() {
       </div>
       <div className="w-5/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
         <div className="overflow-y-auto">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed  ">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
             <thead className="sticky top-0 z-3 text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
               <tr className="rounded-t-lg ">
                 <th scope="col" className="pl-6 py-3 w-1/4">
@@ -148,12 +150,12 @@ export default function Inventory() {
                 <tr
                   key={filament.id}
                   className={`w-full ${
-                    filament.stock_level > 9
+                    filament.stock_level > WARNING_AMOUNT
                       ? "dark:bg-gray-800 dark:border-gray-700"
-                      : filament.stock_level > 5
+                      : filament.stock_level > CRITICAL_AMOUNT
                       ? "bg-yellow-400 text-black"
                       : "bg-red-400 text-black"
-                  } border-b border-gray-200 hover:bg-gray-600`}
+                  } border-b border-gray-200 hover:bg-gray-600 `}
                   onClick={() => handleItemClick(filament.id)}
                 >
                   <td className="">
