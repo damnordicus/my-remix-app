@@ -12,9 +12,7 @@ export default function Index() {
         <MainButton text="Pull From Stock" link="pullFilament"/>
         <MainButton text="Return To Stock" link="returnFilament"/>
         <MainButton text="View Stock" link="inventory" />
-        <div className="flex items-center justify-center w-[200px] h-[150px] bg-gray-600 border-2 border-gray-500 rounded-xl ">
-
-        </div>
+        <MainButton text="Create Barcode" link="generateBarcode"/>
       </div>   
       </div>
   );

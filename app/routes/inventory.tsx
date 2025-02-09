@@ -35,9 +35,16 @@ export const action: ActionFunction = async ({ request }) => {
   if (actionType === "update") {
       
     const id = parseInt(formData.get("id") as string, 10);
-    const stock_level = parseInt(formData.get("stock_level") as string, 10);
-
-    return await updateFilamentStock(id, stock_level);
+    const option = formData.get("option") as string;
+    const barcode = formData.get("barcode") as string;
+    if(option === 'discard'){
+       return await deleteFilament(barcode, id);
+    }
+    if(option === 'add'){
+       return await updateFilamentStock(barcode, id);
+    }
+    //const stock_level = parseInt(formData.get("stock_level") as string, 10);
+    
   }
 
   if (actionType === "delete") {

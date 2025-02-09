@@ -1,5 +1,6 @@
 import { BriefcaseIcon } from "@heroicons/react/24/outline";
 import { parse } from "path";
+import { exit } from "process";
 import { prisma } from "~/utils/db.server";
 
 // Fetch all filaments
@@ -102,7 +103,8 @@ export async function getAllBrands(){
       brand: true,
     }
   })
-  return [...brands]
+  const result = brands.map(x => x.brand);
+  return [...result]
 }
 
 export async function getAllMaterials(){
@@ -124,7 +126,9 @@ export async function getAllColors(){
       color: true,
     },
   })
-  return [...colors]
+
+  const result = colors.map(x => x.color);
+  return [...result]
 }
 
 // Get a filament by ID
@@ -152,19 +156,67 @@ export async function createFilament( brand: string, material: string, color: st
 }
 
 // Update filament stock
-export async function updateFilamentStock(id: number, newLevel: number) {
+export async function updateFilamentStock(barcode: string, id: number) {
+
+  const decoded = atob(barcode);
+  const parsed = JSON.parse(decoded);
+
+  const existingBarcodes = await prisma.filament.findFirstOrThrow({
+    where: { id },
+    select:{
+      barcode: true,
+    }
+  })
+
+  const updatedBarcodes = [...existingBarcodes.barcode, barcode];
+
   return await prisma.filament.update({
-     where: { id },
+     where: { 
+      id,
+      brand: parsed.brand,
+      material: parsed.material,
+      color: parsed.color,
+     },
      data: { 
+      barcode: updatedBarcodes,
       stock_level: {
-        increment: !newLevel ? 0 : newLevel
+        increment: 1
      }}
  });
 }
 
 // Delete a filament
-export async function deleteFilament(id: number) {
-  return await prisma.filament.delete({
-     where: { id }
+export async function deleteFilament(barcode: string, id: number) {
+
+  // const decoded = atob(barcode);
+  // const parsed = JSON.parse(decoded);
+
+  const existingBarcodes = await prisma.filament.findFirstOrThrow({
+    where:{
+      id,
+    },
+    select:{
+      barcode: true,
+      brand: true,
+      material: true,
+      color: true,
+    }
+  })
+
+  const updatedBarcodes = existingBarcodes.barcode.filter(x => x !== barcode);
+
+  return await prisma.filament.update({
+     where: {
+       id,
+      brand: existingBarcodes.brand,
+      material: existingBarcodes.material,
+      color: existingBarcodes.color,
+    },
+     data: {
+        barcode: updatedBarcodes,
+        stock_level:{
+          decrement: 1,
+        }
+     }
  });
 }

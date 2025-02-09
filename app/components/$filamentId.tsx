@@ -1,4 +1,4 @@
-import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, CameraIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Form, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import BarcodeScanner from "./BarcodeScanner";
@@ -59,6 +59,7 @@ export default function SelectedItem({ selectedItem, onClose }){
 
             <Form method="post" className="mt-4">
               <input type="hidden" name="id" value={selectedItem.id} />
+              <input type="hidden" name="option" value={discardVisible ? 'discard' : 'add'}/>
               {/* <BarcodeScanner onScan={handleScan} />
               {scannedBarcode && (
                 <p>Scanned code: {scannedBarcode}</p>
@@ -87,7 +88,7 @@ export default function SelectedItem({ selectedItem, onClose }){
               {(discardVisible && selectedItem.barcode.length > 0) && (
                 <div>
                   <p>Select the barcode to remove:</p>
-                  <select>
+                  <select name="barcode">
                     {selectedItem.barcode.map((x) => (
                       <option key={x} value={x}>{x}</option>
                     ))}
@@ -96,8 +97,12 @@ export default function SelectedItem({ selectedItem, onClose }){
                 </div>
               )}
               {(addVisible) && (
-                <div>
+                <div className="w-full">
                   <p>Enter barcode: </p>
+                  <div className="flex ">
+                  <input type="text" name="barcode" className="w-full border-2 border-orange-500 rounded-lg"></input>
+                  <div className="bg-orange-500 mx-2 border-2 rounded-lg border-orange-700"><CameraIcon className="size-8 mx-2 my-1 text-orange-700"/></div>
+                  </div>
                 </div>
               )}
               <div className="flex mt-5 justify-center gap-2">
