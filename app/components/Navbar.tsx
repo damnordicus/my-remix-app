@@ -35,16 +35,16 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
             <h3 className="font-bold text-lg">Brand</h3>
             <div className="flex flex-col">
               {brands.map((brand) => (
-                <label key={brand.brand}>
+                <label key={brand}>
                   <input
                     type="checkbox"
                     name="brand"
-                    value={brand.brand}
+                    value={brand}
                     onChange={handleFilterChange}
                     className="mr-2"
-                    checked={list?.brand?.includes(brand.brand) ?? false}
+                    checked={list?.brand?.includes(brand) ?? false}
                   />
-                  {brand.brand}
+                  {brand}
                 </label>
               ))}
             </div>
@@ -54,16 +54,16 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
             <h3 className="font-bold text-lg">Material</h3>
             <div className="flex flex-col">
               {materials.map((material) => (
-                <label key={material.material}>
+                <label key={material}>
                   <input
                     type="checkbox"
                     name="material"
-                    value={material.material}
+                    value={material}
                     onChange={handleFilterChange}
                     className="mr-2"
-                    checked={list?.material?.includes(material.material) ?? false}
+                    checked={list?.material?.includes(material) ?? false}
                   />
-                  {material.material}
+                  {material}
                 </label>
               ))}
             </div>
@@ -73,16 +73,16 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
             <h3 className="font-bold text-lg">Color</h3>
             <div className="flex flex-col">
               {colors.map((color) => (
-                <label key={color.color}>
+                <label key={color}>
                   <input
                     type="checkbox"
                     name="color"
-                    value={color.color}
+                    value={color}
                     onChange={handleFilterChange}
                     className="mr-2"
-                    checked={list?.color?.includes(color.color) ?? false}
+                    checked={list?.color?.includes(color) ?? false}
                   />
-                  {color.color}
+                  {color}
                 </label>
               ))}
             </div>

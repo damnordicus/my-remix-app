@@ -31,6 +31,40 @@ export async function getFilamentByBarcode(barcode: string){
   });
 }
 
+export async function getFilamentByAttributes(selectedBrand: string, selectedMaterial: string, selectedColor: string){
+  return await prisma.filament.findFirstOrThrow({
+    where:{
+      brand: selectedBrand,
+      material: selectedMaterial,
+      color: selectedColor,
+    },
+    select: {
+      id: true,
+    }
+  })
+}
+
+export async function addQRtoRoll(qrString: string, filamentId: number){
+  const updateFilament = await prisma.filament.update({
+    where:{
+      id: filamentId
+    },
+    data:{
+      stock_level:{
+        increment: 1,
+      },
+    },
+  })
+
+  return await prisma.roll.create({
+    data:{
+      barcode: qrString,
+      filamentId,
+      weight: 1000,
+    },
+  })
+}
+
 export async function returnFilamentToStock(parsedObject: object) {
   const existingFilament = await prisma.filament.findFirstOrThrow({
     where:{

@@ -1,5 +1,5 @@
 import { ArrowPathIcon, CameraIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Form, useNavigation } from "@remix-run/react";
+import { Form, useFetcher, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import BarcodeScanner from "./BarcodeScanner";
 import Badge from "./Badge";
@@ -19,7 +19,8 @@ export default function SelectedItem({ selectedItem, onClose }){
     const [ discardVisible, setDiscardVisible ] = useState(false);
     const [ addVisible, setAddVisible] = useState(false);
 
-    console.log(selectedItem.barcode)
+    const fetcher = useFetcher();
+
     
 
     function handleScan(barcode) {
@@ -57,7 +58,7 @@ export default function SelectedItem({ selectedItem, onClose }){
               <Badge size={2}>{selectedItem.color}</Badge>
             </div>
 
-            <Form method="post" className="mt-4">
+            <fetcher.Form method="post" className="mt-4">
               <input type="hidden" name="id" value={selectedItem.id} />
               <input type="hidden" name="option" value={discardVisible ? 'discard' : 'add'}/>
               {/* <BarcodeScanner onScan={handleScan} />
@@ -72,7 +73,7 @@ export default function SelectedItem({ selectedItem, onClose }){
                 onChange={(e) => handleChange(e)}
                 className={`w-full p-2 mt-1 rounded-md ${quantity > 0 ? 'text-green-500': quantity === 0 ? 'text-white' : 'text-red-500'}  bg-black border-2 border-amber-500 shadow-lg`}
               /> */}
-              <div className="w-full flex justify-around pt-2 ">
+              <div className="w-full flex justify-around pt-4 ">
                 <div
                 className="bg-red-500 px-2 py-1 mb-2 rounded-lg"
                 onClick={handleDiscard}>
@@ -97,32 +98,13 @@ export default function SelectedItem({ selectedItem, onClose }){
                 </div>
               )}
               {(addVisible) && (
-                <div className="w-full">
-                  <p>Enter barcode: </p>
-                  <div className="flex ">
-                  <input type="text" name="barcode" className="w-full border-2 border-orange-500 rounded-lg"></input>
-                  <div className="bg-orange-500 mx-2 border-2 rounded-lg border-orange-700"><CameraIcon className="size-8 mx-2 my-1 text-orange-700"/></div>
-                  </div>
+                <div className="w-full text-center mt-2">
+                  <input type="number" name="weight" defaultValue={0} placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100}/>
+                  <input type="number" name="price" defaultValue={0.00} placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01}/>
                 </div>
               )}
-              <div className="flex mt-5 justify-center gap-2">
-              <button
-                type="submit"
-                name="_action"
-                value="update"
-                className=" bg-amber-500 text-amber-800 p-2 rounded-lg shadow-lg"
-              >
-                <ArrowPathIcon className="size-7" />
-              </button>
-              <button 
-              type="submit"
-              name="_action"
-              value="delete"
-              className="bg-red-500 text-red-800 p-2 rounded-lg shadow-lg">
-                <TrashIcon className="size-7"/>
-              </button>
-              </div>
-            </Form>
+              
+            </fetcher.Form>
           </div>
         </div>
     )

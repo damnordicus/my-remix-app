@@ -1838,6 +1838,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/qr-image@npm:^3":
+  version: 3.2.9
+  resolution: "@types/qr-image@npm:3.2.9"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/ecfc31fd1ced18b4c7ee7da5d50f1044ad4f5a81953724e57f2f25558b8c57e13a6afbeee0fac59eb9ac54bcd7bc06ae925e4755e28e3fd2e231eb12905e2502
+  languageName: node
+  linkType: hard
+
 "@types/react-dom@npm:^18.2.7":
   version: 18.3.5
   resolution: "@types/react-dom@npm:18.3.5"
@@ -1868,6 +1877,13 @@ __metadata:
   version: 2.0.11
   resolution: "@types/unist@npm:2.0.11"
   checksum: 10c0/24dcdf25a168f453bb70298145eb043cfdbb82472db0bc0b56d6d51cd2e484b9ed8271d4ac93000a80da568f2402e9339723db262d0869e2bf13bc58e081768d
+  languageName: node
+  linkType: hard
+
+"@types/uuid@npm:8.3.4":
+  version: 8.3.4
+  resolution: "@types/uuid@npm:8.3.4"
+  checksum: 10c0/b9ac98f82fcf35962317ef7dc44d9ac9e0f6fdb68121d384c88fe12ea318487d5585d3480fa003cf28be86a3bbe213ca688ba786601dce4a97724765eb5b1cf2
   languageName: node
   linkType: hard
 
@@ -6512,6 +6528,7 @@ __metadata:
     "@remix-run/react": "npm:^2.15.2"
     "@remix-run/serve": "npm:^2.15.2"
     "@types/node": "npm:^22.13.1"
+    "@types/qr-image": "npm:^3"
     "@types/react": "npm:^18.2.20"
     "@types/react-dom": "npm:^18.2.7"
     "@typescript-eslint/eslint-plugin": "npm:^6.7.4"
@@ -6529,11 +6546,13 @@ __metadata:
     pg: "npm:^8.13.1"
     postcss: "npm:^8.4.38"
     prisma: "npm:^6.3.0"
+    qr-image: "npm:^3.2.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     tailwindcss: "npm:^3.4.4"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.1.6"
+    uuidv4: "npm:^6.2.13"
     vite: "npm:^5.1.0"
     vite-tsconfig-paths: "npm:^4.2.1"
   languageName: unknown
@@ -7535,6 +7554,13 @@ __metadata:
   version: 2.3.1
   resolution: "punycode@npm:2.3.1"
   checksum: 10c0/14f76a8206bc3464f794fb2e3d3cc665ae416c01893ad7a02b23766eb07159144ee612ad67af5e84fa4479ccfe67678c4feb126b0485651b302babf66f04f9e9
+  languageName: node
+  linkType: hard
+
+"qr-image@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "qr-image@npm:3.2.0"
+  checksum: 10c0/a355ffe007115b7fefa72d9c72b2ead18e37a53843b6fb6abb6a798d206b564c7bca9340f9dde06903404a30ea67bf504479a385a550c7b6aa4b69a1e76e1dce
   languageName: node
   linkType: hard
 
@@ -9175,6 +9201,25 @@ __metadata:
   version: 1.0.1
   resolution: "utils-merge@npm:1.0.1"
   checksum: 10c0/02ba649de1b7ca8854bfe20a82f1dfbdda3fb57a22ab4a8972a63a34553cf7aa51bc9081cf7e001b035b88186d23689d69e71b510e610a09a4c66f68aa95b672
+  languageName: node
+  linkType: hard
+
+"uuid@npm:8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
+  bin:
+    uuid: dist/bin/uuid
+  checksum: 10c0/bcbb807a917d374a49f475fae2e87fdca7da5e5530820ef53f65ba1d12131bd81a92ecf259cc7ce317cbe0f289e7d79fdfebcef9bfa3087c8c8a2fa304c9be54
+  languageName: node
+  linkType: hard
+
+"uuidv4@npm:^6.2.13":
+  version: 6.2.13
+  resolution: "uuidv4@npm:6.2.13"
+  dependencies:
+    "@types/uuid": "npm:8.3.4"
+    uuid: "npm:8.3.2"
+  checksum: 10c0/33287c7c71e19c5a9fe0d936c0df648338965442c80b5b26e51c13ec9a9c524a72c718355e0cea8a9431a78680d72a41a236b87046ecc0a05f518c8e22df9e35
   languageName: node
   linkType: hard
 
