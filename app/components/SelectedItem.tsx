@@ -1,7 +1,6 @@
-import { ArrowPathIcon, CameraIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, CameraIcon, TrashIcon, QrCodeIcon } from "@heroicons/react/24/outline";
 import { Form, useFetcher, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import BarcodeScanner from "./BarcodeScanner";
 import Badge from "./Badge";
 
 export default function SelectedItem({ selectedItem, onClose }){
@@ -75,12 +74,12 @@ export default function SelectedItem({ selectedItem, onClose }){
               /> */}
               <div className="w-full flex justify-around pt-4 ">
                 <div
-                className="bg-red-500 px-2 py-1 mb-2 rounded-lg"
+                className="bg-red-500 px-2 py-1 mb-2 rounded-lg shadow-lg"
                 onClick={handleDiscard}>
                 - Discard A Roll
               </div>
               <div
-                className="bg-green-500 px-2 py-1 mb-2 rounded-lg"
+                className="bg-green-500 px-2 py-1 mb-2 rounded-lg shadow-lg"
                 onClick={handleAdd}>
                 + Add A Roll
               </div>
@@ -98,9 +97,11 @@ export default function SelectedItem({ selectedItem, onClose }){
                 </div>
               )}
               {(addVisible) && (
-                <div className="w-full text-center mt-2">
-                  <input type="number" name="weight" defaultValue={0} placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100}/>
-                  <input type="number" name="price" defaultValue={0.00} placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01}/>
+                <div className="w-full text-center mt-2 flex flex-col">
+                  <input type="number" name="weight" placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100}/>
+                  <input type="number" name="price" placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01}/>
+                  <div className="w-full flex justify-center text-center items-center"><button className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" name="_action" value="qr"><QrCodeIcon className="size-7 mr-1"/> Generate</button></div>
+                  <div className="w-full flex justify-center text-center items-center"><button className="flex bg-green-500 items-center px-2 rounded-lg mt-4 shadow-lg" name="_action" value="submit">Submit</button></div>
                 </div>
               )}
               
@@ -108,4 +109,8 @@ export default function SelectedItem({ selectedItem, onClose }){
           </div>
         </div>
     )
+}
+
+function uuidv4() {
+  throw new Error("Function not implemented.");
 }

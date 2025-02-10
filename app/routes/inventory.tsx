@@ -5,7 +5,7 @@ import BarcodeScanner from "../components/BarcodeScanner";
 import Navbar from "../components/Navbar";
 import { AddFilament } from "../components/AddFilament";
 import Badge from "../components/Badge";
-import SelectedItem from "~/components/$filamentId";
+import SelectedItem from "~/components/SelectedItem";
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament } from "~/services/filament.server";
 
