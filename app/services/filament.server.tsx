@@ -147,9 +147,6 @@ export async function createFilament( brand: string, material: string, color: st
         material: material.toUpperCase(),
         color: color.toUpperCase(),
         diameter,
-        weight_grams,
-        price,
-        purchase_date,
         stock_level: 0,
      }
     });
@@ -168,6 +165,10 @@ export async function updateFilamentStock(barcode: string, id: number) {
     }
   })
 
+  if(existingBarcodes.barcode.find(x => x === barcode)){
+    return new Error("Roll is already in the inventory")
+  }
+  
   const updatedBarcodes = [...existingBarcodes.barcode, barcode];
 
   return await prisma.filament.update({

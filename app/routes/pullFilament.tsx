@@ -1,6 +1,8 @@
+import { CameraIcon } from "@heroicons/react/24/outline";
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
+import InputText from "~/components/InputText";
 import { getFilamentByBarcode, pullFromStockByBarcode } from "~/services/filament.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -75,6 +77,7 @@ export default function  PullFromStock() {
               Select Roll From Inventory
             </p>
             <input type="hidden" name="id" value={filament?.id}/>
+            <div className="w-full flex items-center">
             <input
               className="w-full p-2 border border-red-500 shadow-[0px_0px_5px_1px_rgba(255,46,88,1)] rounded-lg placeholder-white "
               type="text"
@@ -82,20 +85,12 @@ export default function  PullFromStock() {
               name="barcode"
               onChange={(e) => handleBarcode(e)}
             />
-            <input
-              className="w-full p-2 border border-orange-300 shadow-[0px_0px_5px_1px_rgba(255,149,0,1)] rounded-lg bg-black"
-              type="text"
-              placeholder="Brand"
-              value={filament?.brand ?? null}
-              disabled
-            />
-            <input
-              className="w-full p-2 border border-green-300 shadow-[0px_0px_5px_1px_rgba(0,255,0,1)] rounded-lg bg-black"
-              type="text"
-              placeholder="Type"
-              value={filament?.material ?? null}
-              disabled
-            />
+            <div className="ml-2 px-1 py-1 rounded-lg border-2 border-amber-600 bg-amber-500">
+            <CameraIcon className="size-8 text-amber-800"/>
+            </div>
+            </div>
+            <InputText text='Brand' color='orange' item={filament}/>
+            <InputText text='Material' color='green' item={filament}/>
             <input
               className="w-full p-2 border border-blue-500 shadow-[0px_0px_5px_1px_rgba(0,0,255,1)] rounded-lg bg-black"
               type="text"
