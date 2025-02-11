@@ -101,7 +101,6 @@ export default function SelectedItem({ selectedItem, onClose }){
                   <input type="number" name="weight" placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100}/>
                   <input type="number" name="price" placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01}/>
                   <div className="w-full flex justify-center text-center items-center"><Link to={`/api/generate?filamentId=${selectedItem.id}&type=svg`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save SVG</Link><Link to={`/api/generate?filamentId=${selectedItem.id}&type=png`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save PNG</Link></div>
-                  <div className="w-full flex justify-center text-center items-center"><button className="flex bg-green-500 items-center px-2 rounded-lg mt-4 shadow-lg" name="_action" value="submit">Submit</button></div>
                 </div>
               )}
               
