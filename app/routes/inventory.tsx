@@ -7,7 +7,8 @@ import { AddFilament } from "../components/AddFilament";
 import Badge from "../components/Badge";
 import SelectedItem from "~/routes/inventory.$itemId";
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament } from "~/services/filament.server";
+import { v4 as uuidv4 } from "uuid";
+import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament, addRollToFilament, createNewRoll } from "~/services/filament.server";
 
 export const loader: LoaderFunction = async () => {
   const filaments = await getAllFilaments();
@@ -30,6 +31,22 @@ export const action: ActionFunction = async ({ request }) => {
     const price = parseFloat(formData.get("price") as string);
     const purchase_date = formData.get("purchaseDate") as unknown as Date;
     return await createFilament(brand, material, color, diameter, weight, price, purchase_date);
+  }
+
+  if(actionType === "submit") {
+    const id = formData.get("id") as unknown as number;
+    const option = formData.get("option") as string;
+    const weight = formData.get("weight") as unknown as number;
+    const price = formData.get("price") as unknown as number;
+    if(option === 'add'){
+      console.log('im here')
+       const newId = uuidv4();
+       const addToFilament = await addRollToFilament(id)
+       const addNewRoll = await createNewRoll(newId, weight, price, id);
+
+      return fetch(`/qr/${newId}.svg`);
+    }
+   
   }
 
   // if (actionType === "update") {

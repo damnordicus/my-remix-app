@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import generateQr from "~/services/qr.server";
+import {generateQr} from "~/services/qr.server";
+// import { default as generateQr } from "~/services/........."
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   // const formData = await request.formData();
@@ -12,9 +13,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   if (!barcodeId) throw new Error('barcode id is required.')
 
   // const addNewQR = await addQRtoRoll(qrString, filamentId.id);
-  const contentType = "image/svg+xml";
-  const contentFilename = `qr-code-${barcodeId}.svg`;
-  const qr = await generateQr(barcodeId, 'svg')
+  const contentType = "image/png";
+  const contentFilename = `qr-code-${barcodeId}.png`;
+  const qr = await generateQr(barcodeId, 'png')
   return new Response(qr, {
     status: 200,
     headers: {

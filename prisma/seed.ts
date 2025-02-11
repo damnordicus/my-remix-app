@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import { v4 as uuidv4} from 'uuid';
 
 const prisma = new PrismaClient();
 
@@ -13,7 +14,7 @@ async function main() {
 
   for (let i = 0; i < 20; i++) {
     const stockLevel = faker.number.int({ min: 1, max: 10 }); // Random stock level
-    const barcodes = Array.from({ length: stockLevel }, () => faker.string.alphanumeric(12)); // Generate barcodes
+    const barcodes = Array.from({ length: stockLevel }, () => uuidv4()); // Generate barcodes
 
     const filament = await prisma.filament.create({
       data: {
@@ -21,9 +22,7 @@ async function main() {
         material: materials[Math.floor(Math.random() * materials.length)],
         color: colors[Math.floor(Math.random() * 9)],
         diameter: 1.75,
-        stock_level: stockLevel,
-        notes: faker.lorem.sentence(),
-        barcode: barcodes, // Store all roll barcodes for this filament
+        stock_level: stockLevel
       },
     });
 

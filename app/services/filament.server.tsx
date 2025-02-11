@@ -13,7 +13,6 @@ export async function getAllFilaments() {
         color: true,
         diameter: true,
         stock_level: true,
-        barcode: true,
     },
     orderBy:{
       stock_level: 'asc'
@@ -22,13 +21,15 @@ export async function getAllFilaments() {
 }
 
 export async function getFilamentByBarcode(barcode: string){
-  return await prisma.filament.findFirstOrThrow({
+  const roll =  await prisma.roll.findFirstOrThrow({
     where: {
-      barcode:{
-        has: barcode,
-      }
+      barcode,
+    },
+    select: {
+      filament: true,
     }
   });
+  return roll.filament;
 }
 
 export async function getFilamentByAttributes(selectedBrand: string, selectedMaterial: string, selectedColor: string){
@@ -169,8 +170,20 @@ export async function getAllColors(){
 export async function getFilamentById(id: number) {
   return await prisma.filament.findUnique(
     { 
-        where: { id }, 
+        where: { id },
+        include:{
+          rolls: true,
+        }
     });
+}
+
+export async function getBarcodesByFilamentId(id: number){
+  const result = await prisma.roll.findMany({
+    where:{
+      filamentId: id
+    },
+  });
+  return result.map(x => x.barcode);
 }
 
 // Create a new filament
@@ -186,25 +199,71 @@ export async function createFilament( brand: string, material: string, color: st
     });
 }
 
-// Update filament stock
-export async function updateFilamentStock(id: number, qrcode: string, weight: number, price: number) {
-
-  const filament = await prisma.filament.update({
-     where: { 
-      id
-     },
-     data: { 
-      stock_level: {
-        increment: 1
-     }}
+export async function removeFilamentByQR( barcode: string, id: number){
+  const rollDelete = await prisma.roll.delete({
+    where:{
+      barcode,
+    }
   });
 
-  const roll = await prisma.roll.create({
+  const updateFilament = await prisma.filament.update({
+    where:{
+      id,
+    },
     data:{
-      barcode: qrcode,
-      filamentId: id,
-      weight, 
+      stock_level:{
+        decrement: 1,
+      }
+    }
+  });
+
+  return updateFilament;
+}
+
+// Update filament stock
+// export async function updateFilamentStock(id: number, qrcode: string, weight: number, price: number) {
+
+//   const filament = await prisma.filament.update({
+//      where: { 
+//       id
+//      },
+//      data: { 
+//       stock_level: {
+//         increment: 1
+//      }}
+//   });
+
+//   const roll = await prisma.roll.create({
+//     data:{
+//       barcode: qrcode,
+//       filamentId: id,
+//       weight, 
+//       price,
+//       purchase_date: new Date(Date.now()),
+//     }
+//   })
+// }
+
+export async function addRollToFilament(id: number){
+  return await prisma.filament.update({
+    where:{
+      id,
+    },
+    data:{
+      stock_level:{
+        increment: 1,
+      }
+    }
+  })
+}
+
+export async function createNewRoll(newId: string, weight: number, price: number, id: number){
+  return await prisma.roll.create({
+    data:{
+      barcode: newId,
+      weight,
       price,
+      filamentId: id,
       purchase_date: new Date(Date.now()),
     }
   })

@@ -14,10 +14,8 @@ model Filament {
   color         String
   diameter      Float
   stock_level   Int?
-  notes         String?
-  barcode       String[] @default([])
 
-  @@index([barcode])
+  @@index([id])
   rolls Roll[]
 }
 
