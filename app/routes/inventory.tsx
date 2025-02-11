@@ -1,11 +1,11 @@
-import { Form, json, Link, useLoaderData } from "@remix-run/react";
+import { Form, json, Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
 import Navbar from "../components/Navbar";
 import { AddFilament } from "../components/AddFilament";
 import Badge from "../components/Badge";
-import SelectedItem from "~/components/SelectedItem";
+import SelectedItem from "~/routes/inventory.$itemId";
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament } from "~/services/filament.server";
 
@@ -32,20 +32,20 @@ export const action: ActionFunction = async ({ request }) => {
     return await createFilament(brand, material, color, diameter, weight, price, purchase_date);
   }
 
-  if (actionType === "update") {
+  // if (actionType === "update") {
       
-    const id = parseInt(formData.get("id") as string, 10);
-    const option = formData.get("option") as string;
-    const barcode = formData.get("barcode") as string;
-    if(option === 'discard'){
-       return await deleteFilament(barcode, id);
-    }
-    if(option === 'add'){
-       return await updateFilamentStock(barcode, id);
-    }
-    //const stock_level = parseInt(formData.get("stock_level") as string, 10);
+  //   const id = parseInt(formData.get("id") as string, 10);
+  //   const option = formData.get("option") as string;
+  //   const barcode = formData.get("barcode") as string;
+  //   if(option === 'discard'){
+  //      return await deleteFilament(barcode, id);
+  //   }
+  //   if(option === 'add'){
+  //      return await updateFilamentStock(barcode, id);
+  //   }
+  //   //const stock_level = parseInt(formData.get("stock_level") as string, 10);
     
-  }
+  // }
 
   if (actionType === "delete") {
     console.log('test: ')
@@ -59,7 +59,9 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Inventory() {
   const {filaments, brands, colors, materials} = useLoaderData<typeof loader>();
 
-  const [selectedItem, setSelectedItem] = useState(null);
+  const navigate = useNavigate();
+
+  const [selectedItem, setSelectedItem] = useState({});
   const [scannedBarcode, setScannedBarcode] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({
     brand: [],
@@ -76,15 +78,13 @@ export default function Inventory() {
     setList(filaments);
   }, [filaments]);
 
-  const handleItemClick = (id) => {
-    console.log("handle: ", filaments);
-    const item = filaments.find((y) => y.id === id);
-    console.log(item);
-    setSelectedItem(item);
+  const handleItemClick = (filament: object) => {
+    setSelectedItem(filament);
+    navigate(`/inventory/${filament.id}`);
   };
 
   const handleClose = () => {
-    setSelectedItem(null);
+    setSelectedItem({});
   };
  
   function handleScan(barcode) {
@@ -163,7 +163,7 @@ export default function Inventory() {
                       ? "bg-yellow-400 text-black"
                       : "bg-red-400 text-black"
                   } border-b border-gray-200 hover:bg-gray-600 `}
-                  onClick={() => handleItemClick(filament.id)}
+                  onClick={() => handleItemClick(filament)}
                 >
                   <td className="">
                     <p className=" text-lg pl-2">{filament.brand}</p>
@@ -183,9 +183,8 @@ export default function Inventory() {
           </table>
         </div>
       </div>
-
       {selectedItem && (
-        <SelectedItem selectedItem={selectedItem} onClose={handleClose} />
+        <Outlet />
       )}
     </div>
   );

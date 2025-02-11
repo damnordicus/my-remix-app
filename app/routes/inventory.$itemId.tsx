@@ -1,18 +1,27 @@
 import { ArrowPathIcon, CameraIcon, TrashIcon, QrCodeIcon } from "@heroicons/react/24/outline";
-import { Form, Link, useFetcher, useNavigation } from "@remix-run/react";
+import { Form, Link, useFetcher, useLoaderData, useNavigate, useNavigation, useParams } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import Badge from "./Badge";
+import Badge from "../components/Badge";
+import { getFilamentById } from "~/services/filament.server";
 
-export default function SelectedItem({ selectedItem, onClose }){
-    const navigation = useNavigation();
+export const loader = async ({ request, params }) => {
+  const filamentId = +params.itemId;
+  const selectedFilament = await getFilamentById(filamentId);
+  return {selectedFilament};
+};
+
+export default function SelectedItem(){
+
+    const { selectedFilament } = useLoaderData<typeof loader>();
+    const navigate = useNavigate();
     const [ quantity, setQuantity ] = useState(0);
 
-    useEffect(() => {
-      if(navigation.state !== 'idle'){
-        setQuantity(0);
-        onClose();
-      }
-    },[navigation.state, onClose])
+    // useEffect(() => {
+    //   if(navigate.state !== 'idle'){
+    //     setQuantity(0);
+    //     navigate(-1);
+    //   }
+    // },[navigate.state, onclose])
 
     const [ scannedBarcode, setScannedBarcode ] = useState(null);
     const [ discardVisible, setDiscardVisible ] = useState(false);
@@ -41,30 +50,33 @@ export default function SelectedItem({ selectedItem, onClose }){
       setDiscardVisible(false);
     }
 
+    if(selectedFilament === null){
+      return (<div>No filament found.</div>)
+    }else{
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className={`w-[400px]  bg-slate-600 rounded-2xl shadow-xl p-6 relative border-2 border-slate-300 `}>
             <p
               className="absolute top-2 right-2 cursor-pointer text-white text-xl"
-              onClick={onClose}
+              onClick={() => navigate(-1)}
             >
               ✖
             </p>
-            <p className="text-white font-bold">{selectedItem.brand}</p>
+            <p className="text-white font-bold">{selectedFilament.brand}</p>
             <div className="flex gap-10">
-              <p className="">{selectedItem.material}</p>
+              <p className="">{selectedFilament.material}</p>
 
-              <Badge size={2}>{selectedItem.color}</Badge>
+              <Badge size={2}>{selectedFilament.color}</Badge>
             </div>
 
             <fetcher.Form method="post" className="mt-4">
-              <input type="hidden" name="id" value={selectedItem.id} />
+              <input type="hidden" name="id" value={selectedFilament.id} />
               <input type="hidden" name="option" value={discardVisible ? 'discard' : 'add'}/>
               {/* <BarcodeScanner onScan={handleScan} />
               {scannedBarcode && (
                 <p>Scanned code: {scannedBarcode}</p>
               )} */}
-              <p>Number of Rolls: {selectedItem.stock_level} </p>
+              <p>Number of Rolls: {selectedFilament.stock_level} </p>
               {/* <input
                 type="number"
                 name="stock_level"
@@ -85,11 +97,11 @@ export default function SelectedItem({ selectedItem, onClose }){
               </div>
 
               </div>
-              {(discardVisible && selectedItem.barcode.length > 0) && (
+              {(discardVisible && selectedFilament.barcode.length > 0) && (
                 <div>
                   <p>Select the barcode to remove:</p>
                   <select name="barcode">
-                    {selectedItem.barcode.map((x) => (
+                    {selectedFilament.barcode.map((x) => (
                       <option key={x} value={x}>{x}</option>
                     ))}
                     
@@ -98,9 +110,9 @@ export default function SelectedItem({ selectedItem, onClose }){
               )}
               {(addVisible) && (
                 <div className="w-full text-center mt-2 flex flex-col">
-                  <input type="number" name="weight" placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100}/>
-                  <input type="number" name="price" placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01}/>
-                  <div className="w-full flex justify-center text-center items-center"><Link to={`/api/generate?filamentId=${selectedItem.id}&type=svg`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save SVG</Link><Link to={`/api/generate?filamentId=${selectedItem.id}&type=png`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save PNG</Link></div>
+                  <input type="number" name="weight" placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100} required/>
+                  <input type="number" name="price" placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01} required/>
+                  <div className="w-full flex justify-center text-center items-center gap-3"><Link to={`/api/generate?filamentId=${selectedFilament.id}&type=svg`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save SVG</Link><Link to={`/api/generate?filamentId=${selectedFilament.id}&type=png`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save PNG</Link></div>
                 </div>
               )}
               
@@ -108,8 +120,5 @@ export default function SelectedItem({ selectedItem, onClose }){
           </div>
         </div>
     )
-}
-
-function uuidv4() {
-  throw new Error("Function not implemented.");
+  }
 }

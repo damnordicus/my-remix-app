@@ -187,37 +187,27 @@ export async function createFilament( brand: string, material: string, color: st
 }
 
 // Update filament stock
-export async function updateFilamentStock(barcode: string, id: number) {
+export async function updateFilamentStock(id: number, qrcode: string, weight: number, price: number) {
 
-  const decoded = atob(barcode);
-  const parsed = JSON.parse(decoded);
-
-  const existingBarcodes = await prisma.filament.findFirstOrThrow({
-    where: { id },
-    select:{
-      barcode: true,
-    }
-  })
-
-  if(existingBarcodes.barcode.find(x => x === barcode)){
-    return new Error("Roll is already in the inventory")
-  }
-  
-  const updatedBarcodes = [...existingBarcodes.barcode, barcode];
-
-  return await prisma.filament.update({
+  const filament = await prisma.filament.update({
      where: { 
-      id,
-      brand: parsed.brand,
-      material: parsed.material,
-      color: parsed.color,
+      id
      },
      data: { 
-      barcode: updatedBarcodes,
       stock_level: {
         increment: 1
      }}
- });
+  });
+
+  const roll = await prisma.roll.create({
+    data:{
+      barcode: qrcode,
+      filamentId: id,
+      weight, 
+      price,
+      purchase_date: new Date(Date.now()),
+    }
+  })
 }
 
 // Delete a filament
