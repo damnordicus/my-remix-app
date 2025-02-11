@@ -110,9 +110,9 @@ export default function SelectedItem(){
               )}
               {(addVisible) && (
                 <div className="w-full text-center mt-2 flex flex-col">
-                  <input type="number" name="weight" placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100} required/>
-                  <input type="number" name="price" placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01} required/>
-                  <div className="w-full flex justify-center text-center items-center gap-3"><Link to={`/api/generate?filamentId=${selectedFilament.id}&type=svg`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save SVG</Link><Link to={`/api/generate?filamentId=${selectedFilament.id}&type=png`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save PNG</Link></div>
+                  <input type="number" name="weight" placeholder="Weight in grams" className="border border-slate-400 rounded-lg px-2" min={0} step={100}/>
+                  <input type="number" name="price" placeholder="Cost" className="border border-slate-400 rounded-lg px-2 my-2" min={0.00} step={0.01}/>
+                  <div className="w-full flex justify-center text-center items-center"><Link to={`/qr/${selectedItem.id}.svg`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save SVG</Link><Link to={`/qr/${selectedItem.id}.png`} className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg" reloadDocument><QrCodeIcon className="size-7 mr-1"/> Save PNG</Link></div>
                 </div>
               )}
               
