@@ -1,13 +1,11 @@
-import { CameraIcon, QrCodeIcon } from "@heroicons/react/24/outline";
+import { QrCodeIcon } from "@heroicons/react/24/outline";
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { json, useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import BarcodeScanner from "~/components/BarcodeScanner";
 import CheckboxGroup from "~/components/CheckboxGroup";
 import { v4 as uuidv4 } from "uuid";
 import * as qr from 'qr-image';
-import { addQRtoRoll, getAllBrands, getAllColors, getAllMaterials, getFilamentByAttributes, getFilamentByBarcode, pullFromStockByBarcode, returnFilamentToStock } from "~/services/filament.server";
-import QRGenerator from "~/components/QRGenerator";
+import { addQRtoRoll, getAllBrands, getAllColors, getAllMaterials, getFilamentByAttributes, returnFilamentToStock } from "~/services/filament.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
 
@@ -60,6 +58,7 @@ export default function  GenerateBarcode() {
   useEffect(() => {
     if(fetcher.state === 'idle' && fetcher.data){
       setShowQR(true)
+      console.log(fetcher.data)
 
       // setGeneratedBarcode(fetcher.data as string);
     } 
@@ -133,7 +132,6 @@ export default function  GenerateBarcode() {
             <CheckboxGroup items={colors} label="Colors"/>
             </div>
             <div className="w-full text-center">
-              <QRGenerator />
               <button className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500 bg-amber-500 px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:border-amber-700 hover:bg-amber-700 focus:ring focus:ring-amber-200 disabled:cursor-not-allowed disabled:border-amber-300 disabled:bg-amber-300" type="submit" name="_action" value="qr" ><QrCodeIcon className="size-8 "/>Generate</button>
             {/* <label>Barcode: </label> */}
             {/* <input
