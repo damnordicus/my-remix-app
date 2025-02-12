@@ -1,34 +1,19 @@
 import {
-  ArrowPathIcon,
-  CameraIcon,
-  TrashIcon,
-  QrCodeIcon,
-} from "@heroicons/react/24/outline";
-import {
   Form,
   json,
-  Link,
-  redirect,
   useFetcher,
   useFetchers,
   useLoaderData,
   useNavigate,
-  useNavigation,
-  useParams,
 } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import Badge from "../components/Badge";
-import { v4 as uuidv4 } from "uuid";
 import {
-  addRollToFilament,
-  createNewRoll,
   getBarcodesByFilamentId,
   getFilamentById,
   removeFilamentByQR,
 } from "~/services/filament.server";
-import { generateQr } from "~/services/qr.server";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { error } from "console";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request, params }) => {
   const filamentId = +params.itemId;
@@ -49,35 +34,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     });
 
     if (errors.length > 0) return json({ errors });
-
     try {
       const id = +test.id;
-      const option = test.option;
-      const weight = +test.weight;
-      const price = +test.price;
       const barcode = test.barcode;
 
-      if (option === "add") {
-        console.log("im here");
-        const newId = uuidv4();
-        const addToFilament = await addRollToFilament(id);
-        const addNewRoll = await createNewRoll(newId, weight, price, id);
-        const contentType = "image/svg+xml";
-        const contentFilename = `qr-code-${newId}.svg`;
-        const newQr = await generateQr(newId, "svg");
-        throw new Response(newQr, {
-          status: 200,
-          headers: {
-            "Content-Type": contentType,
-            "Content-Disposition": `attachment; filename="${contentFilename}"`,
-          },
-        });
-      }
-      if (option === "discard") {
-        if (!barcode) throw new Error("Barcode must be selected");
-
-        return await removeFilamentByQR(barcode, id);
-      }
+      return await removeFilamentByQR(barcode, id);
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {
@@ -94,18 +55,6 @@ export default function SelectedItem() {
 
   console.log("barocde: ", barcodes);
   const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(0);
-
-  // useEffect(() => {
-  //   if(navigate.state !== 'idle'){
-  //     setQuantity(0);
-  //     navigate(-1);
-  //   }
-  // },[navigate.state, onclose])
-
-  const [scannedBarcode, setScannedBarcode] = useState(null);
-  const [discardVisible, setDiscardVisible] = useState(false);
-  const [addVisible, setAddVisible] = useState(false);
 
   const fetchers = useFetchers();
 
@@ -114,25 +63,6 @@ export default function SelectedItem() {
   }, [fetchers]);
 
   const fetcher = useFetcher();
-
-  function handleScan(barcode) {
-    console.log("barcode: ", barcode);
-    setScannedBarcode(barcode);
-  }
-
-  function handleChange(e) {
-    setQuantity(parseInt(e.target.value));
-  }
-
-  function handleDiscard() {
-    setDiscardVisible(!discardVisible);
-    setAddVisible(false);
-  }
-
-  function handleAdd() {
-    setAddVisible(!addVisible);
-    setDiscardVisible(false);
-  }
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -146,19 +76,32 @@ export default function SelectedItem() {
     return <div>No filament found.</div>;
   } else {
     return (
-      <div>
-        <p>Select the barcode to remove:</p>
-        <select name="barcode">
+      <>
+      {barcodes.length > 0 ? (
+        <div className="bg-slate-500 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
+        <Form method="post">
+        <p className="w-full text-center mb-2">Select the barcode to remove:</p>
+        <input type="hidden" name="id" value={selectedFilament.id}/>
+        <div className="flex gap-2 justify-center">
+        <select name="barcode" className="shadow-lg border-[1px] rounded-lg border-slate-400 px-2">
           {barcodes.map((x) => (
             <option key={x} value={x}>
-              {x}
+              {x.slice(x.length-10).toUpperCase()}
             </option>
           ))}
         </select>
-        <button name="_action" value="submit">
-          Delete
+        <button name="_action" value="submit" className="p-1 bg-red-400 border-2 rounded-lg border-red-600 text-red-800 shadow-lg">
+          <TrashIcon className="size-6" />
+          
         </button>
+        </div>
+      </Form>
       </div>
+      ):(
+        <p className="text-center">There are no rolls to discard.</p>
+      )}
+      
+      </>
     );
   }
 }

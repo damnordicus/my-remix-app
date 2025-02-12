@@ -105,6 +105,7 @@ export default function SelectedItem() {
   const handleDownload = useCallback((id) => {
     if (fetcher.state !== "idle") return;
     fetcher.load(`/api/generate?id=${id}&type=fetcher`);
+    navigate("..")
   }, [])
 
   useEffect(() => {
@@ -131,6 +132,7 @@ export default function SelectedItem() {
     return <div>No filament found.</div>;
   } else {
     return (
+      <div className="bg-slate-500 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
       <Form className="w-full text-center mt-2 flex flex-col" method="post">
         <input type="hidden" name="id" value={selectedFilament.id} />
         <input type="hidden" name="_action" value="addRoll" />
@@ -138,7 +140,7 @@ export default function SelectedItem() {
           type="number"
           name="weight"
           placeholder="Weight in grams"
-          className="border border-slate-400 rounded-lg px-2"
+          className="border border-slate-400 rounded-lg px-2 mx-2"
           min={0}
           step={100}
         />
@@ -146,12 +148,12 @@ export default function SelectedItem() {
           type="number"
           name="price"
           placeholder="Cost"
-          className="border border-slate-400 rounded-lg px-2 my-2"
+          className="border border-slate-400 rounded-lg px-2 m-2"
           min={0.0}
           step={0.01}
         />
         <div className="w-full flex justify-center text-center items-center">
-          <Link
+          {/* <Link
             to={`/qr/${selectedFilament.id}.svg`}
             className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg"
             reloadDocument
@@ -164,7 +166,7 @@ export default function SelectedItem() {
             reloadDocument
           >
             <QrCodeIcon className="size-7 mr-1" /> Save PNG
-          </Link>
+          </Link> */}
           <button
             type="submit"
             name="_action"
@@ -175,6 +177,7 @@ export default function SelectedItem() {
           </button>
         </div>
       </Form>
+      </div>
     );
   }
 }

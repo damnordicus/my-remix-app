@@ -1,6 +1,6 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
 import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { Form, json, Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import InputText from "~/components/InputText";
 import { getFilamentByBarcode, pullFromStockByBarcode } from "~/services/filament.server";
@@ -43,16 +43,19 @@ export default function  PullFromStock() {
 //   console.log(filament)
   const navigate = useNavigate();
   const [scannedBarcode, setScannedBarcode] = useState("");
+  const [pulledInfo, setPulledInfo] = useState(null);
   const fetcher = useFetcher();
   let filament = fetcher.data?.filament;
-  console.log(filament)
+  //console.log(filament)
 
   const handleBarcode = async (e) => {
     const barcode = e.target.value;
     setScannedBarcode(barcode);
 
     if (barcode.length >= 5) {
-      fetcher.load(`/pullFilament?barcode=${barcode}`)
+      fetcher.load(`/pull/${barcode}`)
+
+
     }else{
         filament = null;
     }
@@ -66,46 +69,49 @@ export default function  PullFromStock() {
 
   };
 
+  useEffect(() => {
+    if(fetcher.state === 'idle' && fetcher.data){
+      console.log(fetcher.data)
+    }
+  },[fetcher.data, fetcher.state])
 
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="w-1/6 h-[315px] flex justify-center bg-slate-600 bg-opacity-80 border-2 border-slate-500 rounded-xl p-4">
+        <div className="w-1/6 h-[315px] flex-col justify-center bg-slate-600 bg-opacity-80 border-2 border-slate-500 rounded-xl p-4">
           <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl ">
               Select Roll From Inventory
             </p>
-            <input type="hidden" name="id" value={filament?.id}/>
-            <div className="w-full flex items-center">
-            <input
-              className="w-full p-2 border border-red-500 shadow-[0px_0px_5px_1px_rgba(255,46,88,1)] rounded-lg placeholder-white "
-              type="text"
-              placeholder="Barcode"
-              name="barcode"
-              onChange={(e) => handleBarcode(e)}
-            />
-            <div className="ml-2 px-1 py-1 rounded-lg border-2 border-amber-600 bg-amber-500">
+            {/* <input type="hidden" name="id" value={filament.id}/> */}
+            <div className="w-full flex justify-center">
+            <Link to={"/barcode"}>
+            <div className="bg-amber-500 p-2 rounded-lg border-2 border-amber-600">
             <CameraIcon className="size-8 text-amber-800"/>
             </div>
+            </Link>
             </div>
-            <InputText text='Brand' color='orange' item={filament}/>
-            <InputText text='Material' color='green' item={filament}/>
-            <input
+            {/* <InputText text='Brand' color='orange' item={filament.color}/> */}
+            {/* <InputText text='Material' color='green' item={filament.material}/> */}
+            {/* <input
               className="w-full p-2 border border-blue-500 shadow-[0px_0px_5px_1px_rgba(0,0,255,1)] rounded-lg bg-black"
               type="text"
               placeholder="Weight (g)"
-              value={filament?.weight_grams ? `${filament.weight_grams} g` : ''}
+              value={pulledInfo?.weight ? `${pulledInfo.weight} g` : ''}
               disabled
-            />
+            /> */}
+            
+          </fetcher.Form>
+          <Form>
             <button
-              className="w-2/4 p-2 bg-amber-600 text-amber-300 rounded-lg hover:bg-amber-600 border-2 border-amber-300"
+              className="w-2/4 p-2 bg-amber-500 text-amber-800 rounded-lg hover:bg-amber-600 border-2 border-amber-600"
               value="submit"
               name="_action"
             >
               Submit
             </button>
-          </fetcher.Form>
+          </Form>
         </div>
       </div>
     </>

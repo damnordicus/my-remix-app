@@ -1,24 +1,24 @@
-import { Form, json, Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import { data, Form, json, Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
 import Navbar from "../components/Navbar";
-import { AddFilament } from "../components/AddFilament";
+import { AddFilament } from "./inventory.create";
 import Badge from "../components/Badge";
 import SelectedItem from "~/routes/inventory.$itemId";
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { ActionFunction, ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
 import { v4 as uuidv4 } from "uuid";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament, addRollToFilament, createNewRoll } from "~/services/filament.server";
 
-export const loader: LoaderFunction = async () => {
+export const loader = async () => {
   const filaments = await getAllFilaments();
   const brands = await getAllBrands();
   const colors = await getAllColors();
   const materials = await getAllMaterials();
-  return ({filaments, brands, colors, materials});
+  return data({filaments, brands, colors, materials});
 };
 
-export const action: ActionFunction = async ({ request }) => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const actionType = formData.get("_action");
 
@@ -77,10 +77,7 @@ export default function Inventory() {
   const {filaments, brands, colors, materials} = useLoaderData<typeof loader>();
 
   const navigate = useNavigate();
-
-  const [selectedItem, setSelectedItem] = useState({});
-  const [scannedBarcode, setScannedBarcode] = useState(null);
-  const [selectedFilters, setSelectedFilters] = useState({
+  const [selectedFilters, setSelectedFilters] = useState<{brand: string[]; material: string[]; color: string[];}>({
     brand: [],
     material: [],
     color: [],
@@ -95,21 +92,11 @@ export default function Inventory() {
     setList(filaments);
   }, [filaments]);
 
-  const handleItemClick = (filament: object) => {
-    setSelectedItem(filament);
-    navigate(`/inventory/${filament.id}`);
+  const handleItemClick = (id: number) => {
+    navigate(`/inventory/${id}`);
   };
 
-  const handleClose = () => {
-    setSelectedItem({});
-  };
- 
-  function handleScan(barcode) {
-    console.log("barcode: ", barcode);
-    setScannedBarcode(barcode);
-  }
-
-  const filterList = () => {
+  const filterList = useCallback(() => {
     setFilterVisible(!filterVisible);
     const newList = filaments.filter((filament) => {
       const brandMatch = selectedFilters.brand.length
@@ -124,7 +111,7 @@ export default function Inventory() {
       return brandMatch && materialMatch && colorMatch;
     });
     setList(newList);
-  };
+  }, [filaments]);
   console.log("selected: ", selectedFilters);
 
   const isFiltered = !Object.values(selectedFilters).every(
@@ -136,7 +123,8 @@ export default function Inventory() {
   return (
     <div className="" style={{alignSelf: "start"}}>
       <div className="flex justify-center py-4 gap-1 ">
-        <AddFilament />
+        {/* <AddFilament /> */}
+        <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-s-full border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>
         <Navbar
           setSelectedFilters={setSelectedFilters}
           filterList={filterList}
@@ -180,7 +168,7 @@ export default function Inventory() {
                       ? "bg-yellow-400 text-black"
                       : "bg-red-400 text-black"
                   } border-b border-gray-200 hover:bg-gray-600 `}
-                  onClick={() => handleItemClick(filament)}
+                  onClick={() => handleItemClick(filament.id)}
                 >
                   <td className="">
                     <p className=" text-lg pl-2">{filament.brand}</p>
@@ -200,9 +188,7 @@ export default function Inventory() {
           </table>
         </div>
       </div>
-      {selectedItem && (
-        <Outlet />
-      )}
+      <Outlet />
     </div>
   );
 }

@@ -1,8 +1,8 @@
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { Form, useNavigation } from "@remix-run/react";
+import { Form, useNavigate, useNavigation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 
-export const AddFilament = () => {
+export default function AddFilament () {
     const [addVisible, setAddVisible] = useState(false);
     const [selectedColor, setSelectedColor] = useState('');
     const navigation = useNavigation();
@@ -18,6 +18,7 @@ export const AddFilament = () => {
       "NEON GREEN", "NEON ORANGE", "NEON PINK", "NEON YELLOW",
       "GLOW-IN-THE-DARK", "MULTICOLOR", "RAINBOW"
     ];
+    const navigate = useNavigate();
 
     
     useEffect(() => {
@@ -28,25 +29,23 @@ export const AddFilament = () => {
 
     const toggleView = () => {
         setSelectedColor('');
-        setAddVisible(!addVisible);
+        navigate("..");
     };
 
     const handleChange = (e) => {
       setSelectedColor(e.target.value);
     };
 
-    console.log(selectedColor)
-
     return(
         <>
-        <button
+        {/* <button
         onClick={() => setAddVisible((prev) => !prev)}
         className="bg-amber-600 text-white p-1 pr-3 pl-3 border rounded-s-full border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400"
-      >Add New Filament</button>
-      {addVisible && (
+      >Add New Filament</button> */}
+      
        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
        <div className="flex flex-col mt-2 p-2 bg-slate-500 w-[400px] h-[410px] rounded-2xl shadow-lg border-2 border-slate-300">
-        <div className="absolute " ><XCircleIcon className="hover:cursor-pointer size-6" onClick={toggleView} /></div>
+        <div className="w-full flex justify-end relative " ><XCircleIcon className="hover:cursor-pointer size-6" onClick={toggleView} /></div>
          <h2 className="text-center mb-4 text-white font-semibold text-lg">Add New Filament</h2>
          
          <Form method="post" className="flex flex-col items-center space-y-3">
@@ -73,8 +72,6 @@ export const AddFilament = () => {
          </Form>
        </div>
      </div>
-     
-      )}
         
         </>
     );

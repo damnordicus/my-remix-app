@@ -10,12 +10,16 @@ declare module "@remix-run/node" {
 
 export default defineConfig({
   server:{
-    host: "0.0.0.0",
+    warmup: {
+      clientFiles: ['./app/root.tsx'],
+    },
+    allowedHosts: true,
     // port: 3000
   },
   plugins: [
     remix({
       future: {
+        unstable_optimizeDeps: true,
         v3_fetcherPersist: true,
         v3_relativeSplatPath: true,
         v3_throwAbortReason: true,

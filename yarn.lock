@@ -2040,7 +2040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.20":
+"@types/react@npm:^18.2.0, @types/react@npm:^18.2.20":
   version: 18.3.18
   resolution: "@types/react@npm:18.3.18"
   dependencies:
@@ -2279,7 +2279,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zxing/text-encoding@npm:0.9.0, @zxing/text-encoding@npm:^0.9.0":
+"@zxing/library@npm:^0.21.3":
+  version: 0.21.3
+  resolution: "@zxing/library@npm:0.21.3"
+  dependencies:
+    "@zxing/text-encoding": "npm:~0.9.0"
+    ts-custom-error: "npm:^3.2.1"
+  dependenciesMeta:
+    "@zxing/text-encoding":
+      optional: true
+  checksum: 10c0/c6b33998847ad2fda0bce2f07f5b625e33e9dd98f84818ceb976b1193936b69b38ac3120418cca24b38441c711cfd21208b50851967bf8f301567e7f70197268
+  languageName: node
+  linkType: hard
+
+"@zxing/text-encoding@npm:0.9.0, @zxing/text-encoding@npm:^0.9.0, @zxing/text-encoding@npm:~0.9.0":
   version: 0.9.0
   resolution: "@zxing/text-encoding@npm:0.9.0"
   checksum: 10c0/d15bff181d46c2ab709e7242801a8d40408aa8c19b44462e5f60e766bf59105b44957914ab6baab60d10d466a5e965f21fe890c67dfdb7d5c7f940df457b4d0d
@@ -6807,6 +6820,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^6.7.4"
     "@typescript-eslint/parser": "npm:^6.7.4"
     "@zxing/browser": "npm:^0.1.5"
+    "@zxing/library": "npm:^0.21.3"
     autoprefixer: "npm:^10.4.19"
     canvas: "npm:^3.1.0"
     eslint: "npm:^8.38.0"
@@ -6823,6 +6837,8 @@ __metadata:
     qr-image: "npm:^3.2.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
+    react-qr-barcode-scanner: "npm:^2.0.0"
+    react-webcam: "npm:^7.2.0"
     sharp: "npm:^0.33.5"
     tailwindcss: "npm:^3.4.4"
     tsx: "npm:^4.19.2"
@@ -7955,6 +7971,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-qr-barcode-scanner@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "react-qr-barcode-scanner@npm:2.0.0"
+  dependencies:
+    "@types/react": "npm:^18.2.0"
+    "@zxing/library": "npm:^0.21.3"
+    react-webcam: "npm:^7.1.1"
+  peerDependencies:
+    react: ^18.2.0
+    react-dom: ^18.2.0
+  checksum: 10c0/8969efc5cfd774c88d1718d48e4295b9f2c354c982ef8350d5bbc3c8f21ff91463cbf13c44d45c23759d5629b8cc6dfda0c36bf4b29959c9f2f34aeb59a1a7d0
+  languageName: node
+  linkType: hard
+
 "react-refresh@npm:^0.14.0":
   version: 0.14.2
   resolution: "react-refresh@npm:0.14.2"
@@ -7983,6 +8013,16 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 10c0/0ad27b34e2ccb6db68ef124cd4492ba86b5422ea3e2af01c9de95e372eb3a36fb4727b40488ebc90e5e0cea41bc655c53569a754713554a465ca9423aa233df8
+  languageName: node
+  linkType: hard
+
+"react-webcam@npm:^7.1.1, react-webcam@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "react-webcam@npm:7.2.0"
+  peerDependencies:
+    react: ">=16.2.0"
+    react-dom: ">=16.2.0"
+  checksum: 10c0/d639a9e4cd545f66a5ecbfdc6c38344f6ae40e6609ba5fb26db730b48723158dedeeecdecba94e4d117517f4db0be828169db270c329b9b71d847e54aba6f7f0
   languageName: node
   linkType: hard
 
@@ -9253,6 +9293,13 @@ __metadata:
   peerDependencies:
     typescript: ">=4.2.0"
   checksum: 10c0/e65dc6e7e8141140c23e1dc94984bf995d4f6801919c71d6dc27cf0cd51b100a91ffcfe5217626193e5bea9d46831e8586febdc7e172df3f1091a7384299e23a
+  languageName: node
+  linkType: hard
+
+"ts-custom-error@npm:^3.2.1":
+  version: 3.3.1
+  resolution: "ts-custom-error@npm:3.3.1"
+  checksum: 10c0/67cc807d03406d7eeb2b908408d455d253cc43b480d669e2e3ea028b9aaa2c78ad1b392425b86368bbbc3c43a15e4abe304312d87ed845091646ec1937bab982
   languageName: node
   linkType: hard
 
