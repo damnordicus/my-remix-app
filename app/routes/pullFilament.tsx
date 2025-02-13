@@ -75,6 +75,17 @@ export default function  PullFromStock() {
     }
   },[fetcher.data, fetcher.state])
 
+  useEffect(() => {
+    const barcode = localStorage.getItem('scannedBarcode');
+    if(barcode){
+      setScannedBarcode(barcode);
+      fetcher.load(`/pull/${barcode}`);
+      localStorage.removeItem('scannedBarcode');
+    }
+  },[]);
+
+  console.log(scannedBarcode);
+
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
@@ -86,7 +97,7 @@ export default function  PullFromStock() {
             </p>
             {/* <input type="hidden" name="id" value={filament.id}/> */}
             <div className="w-full flex justify-center">
-            <Link to={"/barcode"}>
+            <Link to={"/barcode"} target="_blank" rel="noreferrer">
             <div className="bg-amber-500 p-2 rounded-lg border-2 border-amber-600">
             <CameraIcon className="size-8 text-amber-800"/>
             </div>

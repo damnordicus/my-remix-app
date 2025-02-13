@@ -113,7 +113,9 @@ export default function Barcode() {
   useEffect(() => {
     if (data !== '' && data !== 'Not Found') {
       setStopStream(true);
-      
+
+      localStorage.setItem('scannedBarcode', data)
+      window.close();
       console.log(`go get the data for ${data}`)
     }
   }, [data])
@@ -126,7 +128,9 @@ export default function Barcode() {
         stopStream={stopStream}
         onUpdate={(err, result) => {
           if (!stopStream) {
-            if (result) setData(result.text);
+            if (result) {
+              setData(result.text);
+            }
             else setData("Not Found");
           }
         }}
