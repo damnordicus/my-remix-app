@@ -100,6 +100,15 @@ export async function returnFilamentToStock(parsedObject: object) {
 
 }
 
+export async function loginWithPassword( username: string, password: string){
+  return prisma.user.findUnique({
+    where:{
+      username,
+      password,
+    },
+  })
+}
+
 export async function pullFromStockByBarcode(barcode: string){
   const filamentId = await prisma.roll.findMany({
     where:{

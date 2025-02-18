@@ -12,7 +12,7 @@ export default function Index() {
         <MainButton text="Pull From Stock" link="pullFilament"/>
         <MainButton text="Return To Stock" link="returnFilament"/>
         <MainButton text="View Stock" link="inventory" />
-        <MainButton text="Create Barcode" link="generateBarcode"/>
+        <MainButton text="Create Barcode" link="barcode"/>
       </div>   
       </div>
   );
