@@ -1,4 +1,4 @@
-import { data, Form, json, Link, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import { data, Form, Link, Outlet, useLoaderData, useNavigate } from "react-router";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
@@ -6,7 +6,7 @@ import Navbar from "../components/Navbar";
 import { AddFilament } from "./inventory.create";
 import Badge from "../components/Badge";
 import SelectedItem from "~/routes/inventory.$itemId";
-import { ActionFunction, ActionFunctionArgs, LoaderFunction } from "@remix-run/node";
+import { ActionFunction, ActionFunctionArgs, LoaderFunction } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament, addRollToFilament, createNewRoll } from "~/services/filament.server";
 
@@ -15,7 +15,7 @@ export const loader = async () => {
   const brands = await getAllBrands();
   const colors = await getAllColors();
   const materials = await getAllMaterials();
-  return data({filaments, brands, colors, materials});
+  return {filaments, brands, colors, materials};
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {

@@ -8,8 +8,8 @@ import {
   ScrollRestoration,
   useLoaderData,
   useRouteError,
-} from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+} from "react-router";
+import type { LinksFunction } from "react-router";
 import { default as RootLayout } from "./components/Layout";
 
 import "./tailwind.css";

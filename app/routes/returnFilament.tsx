@@ -1,6 +1,6 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { ActionFunction, LoaderFunction } from "react-router";
+import { json, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { CameraEnhancer } from "dynamsoft-camera-enhancer";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
 import { useEffect, useState } from "react";

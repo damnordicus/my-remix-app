@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs } from "react-router";
 import {generateQr} from "~/services/qr.server";
 // import { default as generateQr } from "~/services/........."
 

@@ -29,7 +29,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
       </button>
       {filterVisible && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
-        <div className="p-4 w-[420px] bg-slate-500 shadow-lg rounded border z-30">
+        <div className="p-4 w-[420px] bg-slate-500 shadow-lg rounded-sm border z-30">
           <div className="flex justify-between">
           <div className=" mb-4">
             <h3 className="font-bold text-lg">Brand</h3>

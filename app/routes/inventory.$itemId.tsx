@@ -6,7 +6,6 @@ import {
 } from "@heroicons/react/24/outline";
 import {
   Form,
-  json,
   Link,
   Outlet,
   redirect,
@@ -16,7 +15,7 @@ import {
   useNavigate,
   useNavigation,
   useParams,
-} from "@remix-run/react";
+} from "react-router";
 import { useEffect, useState } from "react";
 import Badge from "../components/Badge";
 import { v4 as uuidv4 } from "uuid";
@@ -28,7 +27,7 @@ import {
   removeFilamentByQR,
 } from "~/services/filament.server";
 import { generateQr } from "~/services/qr.server";
-import { ActionFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs } from "react-router";
 import { error } from "console";
 
 export const loader = async ({ request, params }) => {
@@ -49,7 +48,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       if (entry === "") errors.push(`${key} is required`);
     });
 
-    if (errors.length > 0) return json({ errors });
+    if (errors.length > 0) return { errors };
 
     try {
       const id = +test.id;
@@ -82,7 +81,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {
-        return json({ errors: [e.message] });
+        return { errors: [e.message] };
       }
       // return json({ errors: ["There was an error."] });
       throw e;

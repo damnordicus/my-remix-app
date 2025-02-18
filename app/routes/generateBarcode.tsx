@@ -1,6 +1,6 @@
 import { QrCodeIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, useFetcher, useLoaderData } from "@remix-run/react";
+import { ActionFunction, LoaderFunction } from "react-router";
+import { json, useFetcher, useLoaderData } from "react-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import CheckboxGroup from "~/components/CheckboxGroup";
 import { v4 as uuidv4 } from "uuid";
@@ -132,7 +132,7 @@ export default function  GenerateBarcode() {
             <CheckboxGroup items={colors} label="Colors"/>
             </div>
             <div className="w-full text-center">
-              <button className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500 bg-amber-500 px-5 py-2.5 text-center text-sm font-medium text-white shadow-sm transition-all hover:border-amber-700 hover:bg-amber-700 focus:ring focus:ring-amber-200 disabled:cursor-not-allowed disabled:border-amber-300 disabled:bg-amber-300" type="submit" name="_action" value="qr" ><QrCodeIcon className="size-8 "/>Generate</button>
+              <button className="inline-flex items-center gap-1.5 rounded-lg border border-amber-500 bg-amber-500 px-5 py-2.5 text-center text-sm font-medium text-white shadow-xs transition-all hover:border-amber-700 hover:bg-amber-700 focus:ring-3 focus:ring-amber-200 disabled:cursor-not-allowed disabled:border-amber-300 disabled:bg-amber-300" type="submit" name="_action" value="qr" ><QrCodeIcon className="size-8 "/>Generate</button>
             {/* <label>Barcode: </label> */}
             {/* <input
                 type="text"

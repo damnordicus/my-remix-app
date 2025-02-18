@@ -29,6 +29,11 @@ export async function getFilamentByBarcode(barcode: string){
       filament: true,
     }
   });
+
+  if (!roll.filament) {
+    throw new Error("No filament found");
+  }
+
   return roll.filament;
 }
 

@@ -1,18 +1,11 @@
-import {
-  Form,
-  json,
-  useFetcher,
-  useFetchers,
-  useLoaderData,
-  useNavigate,
-} from "@remix-run/react";
+import { Form, useFetcher, useFetchers, useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import {
   getBarcodesByFilamentId,
   getFilamentById,
   removeFilamentByQR,
 } from "~/services/filament.server";
-import { ActionFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs } from "react-router";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request, params }) => {
@@ -33,7 +26,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       if (entry === "") errors.push(`${key} is required`);
     });
 
-    if (errors.length > 0) return json({ errors });
+    if (errors.length > 0) return { errors };
     try {
       const id = +test.id;
       const barcode = test.barcode;
@@ -42,7 +35,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {
-        return json({ errors: [e.message] });
+        return { errors: [e.message] };
       }
       // return json({ errors: ["There was an error."] });
       throw e;

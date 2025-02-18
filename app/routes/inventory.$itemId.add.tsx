@@ -1,14 +1,6 @@
 import { QrCodeIcon } from "@heroicons/react/24/outline";
-import { ActionFunctionArgs } from "@remix-run/node";
-import {
-  Form,
-  json,
-  Link,
-  useActionData,
-  useFetcher,
-  useMatches,
-  useNavigate,
-} from "@remix-run/react";
+import { ActionFunctionArgs } from "react-router";
+import { Form, Link, useActionData, useFetcher, useMatches, useNavigate } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { addRollToFilament, createNewRoll } from "~/services/filament.server";
@@ -35,11 +27,11 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const newId = uuidv4();
       const addToFilament = await addRollToFilament(id);
       const addNewRoll = await createNewRoll(newId, weight, price, id);
-      return json({ newId, errors: [] });
+      return { newId, errors: [] };
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {
-        return json({ errors: [e.message], newId: null });
+        return { errors: [e.message], newId: null };
       }
       // return json({ errors: ["There was an error."] });
       throw e;

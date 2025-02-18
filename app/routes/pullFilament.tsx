@@ -1,6 +1,6 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { Form, json, Link, useFetcher, useLoaderData, useNavigate } from "@remix-run/react";
+import { ActionFunction, LoaderFunction } from "react-router";
+import { Form, Link, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import InputText from "~/components/InputText";
 import { getFilamentByBarcode, pullFromStockByBarcode } from "~/services/filament.server";
@@ -10,16 +10,16 @@ export const loader: LoaderFunction = async ({ request }) => {
   const barcode = url.searchParams.get("barcode");
 
   if (!barcode) {
-    return json({ error: "No barcode provided" }, { status: 400 });
+    return {status: 400 };
   }
 
   const filament = await getFilamentByBarcode(barcode);
 
   if (!filament) {
-    return json({ error: "Filament not found" }, { status: 404 });
+    throw new Error("No filament found");
   }
 
-  return ({ filament });
+  return { filament };
 };
 
 export const action: ActionFunction = async ({ request }) => {
@@ -89,8 +89,8 @@ export default function  PullFromStock() {
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="w-1/6 h-[315px] flex-col justify-center bg-slate-600 bg-opacity-80 border-2 border-slate-500 rounded-xl p-4">
-          <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
+        <div className="w-1/6 h-[315px] bg-slate-600 bg-opacity-80 border-2 border-slate-500 rounded-xl p-4">
+          <Form className="flex flex-col items-center gap-4 w-full">
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl ">
               Select Roll From Inventory
@@ -112,9 +112,6 @@ export default function  PullFromStock() {
               value={pulledInfo?.weight ? `${pulledInfo.weight} g` : ''}
               disabled
             /> */}
-            
-          </fetcher.Form>
-          <Form>
             <button
               className="w-2/4 p-2 bg-amber-500 text-amber-800 rounded-lg hover:bg-amber-600 border-2 border-amber-600"
               value="submit"

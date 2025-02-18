@@ -7,7 +7,7 @@ import {
 } from "~/services/filament.server";
 import { v4 as uuidv4 } from "uuid";
 import * as qr from "qr-image";
-import { ActionFunctionArgs, json } from "@remix-run/node";
+import { ActionFunctionArgs, json } from "react-router";
 import { generateQr } from "~/services/qr.server";
 
 // export async function loader({ request, params }) {
