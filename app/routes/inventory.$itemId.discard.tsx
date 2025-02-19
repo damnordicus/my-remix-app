@@ -71,7 +71,7 @@ export default function SelectedItem() {
     return (
       <>
       {barcodes.length > 0 ? (
-        <div className="bg-slate-500 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
+        <div className="bg-slate-500/60 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
         <Form method="post">
         <p className="w-full text-center mb-2">Select the barcode to remove:</p>
         <input type="hidden" name="id" value={selectedFilament.id}/>

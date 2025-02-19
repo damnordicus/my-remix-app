@@ -176,7 +176,7 @@ export default function Inventory() {
                   <td className="text-center">
                     <p>{filament.material}</p>
                   </td>
-                  <td className={`text-cente `}>
+                  <td className={`flex justify-center`}>
                     <Badge>{filament.color}</Badge>
                   </td>
                   <td className="text-center">

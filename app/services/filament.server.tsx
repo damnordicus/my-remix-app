@@ -114,6 +114,10 @@ export async function loginWithPassword( username: string, password: string){
   })
 }
 
+export async function getAllUsers(){
+  return prisma.user.findMany({});
+}
+
 export async function pullFromStockByBarcode(barcode: string){
   const filamentId = await prisma.roll.findMany({
     where:{

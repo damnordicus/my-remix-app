@@ -38,13 +38,16 @@ export default function Badge({children, size}) {
         case 'RAINBOW':
             pillDetails = 'bg-slate-800 border-slate-700 text-lg ';
             break;
+        case 'PINK':
+            pillDetails = 'bg-pink-500 border-pink-700 text-white';
+            break;
         default:
             pillDetails = 'bg-slate-800 border-slate-700 text-lg text-slate-300';
             break;
         
     }
     return (
-        <div className={` rounded-full text-center border-4 ${size ? 'h-[25px] w-[80px]' : ''} ${pillDetails}`}>
+        <div className={`rounded-full text-center border-4 ${size ? 'h-[25px] w-[80px]' : 'h-[35px] w-[200px]'} ${pillDetails}`}>
             {children === 'RAINBOW' ? (
                 <>
                     <span className=" text-red-500">R</span>
