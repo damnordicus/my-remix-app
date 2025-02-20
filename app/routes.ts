@@ -2,7 +2,6 @@ import {
   type RouteConfig,
   route,
   index,
-  inventory,
   prefix,
 } from "@react-router/dev/routes";
 
@@ -27,7 +26,7 @@ export default [
   ...prefix("job", [
     route("auth", "./routes/job.tsx"),
     route("create", "./routes/jobs/create.tsx", [
-      route("stock", "./routes/job.$userId.stock.tsx"),
+      route("inventory", "./routes/jobs/create.inventory.tsx"),
     ]),
   ]),
   route("barcode", "./routes/barcode.tsx"),

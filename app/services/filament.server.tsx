@@ -6,14 +6,6 @@ import { prisma } from "~/utils/db.server";
 // Fetch all filaments
 export async function getAllFilaments() {
   return await prisma.filament.findMany({
-    select:{
-        id: true,
-        brand: true,
-        material: true,
-        color: true,
-        diameter: true,
-        stock_level: true,
-    },
     orderBy:{
       stock_level: 'asc'
     }
@@ -149,22 +141,32 @@ export async function pullFromStockByBarcode(barcode: string){
   return result;
 }
 
-export async function getAllBrands(){
+export async function getAllBrands(min?: number){
   const brands = await prisma.filament.findMany({
     distinct: 'brand',
     select:{
       brand: true,
-    }
+    },
+    where:{
+      stock_level: {
+        gte: min,
+      },
+    },
   })
   const result = brands.map(x => x.brand);
   return [...result]
 }
 
-export async function getAllMaterials(){
+export async function getAllMaterials(min?: number){
   const materials = await prisma.filament.findMany({
     distinct: 'material',
     select: {
       material: true,
+    },
+    where:{
+      stock_level: {
+        gte: min,
+      },
     },
   })
 
@@ -172,11 +174,16 @@ export async function getAllMaterials(){
   return [...result]
 }
 
-export async function getAllColors(){
+export async function getAllColors(min?: number){
   const colors = await prisma.filament.findMany({
     distinct: 'color',
     select: {
       color: true,
+    },
+    where: {
+      stock_level: {
+        gte: min,
+      },
     },
   })
 
@@ -202,6 +209,23 @@ export async function getBarcodesByFilamentId(id: number){
     },
   });
   return result.map(x => x.barcode);
+}
+
+export async function getFirstBarcodeForFilament(brand: string, material: string, color: string){
+  return await prisma.filament.findFirstOrThrow({
+    where:{
+      brand,
+      color,
+      material,
+    },
+    include:{
+      rolls:{
+        select:{
+          barcode: true,
+        },
+      },
+    },
+  })
 }
 
 // Create a new filament

@@ -22,7 +22,7 @@ export default function CheckboxGroup({
   const labelName = label.replaceAll(" ", "-").toLocaleLowerCase()
 
   return (
-    <div className="flex flex-col">
+    <div className="flex-col">
       <h2 className="text-lg mb-1 text-center font-bold">{label}:</h2>
       {items.map((x, index) => {
           const labelId = `${labelName}-${index}`;
