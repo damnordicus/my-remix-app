@@ -4,6 +4,7 @@ import { Link, Outlet, useLoaderData, useNavigate } from "react-router";
 import InputDropDown from "~/components/InputDropDown";
 import { LoaderFunctionArgs } from "react-router";
 import Badge from "~/components/Badge";
+import { getFilamentByBarcode } from "~/services/filament.server";
 
 export async function loader({request}: LoaderFunctionArgs) {
     // check request.headers.cookie for userId or sessionid
@@ -14,13 +15,14 @@ export async function loader({request}: LoaderFunctionArgs) {
     const selection = searchParams.get('selection');
     
     if(selection){
-        return {selection};
+        const filament = await getFilamentByBarcode(selection);
+        return {filament, selection};
     }
         return {};
 }
 
 export default function PrintJobForm() {
-    const { selection } = useLoaderData<typeof loader>();
+    const { filament: selection, selection: barcode } = useLoaderData<typeof loader>();
     const options = ["Left XL", "Right XL", "Left MK4", "Right MK4", "MK3 1", "MK3 2", "MK3 3", "MK3 4", "MK3 5", "MK3 6"];
     const [ selectedCategory, setSelectedCategory] = useState('');
     const [ selectedPrinter, setSelectedPrinter] = useState('');
@@ -29,9 +31,9 @@ export default function PrintJobForm() {
 
     useEffect(() => {
         if(selection){
-            let array = atob(selection);
-            let converted = JSON.parse(array);
-            setSelectedFilament(converted)
+            // let array = atob(selection);
+            // let converted = JSON.parse(array);
+            setSelectedFilament(selection)
         }
     },[selection])
     
@@ -43,7 +45,7 @@ export default function PrintJobForm() {
 
     return (
         <div className="flex w-full min-h-screen items-center justify-center">
-         <div className="flex-col pt-5 gap-2 w-[400px] bg-slate-600/60 rounded-xl border-2 border-slate-400 shadow-xl">
+         <div className="flex-col pt-5 gap-2 w-[420px] bg-slate-600/60 rounded-xl border-2 border-slate-400 shadow-xl">
             <h1 className="text-2xl text-center text-amber-500">
                 Job Details
             </h1>
@@ -56,12 +58,14 @@ export default function PrintJobForm() {
                 <Link to={'inventory'}  className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center">Search Filament</Link>
                 </div>}
                 {selection && (
-                    <div className="flex justify-around  w-full text-lg">
-                        
-                        <p>Brand: {selectedFilament.brand}</p>
-                        <p>Material: {selectedFilament.material}</p>
-                        <Badge size={4} children={selectedFilament.color}></Badge>
-                        <p>Barcode: {selectedFilament.barcode}</p>
+                    <div className="flex-col  w-full text-lg">
+                        <div className="flex w-full ">
+                            <p className="flex mx-4">Brand: {selection.brand}</p>
+                            <p className="flex mx-4">Material: {selection.material}</p>
+                            <Badge size={4} >{selection.color}</Badge>
+                        </div>
+                        <p className="flex w-full mx-4 mt-4">Barcode: {barcode}</p>
+                        <Link to={'inventory'} className="bg-amber-500 px-3 mx-auto rounded-xl py-1 border-2 border-amber-600 text-black text-center">Change Filament</Link>
                     <input type="hidden" name="" value={''} />
                     </div>
                     )}

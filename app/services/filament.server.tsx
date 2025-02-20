@@ -141,50 +141,35 @@ export async function pullFromStockByBarcode(barcode: string){
   return result;
 }
 
-export async function getAllBrands(min?: number){
+export async function getAllBrands(){
   const brands = await prisma.filament.findMany({
     distinct: 'brand',
     select:{
       brand: true,
-    },
-    where:{
-      stock_level: {
-        gte: min,
-      },
-    },
+    }
   })
   const result = brands.map(x => x.brand);
   return [...result]
 }
 
-export async function getAllMaterials(min?: number){
+export async function getAllMaterials(){
   const materials = await prisma.filament.findMany({
     distinct: 'material',
     select: {
       material: true,
-    },
-    where:{
-      stock_level: {
-        gte: min,
-      },
-    },
+    }
   })
 
   const result = materials.map(x => x.material);
   return [...result]
 }
 
-export async function getAllColors(min?: number){
+export async function getAllColors(){
   const colors = await prisma.filament.findMany({
     distinct: 'color',
     select: {
       color: true,
-    },
-    where: {
-      stock_level: {
-        gte: min,
-      },
-    },
+    }
   })
 
   const result = colors.map(x => x.color);
@@ -211,25 +196,31 @@ export async function getBarcodesByFilamentId(id: number){
   return result.map(x => x.barcode);
 }
 
-export async function getFirstBarcodeForFilament(brand: string, material: string, color: string){
-  return await prisma.filament.findFirstOrThrow({
-    where:{
-      brand,
-      color,
-      material,
-    },
-    include:{
-      rolls:{
-        select:{
-          barcode: true,
+export async function getFirstBarcodeForFilament(brand: string, material: string, color: string) {
+  try {
+    const results = await prisma.filament.findFirstOrThrow({
+      where: { brand, color, material },
+      include: {
+        rolls: {
+          select: { barcode: true },
         },
       },
-    },
-  })
+    });
+
+    // Ensure at least one roll exists
+    if (!results.rolls.length) {
+      return { message: 'No rolls available.', status: 404 };
+    }
+
+    // Return only the first barcode
+    return { barcode: results.rolls[0].barcode };
+  } catch (error) {
+    return { message: 'Filament not found.', status: 404 };
+  }
 }
 
 // Create a new filament
-export async function createFilament( brand: string, material: string, color: string, diameter: number, weight_grams: number, price: number, purchase_date: Date) {
+export async function createFilament( brand: string, material: string, color: string, diameter: number) {
  return await prisma.filament.create({
      data: {
         brand: brand.toUpperCase(),
@@ -345,4 +336,15 @@ export async function deleteFilament(barcode: string, id: number) {
         }
      }
  });
+}
+
+export async function getColorsByMaterial( material: string){
+  const result = await prisma.filament.findMany({
+    where:{
+      material,
+    },
+  });
+
+  console.log(result)
+  return {result};
 }

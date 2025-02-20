@@ -22,9 +22,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const id = +test.id;
       const weight = +test.weight;
       const price = +test.price;
-
-      console.log("im here");
       const newId = uuidv4();
+
+      console.log('id: ', id, ' weight: ', weight, ' price: ', price, ' newId: ', newId)
       const addToFilament = await addRollToFilament(id);
       const addNewRoll = await createNewRoll(newId, weight, price, id);
       return { newId, errors: [] };

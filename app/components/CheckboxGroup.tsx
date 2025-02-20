@@ -1,23 +1,11 @@
-import React from "react";
-
 export default function CheckboxGroup({
   items,
   label,
-  setSelected,
 }: {
   items: string[];
   label: string;
-  setSelected?: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  function handleChange(e) {
-    if (setSelected) {
-      if (e.target.checked) {
-        setSelected(e.target.value);
-      } else {
-        setSelected("");
-      }
-    }
-  }
+  
 
   const labelName = label.replaceAll(" ", "-").toLocaleLowerCase()
 
@@ -35,8 +23,7 @@ export default function CheckboxGroup({
                       name={labelName}
                       id={labelId}
                       value={x}
-                      className="mr-2"
-                      onChange={(e) => handleChange(e)} />
+                      className="mr-2"/>
               </div>
           );
       })}
