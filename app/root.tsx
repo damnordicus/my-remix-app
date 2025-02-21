@@ -14,6 +14,7 @@ import { default as RootLayout } from "./components/Layout";
 
 import "./tailwind.css";
 import { useCallback, useMemo } from "react";
+import { Toaster } from "react-hot-toast";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -62,7 +63,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className="bg-black text-white">
-
+      <Toaster position="top-center"/>
     <RootLayout backgroundUrl={backgroundUrl}>
         {children}
         </RootLayout>

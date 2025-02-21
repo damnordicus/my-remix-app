@@ -1,10 +1,10 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { Link, Outlet, useLoaderData, useNavigate } from "react-router";
+import { ActionFunctionArgs, Form, Link, Outlet, redirect, useActionData, useLoaderData, useNavigate, LoaderFunctionArgs } from "react-router";
 import InputDropDown from "~/components/InputDropDown";
-import { LoaderFunctionArgs } from "react-router";
 import Badge from "~/components/Badge";
-import { getFilamentByBarcode } from "~/services/filament.server";
+import { createJob, getFilamentByBarcode } from "~/services/filament.server";
+import { toast } from "react-hot-toast";
 
 export async function loader({request}: LoaderFunctionArgs) {
     // check request.headers.cookie for userId or sessionid
@@ -21,6 +21,25 @@ export async function loader({request}: LoaderFunctionArgs) {
         return {};
 }
 
+export async function action ({ request }: ActionFunctionArgs) {
+    const formData = await request.formData();
+    const action = formData.get('_action');
+
+    if(action === 'submit'){
+        const classification = formData.get("classification");
+        const printer = formData.get('printer');
+        const barcode = formData.get('barcode');
+        const details = formData.get('details');
+        const username = 1;
+        if(!classification || !printer || !barcode || !details) return redirect('')   
+        
+        await createJob(classification, printer, barcode, details, username);
+        return redirect('/?success=true');
+    }
+    return redirect('/');
+    
+}
+
 export default function PrintJobForm() {
     const { filament: selection, selection: barcode } = useLoaderData<typeof loader>();
     const options = ["Left XL", "Right XL", "Left MK4", "Right MK4", "MK3 1", "MK3 2", "MK3 3", "MK3 4", "MK3 5", "MK3 6"];
@@ -28,6 +47,7 @@ export default function PrintJobForm() {
     const [ selectedPrinter, setSelectedPrinter] = useState('');
     const [ selectedFilament, setSelectedFilament] = useState({});
     const navigate = useNavigate();
+    const actionData = useActionData<typeof action>();
 
     useEffect(() => {
         if(selection){
@@ -36,12 +56,20 @@ export default function PrintJobForm() {
             setSelectedFilament(selection)
         }
     },[selection])
+
+    // useEffect(() => {
+    //     if(actionData?.success){
+    //         toast.success(actionData.message);
+    //         setTimeout(() => {
+    //             window.location.href = '/';
+    //         }, 2000);
+    //     }
+    // },[actionData]);
     
 
     // const handleClick = () => {
     //     navigate('inventory');
     // }
-    console.log('sf: ',selectedFilament)
 
     return (
         <div className="flex w-full min-h-screen items-center justify-center">
@@ -49,8 +77,9 @@ export default function PrintJobForm() {
             <h1 className="text-2xl text-center text-amber-500">
                 Job Details
             </h1>
-            <InputDropDown labelText={"Job For: "} options={["Mission", "Personal"]} setSelectedOption={setSelectedCategory}/>
-            <InputDropDown labelText={"Select Printer: "} options={options} setSelectedOption={setSelectedPrinter}/>
+            <Form method="POST">
+            <InputDropDown labelText={"Classification"} options={["Mission", "Personal"]} setSelectedOption={setSelectedCategory}/>
+            <InputDropDown labelText={"Printer"} options={options} setSelectedOption={setSelectedPrinter}/>
             <div className="flex-col w-full">
                 <label htmlFor="printerSelect" className="flex pl-4 pb-2 text-lg" >Select Filament: </label>
                 {!selection && <div className="flex justify-center gap-4">
@@ -64,17 +93,18 @@ export default function PrintJobForm() {
                             <p className="flex mx-4">Material: {selection.material}</p>
                             <Badge size={4} >{selection.color}</Badge>
                         </div>
-                        <p className="flex w-full mx-4 mt-4">Barcode: {barcode}</p>
-                        <Link to={'inventory'} className="bg-amber-500 px-3 mx-auto rounded-xl py-1 border-2 border-amber-600 text-black text-center">Change Filament</Link>
-                    <input type="hidden" name="" value={''} />
+                        <p className="flex w-full mx-4 mt-4">Barcode: </p>
+                        <input type="text" name="barcode" className="flex pl-2 bg-slate-800 rounded-xl border border-slate-500 mx-4" value={barcode}/>
+                        <Link to={'inventory'} className="bg-amber-500 px-3 mx-auto mt-2 rounded-xl py-1 border-2 border-amber-600 text-black text-center">Change Filament</Link>
                     </div>
                     )}
             </div>
-            <label htmlFor="description" className="flex pl-4 text-lg" >Job Description: </label>
-            <textarea name="description" className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 "></textarea>
+            <label htmlFor="details" className="flex pl-4 text-lg py-2" >Job Description: </label>
+            <textarea name="details" className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 px-2"></textarea>
             <div className="w-full text-center pt-2 mb-4 mt-1">
-                <button className="rounded-xl border-2 border-amber-600 bg-amber-500 px-2 py-1 text-black">Submit</button>
+                <button name="_action" value="submit" type="submit" className="rounded-xl border-2 border-amber-600 bg-amber-500 px-2 py-1 text-black">Submit</button>
             </div>
+            </Form>
         </div>
         <Outlet />
         </div>

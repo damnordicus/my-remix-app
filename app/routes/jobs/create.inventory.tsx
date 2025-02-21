@@ -95,18 +95,18 @@ export default function SelectFromInventory(){
                     Select A Roll
                 </h1>
                 <Form method="POST">
-                <div className="flex justify-around">
-                <label htmlFor="material" className="px-4">Material: </label>
-                <select name="material" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
+                <div className="flex justify-around mb-2">
+                <label htmlFor="material" className="pl-4 pr-2 self-center">Material: </label>
+                <select name="material" className="w-full bg-slate-800/60 text-white mr-4 border border-slate-400 rounded-xl py-1 pl-2 self-center" onChange={handleChange}>
                     <option key={0} value={''}></option>
                     {materials.map(material => (
                         <option key={material} value={material}>{material}</option>
                     ))}
                 </select>
                 </div>
-                {showColor && <div className="flex justify-around">
-                <label htmlFor="color" className="px-4">Colors: </label>
-                <select name="color" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
+                {showColor && <div className="flex justify-around mb-2">
+                <label htmlFor="color" className="pl-4 pr-2 self-center">Colors: </label>
+                <select name="color" className="w-full bg-slate-800/60 text-white mr-4 border border-slate-400 rounded-xl py-1 pl-2 self-center" onChange={handleChange}>
                 <option key={0} value={''}></option>
                     {colorOptions.map((color, index) => (
                         <option key={index} value={color}>{color}</option>
@@ -114,8 +114,8 @@ export default function SelectFromInventory(){
                 </select>
                 </div>}
                 {showBrand && <div className="flex justify-around">
-                <label htmlFor="brand" className="px-4">Brands: </label>
-                <select name="brand" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
+                <label htmlFor="brand" className="pl-4 pr-2 self-center">Brands: </label>
+                <select name="brand" className="w-full bg-slate-800/60 text-white mr-4 border border-slate-400 rounded-xl py-1 pl-2 self-center" onChange={handleChange}>
                 <option key={0} value={''}></option>
                     {brandOptions.map((brand, index) => (
                         <option key={index} value={brand}>{brand}</option>

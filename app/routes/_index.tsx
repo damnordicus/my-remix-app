@@ -1,10 +1,19 @@
-import { ClientLoaderFunctionArgs, useLoaderData } from "react-router";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { ClientLoaderFunctionArgs, useLoaderData, useSearchParams } from "react-router";
 import Layout from "~/components/Layout";
 import MainButton from "~/components/MainButton";
 
-
+let showing = 0;
 export default function Index() {
+  const [searchParams, setSearchParams ] = useSearchParams();
 
+  useEffect(() => {
+    if( searchParams.get("success") === "true"){
+      toast.success("Print job created!");
+      showing = 1
+    }
+  }, [searchParams]);
   
   return (
     <div className="h-screen flex items-center justify-center">

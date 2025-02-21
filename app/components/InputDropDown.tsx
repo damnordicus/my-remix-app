@@ -29,10 +29,11 @@ export default function InputDropDown({
   return (
     <div className="flex-col w-full">
       <label htmlFor="printerSelect" className="flex pl-4 pb-2 text-lg">
-        {labelText}
+        {labelText}:
       </label>
       {options && options.length > 0 ? (
         <select
+          name={labelText.toLowerCase()}
           className="flex ml-4 text-lg w-11/12 py-1 pl-4 bg-slate-800/80 rounded-xl border border-slate-500"
           onChange={(e) => handleChange(e)}
         >

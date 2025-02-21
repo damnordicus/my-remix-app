@@ -1,4 +1,5 @@
 import { BriefcaseIcon } from "@heroicons/react/24/outline";
+import { connect } from "http2";
 import { parse } from "path";
 import { exit } from "process";
 import { prisma } from "~/utils/db.server";
@@ -364,4 +365,42 @@ export async function getBrandsByColor( material: string, color: string){
     distinct: ['brand'],
   });
   return result.map(item => item.brand);
+}
+
+export async function createJob(classification: string, printer: string, barcode: string, details: string, userId: number){
+  const roll = await prisma.roll.findFirstOrThrow({
+    where:{
+      barcode,
+    },
+    include:{
+      filament: true,
+    }
+  });
+
+  const filament = await prisma.roll.update({
+    where:{
+      barcode,
+    },
+    data:{
+      filament:{
+        update:{
+          stock_level:{
+            decrement: 1,
+          }
+        }
+      }
+    }
+  })
+
+  const result = await prisma.job.create({
+    data:{
+      classification,
+      printer,
+      barcode,
+      details,
+      rollId: roll.id,
+      userId,
+    },
+  });
+  return result;
 }

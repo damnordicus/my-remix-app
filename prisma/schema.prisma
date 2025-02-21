@@ -42,10 +42,12 @@ model User {
 
 model Job {
   id Int @id @default(autoincrement())
-  username String
-  user User @relation(fields: [username], references: [username])
+  userId Int
+  user User @relation(fields: [userId], references: [id])
   details String
   printer String
+  classification String
+  barcode String
   rollId Int
   roll Roll @relation(fields: [rollId], references: [id])
 }
