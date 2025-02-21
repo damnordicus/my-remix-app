@@ -206,11 +206,11 @@ export async function getFirstBarcodeForFilament(brand: string, material: string
         },
       },
     });
-
+    console.log('results: ', results)
     // Ensure at least one roll exists
-    if (!results.rolls.length) {
-      return { message: 'No rolls available.', status: 404 };
-    }
+    // if (results.rolls.length === 0) {
+    //   return { message: 'No rolls available.', status: 404 };
+    // }
 
     // Return only the first barcode
     return { barcode: results.rolls[0].barcode };
@@ -343,8 +343,25 @@ export async function getColorsByMaterial( material: string){
     where:{
       material,
     },
+    select:{
+      color: true,
+    },
+    distinct: ['color'],
   });
 
-  console.log(result)
-  return {result};
+  return result.map(item => item.color);
+}
+
+export async function getBrandsByColor( material: string, color: string){
+  const result = await prisma.filament.findMany({
+    where:{
+      material,
+      color,
+    },
+    select:{
+      brand: true,
+    },
+    distinct: ['brand'],
+  });
+  return result.map(item => item.brand);
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Form, Link, Navigate, Outlet, redirect, useFetcher, useLoaderData, useNavigate } from "react-router";
 import CheckboxGroup from "~/components/CheckboxGroup";
 import { getAllBrands, getAllColors, getAllFilaments, getAllMaterials, getFirstBarcodeForFilament } from "~/services/filament.server";
@@ -21,11 +21,12 @@ export const action = async ({request}) => {
         const brand = formData.get("brand");
         const material = formData.get("material");
         const color = formData.get("color");
+        console.log('brand: ', brand, ' material: ', material, ' color: ', color)
         const barcodes = await getFirstBarcodeForFilament(brand, material, color);
         let barcode;
-
-        if(barcodes?.rolls && barcodes.rolls.length > 0){
-            barcode = barcodes.rolls[0].barcode;
+        console.log('barcode: ', barcodes)
+        if(barcodes.barcode?.length){
+            barcode = barcodes.barcode;
         }else{
             return {message: 'No rolls found for that selection', status: 400}
         }
@@ -41,27 +42,51 @@ export const action = async ({request}) => {
 }
 
 export default function SelectFromInventory(){
-    const {brands, colors, materials, filaments} = useLoaderData<typeof loader>();
-    const fetcher = useFetcher();
+    const {materials} = useLoaderData<typeof loader>();
+    const materialFetcher = useFetcher();
+    const colorFetcher = useFetcher();
+    const brandFetcher = useFetcher();
+
+    const [showColor, setShowColor] = useState(false);
+    const [showBrand, setShowBrand] = useState(false);
+    const [colorOptions, setColorOptions] = useState([]);
+    const [brandOptions, setBrandOptions] = useState([]);
+    const [selectedMaterial, setSelectedMaterial] = useState('');
 
     function handleChange(e) {
         //e.target.name
+
         switch(e.target.name){
-            case 'materials' :
-                console.log('materials')
-                fetcher.load(`materials?material=${e.target.value}`)
+            case 'material' :
+                if(e.target.value !== ''){
+                    setSelectedMaterial(e.target.value);
+                    materialFetcher.load(`materials?material=${e.target.value}`) 
+                }
                 break;
-            case 'colors':
-                console.log('colors')
-                break;
-            case 'brands':
-                console.log('brands')
+            case 'color':
+                if(e.target.value !== ''){
+                  colorFetcher.load(`colors?color=${e.target.value}&material=${selectedMaterial}`)  
+                }
                 break;
             default :
                 break;
         }
 
     }
+
+    useEffect(() => {
+        if(materialFetcher.data && materialFetcher.state === "idle"){
+            console.log('test', materialFetcher.data)
+            setColorOptions(materialFetcher.data.result);
+            setShowColor(true);
+        } 
+        if(colorFetcher.data && colorFetcher.state === "idle"){
+            console.log('color: ',colorFetcher.data)
+            setBrandOptions(colorFetcher.data.result);
+            setShowBrand(true);
+        }
+
+    },[ materialFetcher.data, materialFetcher.state, colorFetcher.data, colorFetcher.state])
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50">
@@ -71,21 +96,32 @@ export default function SelectFromInventory(){
                 </h1>
                 <Form method="POST">
                 <div className="flex justify-around">
-                <label htmlFor="materials" className="px-4">Material: </label>
-                <select name="materials" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
+                <label htmlFor="material" className="px-4">Material: </label>
+                <select name="material" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
+                    <option key={0} value={''}></option>
                     {materials.map(material => (
                         <option key={material} value={material}>{material}</option>
                     ))}
                 </select>
                 </div>
-                {/* <div className="flex justify-around">
-                <label htmlFor="colors" className="px-4">Colors: </label>
-                <select name="colors" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
-                    {colors.map(color => (
-                        <option key={color} value={color}>{color}</option>
+                {showColor && <div className="flex justify-around">
+                <label htmlFor="color" className="px-4">Colors: </label>
+                <select name="color" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
+                <option key={0} value={''}></option>
+                    {colorOptions.map((color, index) => (
+                        <option key={index} value={color}>{color}</option>
                     ))}
                 </select>
-                </div> */}
+                </div>}
+                {showBrand && <div className="flex justify-around">
+                <label htmlFor="brand" className="px-4">Brands: </label>
+                <select name="brand" className="w-full bg-slate-800/60 text-white mr-4" onChange={handleChange}>
+                <option key={0} value={''}></option>
+                    {brandOptions.map((brand, index) => (
+                        <option key={index} value={brand}>{brand}</option>
+                    ))}
+                </select>
+                </div>}
 
                 {false && <p className="text-center text-red-500">No Rolls Found</p>}
                 <div className="flex justify-around mt-4 items-center">

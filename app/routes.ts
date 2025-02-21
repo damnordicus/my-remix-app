@@ -27,7 +27,8 @@ export default [
     route("auth", "./routes/job.tsx"),
     route("create", "./routes/jobs/create.tsx", [
       route("inventory", "./routes/jobs/create.inventory.tsx",[
-        route("materials", "./routes/jobs/create.inventory.materials.tsx")
+        route("materials", "./routes/jobs/create.inventory.materials.tsx"),
+        route("colors", "./routes/jobs/create.inventory.colors.tsx")
       ]),
     ]),
   ]),
