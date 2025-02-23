@@ -34,9 +34,10 @@ model Roll {
 model User {
   id Int @id @default(autoincrement())
   username String @unique
-  password String
+  secret String
   phone String
   email String
+  admin Boolean @default(false)
   jobs Job[]
 }
 

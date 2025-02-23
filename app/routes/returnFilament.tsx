@@ -1,5 +1,5 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, LoaderFunction } from "react-router";
+import { ActionFunction, Link, LoaderFunction } from "react-router";
 import { json, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { CameraEnhancer } from "dynamsoft-camera-enhancer";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
@@ -73,6 +73,14 @@ export default function  ReturnToStock() {
     setIsActive(!isActive);
   };
 
+  useEffect(() => {
+    const grabbedBarcode = localStorage.getItem("scannedBarcode");
+    console.log('session: ', grabbedBarcode)
+    if(grabbedBarcode){
+      setScannedBarcode(grabbedBarcode);
+    }
+  }, [])
+
   const test = {brand:"ESUN", color:"GOLD", material:"PLA"}
   const stringify = JSON.stringify(test);
   const encoded = btoa(stringify);
@@ -81,7 +89,7 @@ export default function  ReturnToStock() {
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="w-1/6 h-[225px] flex justify-center bg-slate-600 border-2 bg-opacity-80 border-slate-500 rounded-xl p-4">
+        <div className="w-2/6 flex justify-center bg-slate-600/50 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-4">
           <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl mb-4">
@@ -94,9 +102,10 @@ export default function  ReturnToStock() {
               type="text"
               placeholder="Barcode"
               name="barcode"
+              defaultValue={scannedBarcode}
               required
             />
-            <div onClick={handleCamera}><CameraIcon className="size-7 ml-4 text-amber-500"/></div>
+            <Link to="../barcode"><CameraIcon className="size-7 ml-4 text-amber-500"/></Link>
             </div>
             
             
@@ -108,7 +117,7 @@ export default function  ReturnToStock() {
               required
             />
             <button
-              className="w-1/2 p-2 mt-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600"
+              className="w-full p-2 mt-2 border-2 border-amber-300 bg-amber-500 text-white rounded-lg hover:bg-amber-600 hover:cursor-pointer"
               value="submit"
               name="_action"
             >

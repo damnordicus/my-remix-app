@@ -15,6 +15,7 @@ import { default as RootLayout } from "./components/Layout";
 import "./tailwind.css";
 import { useCallback, useMemo } from "react";
 import { Toaster } from "react-hot-toast";
+import { userSession } from "./services/cookies.server";
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -28,6 +29,11 @@ export const links: LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
 ];
+
+export const loader = async ({ request }) => {
+  const session = await userSession.parse(request.headers.get("Cookie")) || {};
+  return { user: session.username || null, admin: session.admin || false };
+};
 
 export function Layout({ children }: { children: React.ReactNode }) {
 
@@ -49,10 +55,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
     return randomNumber
   }, [])
 
-  console.log(get2())
+  // console.log(get2())
 
   // const { rand } = useLoaderData<typeof clientLoader>();
-  const backgroundUrl = `/fil${getNumber}.jpg`;
+  const backgroundUrl = `/fil7.jpg`;
+  const { user } = useLoaderData<typeof loader>();
   
   return (
     <html lang="en">
@@ -64,7 +71,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-black text-white">
       <Toaster position="top-center"/>
-    <RootLayout backgroundUrl={backgroundUrl}>
+    <RootLayout backgroundUrl={backgroundUrl} user={user}>
         {children}
         </RootLayout>
         <ScrollRestoration />

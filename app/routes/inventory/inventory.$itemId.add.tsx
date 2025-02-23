@@ -83,7 +83,7 @@ export default function SelectedItem() {
   // const { selectedFilament, barcodes } = useLoaderData<typeof loader>();
   const data = useMatches();
   const item = data.find(
-    (match) => match.id === "routes/inventory.$itemId"
+    (match) => match.id === "routes/inventory/inventory.$itemId"
   )?.data;
   let selectedFilament = null;
   if (item && item.selectedFilament) selectedFilament = item.selectedFilament;
@@ -124,7 +124,7 @@ export default function SelectedItem() {
     return <div>No filament found.</div>;
   } else {
     return (
-      <div className="bg-slate-500 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
+      <div className="bg-slate-400/60 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
       <Form className="w-full text-center mt-2 flex flex-col" method="post">
         <input type="hidden" name="id" value={selectedFilament.id} />
         <input type="hidden" name="_action" value="addRoll" />
@@ -132,7 +132,7 @@ export default function SelectedItem() {
           type="number"
           name="weight"
           placeholder="Weight in grams"
-          className="border border-slate-400 rounded-lg px-2 mx-2"
+          className="border border-slate-400 bg-slate-600 rounded-lg px-2 mx-2"
           min={0}
           step={100}
         />
@@ -140,7 +140,7 @@ export default function SelectedItem() {
           type="number"
           name="price"
           placeholder="Cost"
-          className="border border-slate-400 rounded-lg px-2 m-2"
+          className="border border-slate-400 bg-slate-600 rounded-lg px-2 m-2"
           min={0.0}
           step={0.01}
         />

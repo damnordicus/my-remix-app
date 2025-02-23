@@ -3,9 +3,9 @@ import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
 import Navbar from "../components/Navbar";
-import { AddFilament } from "./inventory.create";
+import { AddFilament } from "./inventory/inventory.create";
 import Badge from "../components/Badge";
-import SelectedItem from "~/routes/inventory.$itemId";
+import SelectedItem from "~/routes/inventory/inventory.$itemId";
 import { ActionFunction, ActionFunctionArgs, LoaderFunction } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament, addRollToFilament, createNewRoll } from "~/services/filament.server";
@@ -97,7 +97,7 @@ export default function Inventory() {
   };
 
   const filterList = useCallback(() => {
-    setFilterVisible(!filterVisible);
+    setFilterVisible(false);
     const newList = filaments.filter((filament) => {
       const brandMatch = selectedFilters.brand.length
         ? selectedFilters.brand.includes(filament.brand)
@@ -111,8 +111,7 @@ export default function Inventory() {
       return brandMatch && materialMatch && colorMatch;
     });
     setList(newList);
-  }, [filaments]);
-  console.log("selected: ", selectedFilters);
+  }, [filaments, selectedFilters]);
 
   const isFiltered = !Object.values(selectedFilters).every(
     (arr) => arr.length > 0

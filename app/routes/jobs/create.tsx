@@ -5,6 +5,7 @@ import InputDropDown from "~/components/InputDropDown";
 import Badge from "~/components/Badge";
 import { createJob, getFilamentByBarcode } from "~/services/filament.server";
 import { toast } from "react-hot-toast";
+import { userSession } from "~/services/cookies.server";
 
 export async function loader({request}: LoaderFunctionArgs) {
     // check request.headers.cookie for userId or sessionid
@@ -13,6 +14,12 @@ export async function loader({request}: LoaderFunctionArgs) {
 
     const searchParams = new URL(request.url).searchParams;
     const selection = searchParams.get('selection');
+
+    const session = await userSession.parse(request.headers.get("Cookie"));
+
+    if(!session?.username){
+        return redirect("..");
+    }
     
     if(selection){
         const filament = await getFilamentByBarcode(selection);
@@ -30,10 +37,10 @@ export async function action ({ request }: ActionFunctionArgs) {
         const printer = formData.get('printer');
         const barcode = formData.get('barcode');
         const details = formData.get('details');
-        const username = 1;
+        const userId = 14;
         if(!classification || !printer || !barcode || !details) return redirect('')   
         
-        await createJob(classification, printer, barcode, details, username);
+        await createJob(classification, printer, barcode, details, userId);
         return redirect('/?success=true');
     }
     return redirect('/');
@@ -46,6 +53,7 @@ export default function PrintJobForm() {
     const [ selectedCategory, setSelectedCategory] = useState('');
     const [ selectedPrinter, setSelectedPrinter] = useState('');
     const [ selectedFilament, setSelectedFilament] = useState({});
+    const [ scannedBarcode, setScannedBarcode ] = useState('');
     const navigate = useNavigate();
     const actionData = useActionData<typeof action>();
 
@@ -57,6 +65,13 @@ export default function PrintJobForm() {
         }
     },[selection])
 
+    useEffect(() => {
+        const grabbedBarcode = localStorage.getItem("scannedBarcode");
+        console.log('session: ', grabbedBarcode)
+        if(grabbedBarcode){
+          setScannedBarcode(grabbedBarcode);
+        }
+      }, [])
     // useEffect(() => {
     //     if(actionData?.success){
     //         toast.success(actionData.message);
@@ -73,7 +88,7 @@ export default function PrintJobForm() {
 
     return (
         <div className="flex w-full min-h-screen items-center justify-center">
-         <div className="flex-col pt-5 gap-2 w-[420px] bg-slate-600/60 rounded-xl border-2 border-slate-400 shadow-xl">
+         <div className="flex-col pt-5 gap-2 w-[420px] bg-slate-600/60 backdrop-blur-sm rounded-xl border-2 border-slate-400 shadow-xl">
             <h1 className="text-2xl text-center text-amber-500">
                 Job Details
             </h1>
@@ -83,8 +98,12 @@ export default function PrintJobForm() {
             <div className="flex-col w-full">
                 <label htmlFor="printerSelect" className="flex pl-4 pb-2 text-lg" >Select Filament: </label>
                 {!selection && <div className="flex justify-center gap-4">
-                <Link to={`../barcode`} className="bg-amber-500 px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 text-center"><CameraIcon className="size-6"/></Link>
-                <Link to={'inventory'}  className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center">Search Filament</Link>
+                {!scannedBarcode && <><Link to={`../barcode`} className="bg-amber-500 px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 text-center"><CameraIcon className="size-6"/></Link>
+                <Link to={'inventory'}  className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center">Search Filament</Link></> }
+                {scannedBarcode && <div className="flex-col w-full">
+                <input type="text" defaultValue={scannedBarcode} className="text-center py-1 bg-slate-800/60 mx-4 rounded-xl border border-slate-500"></input>
+                <button onClick={()=>{setScannedBarcode(''); localStorage.removeItem("scannedBarcode");}} className="w-fit flex self-center py-1 px-2 mt-4 rounded-lg border-2 border-amber-600 bg-amber-500 text-black">Change Filament</button>
+                </div>}
                 </div>}
                 {selection && (
                     <div className="flex-col  w-full text-lg">

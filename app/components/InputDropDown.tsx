@@ -6,7 +6,6 @@ function isUserObject(user: unknown): user is User {
   return (
     !!(user as User)?.id &&
     !!(user as User)?.username &&
-    !!(user as User)?.password &&
     !!(user as User)?.phone &&
     !!(user as User)?.email
   );
@@ -37,10 +36,11 @@ export default function InputDropDown({
           className="flex ml-4 text-lg w-11/12 py-1 pl-4 bg-slate-800/80 rounded-xl border border-slate-500"
           onChange={(e) => handleChange(e)}
         >
+          <option key={0} value=''></option>
           {options.map((item) => {
             if (isUserObject(item)) {
               return (
-                <option key={item.id} value={item.id}>
+                <option key={item.id} value={item.username}>
                   {item.username}
                 </option>
               );

@@ -1,33 +1,62 @@
-import { data, Form, Outlet, redirect, useLoaderData, useNavigate } from "react-router";
+import { data, Form, LoaderFunctionArgs, Outlet, redirect, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { request } from "https";
-import { getAllUsers, loginWithPassword } from "~/services/filament.server";
+import { getAllUsers, getUserByUsername, loginWithPassword } from "~/services/filament.server";
 import InputDropDown from "~/components/InputDropDown";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import * as OTPAuth from "otpauth"
+import { userSession } from "~/services/cookies.server";
 
-export const loader = async () => {
+export const loader = async ({request}: LoaderFunctionArgs) => {
+  const session = await userSession.parse(request.headers.get("Cookie")) || {};
+
+
   const getUsers = await getAllUsers();
-  return {getUsers};
+
+  return {getUsers, user: session.username ?? null};
 };
 
 export const action = async ({ request }) => {
   const formData = await request.formData();
   const actionType = formData.get("_action");
 
-  if (actionType === "submit") {
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
+      const username = formData.get("username") as string;
+      const otp = formData.get("otp") as string;
+  
+      if(!username || !otp){
+          return {error: "Username and otp are required"};
+      }
+      
+      const user = await getUserByUsername(username);
+  
+      if(!user || !user.secret) {
+          return {error: "Invalid user or OTP secret missing"};
+      }
+  
+      const totp = new OTPAuth.TOTP({
+          issuer:"Filament Inventory Manager",
+          label: username,
+          algorithm: "SHA1",
+          digits: 6,
+          period: 30,
+          secret: user.secret,
+      });
+      const expectedToken = totp.generate();
 
-    //if(!username || !password) return 
-    //const login = await loginWithPassword(username, password);
-    //return {login};
-    return redirect(`/job/create`);
-  } else {
-    return null;
-  }
+      const isValid = totp.validate({ token: otp, window: 1 }) !== null;
+      if(!isValid) {
+          return { error: "Invalid OTP code"};
+      }
+
+      const headers = new Headers();
+      headers.append("Set-Cookie", await userSession.serialize({ username: user.username, admin: user.admin }));
+  
+      return redirect("../job/create", { headers });
 };
 
 export default function PrintJob() {
-  const { getUsers } = useLoaderData<typeof loader>(); 
+  const { getUsers, user } = useLoaderData<typeof loader>(); 
+
+  const [ selectedUser, setSelectedUser] = useState('');
 
   console.log(getUsers)
 
@@ -39,27 +68,12 @@ export default function PrintJob() {
           </h1>
           <Form className="flex-col w-full items-center justify-center px-5 pb-5 gap-2 text-lg" method="POST">
               <div className="flex-col w-full">
-                <InputDropDown labelText="Username: " options={getUsers} setSelectedOption={() => null}/>
-                {/* <label htmlFor="username" className="">
-                  Username:
-                </label>
-                <select></select> */}
-                {/* <input
-                  type="text"
-                  name="username"
-                  className="bg-slate-800/60 px-3 py-1.5 rounded-lg"
-                /> */}
+                <InputDropDown labelText="Username" options={getUsers} setSelectedOption={setSelectedUser}/>
+                {/* <input type='hidden' name="username" value={selectedUser}/> */}
               </div>
-              {/* <div className="flex-col w-full gap-1">
-                <label htmlFor="password" className="">
-                  Password:
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  className="bg-slate-800/60 px-3 py-1.5 rounded-lg"
-                />
-              </div> */}
+              <div>
+                <input type="text" name="otp" className="bg-slate-700/60"/>
+              </div>
               <button type="submit" name="_action" value="submit" className="rounded-xl border-2 border-amber-400/60 bg-amber-600 hover:cursor-pointer hover:border-amber-600/60 hover:bg-amber-400 hover:text-amber-900 w-full px-2 py-1 mt-6 mb-2 text-white">
                 Login
               </button>

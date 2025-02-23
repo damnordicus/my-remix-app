@@ -1467,6 +1467,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@noble/hashes@npm:1.6.1":
+  version: 1.6.1
+  resolution: "@noble/hashes@npm:1.6.1"
+  checksum: 10c0/27643cd8b551bc933b57cc29aa8c8763d586552fc4c3e06ecf7897f55be3463c0c9dff7f6ebacd88e5ce6d0cdb5415ca4874d0cf4359b5ea4a85be21ada03aab
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -6606,6 +6613,7 @@ __metadata:
     eslint-plugin-react-hooks: "npm:^4.6.2"
     isbot: "npm:^5.1.22"
     mkcert: "npm:^3.2.0"
+    otpauth: "npm:^9.3.6"
     pg: "npm:^8.13.3"
     prisma: "npm:^6.4.0"
     qr-image: "npm:^3.2.0"
@@ -7024,6 +7032,15 @@ __metadata:
     strip-ansi: "npm:^6.0.0"
     wcwidth: "npm:^1.0.1"
   checksum: 10c0/10ff14aace236d0e2f044193362b22edce4784add08b779eccc8f8ef97195cae1248db8ec1ec5f5ff076f91acbe573f5f42a98c19b78dba8c54eefff983cae85
+  languageName: node
+  linkType: hard
+
+"otpauth@npm:^9.3.6":
+  version: 9.3.6
+  resolution: "otpauth@npm:9.3.6"
+  dependencies:
+    "@noble/hashes": "npm:1.6.1"
+  checksum: 10c0/e73e77fef2b4b335f7415871e46db54d8d125a62fc9783b279abf6d9144ba2a2470b4d023bc44b0563aa21e45e290399e820af474e59f991d241a10e0fa6306c
   languageName: node
   linkType: hard
 

@@ -39,7 +39,7 @@ export default function Badge({children, size}) {
             pillDetails = 'bg-slate-800 border-slate-700 text-lg ';
             break;
         case 'PINK':
-            pillDetails = 'bg-pink-500 border-pink-700 text-white';
+            pillDetails = 'bg-pink-500 border-pink-700 text-white p-1';
             break;
         default:
             pillDetails = 'bg-slate-800 border-slate-700 text-lg text-slate-300';

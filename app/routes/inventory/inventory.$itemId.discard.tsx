@@ -71,12 +71,12 @@ export default function SelectedItem() {
     return (
       <>
       {barcodes.length > 0 ? (
-        <div className="bg-slate-500/60 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
+        <div className="bg-slate-400/60 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
         <Form method="post">
         <p className="w-full text-center mb-2">Select the barcode to remove:</p>
         <input type="hidden" name="id" value={selectedFilament.id}/>
         <div className="flex gap-2 justify-center">
-        <select name="barcode" className="shadow-lg border-[1px] rounded-lg border-slate-400 px-2">
+        <select name="barcode" className="shadow-lg border-[1px] rounded-lg border-slate-400 px-2 bg-slate-600">
           {barcodes.map((x) => (
             <option key={x} value={x}>
               {x.slice(x.length-10).toUpperCase()}

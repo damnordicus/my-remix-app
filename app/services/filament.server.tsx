@@ -65,50 +65,45 @@ export async function addQRtoRoll(qrString: string, filamentId: number){
 }
 
 export async function returnFilamentToStock(parsedObject: object) {
-  const existingFilament = await prisma.filament.findFirstOrThrow({
-    where:{
-      brand: parsedObject.brand,
-      color: parsedObject.color,
-      material: parsedObject.material,
-    },
-    select:{
-      id: true,
-      barcode: true,
-    }
-  });
-  const existingId = existingFilament.id;
-  const existingBarcodes = [...existingFilament.barcode, btoa(JSON.stringify(parsedObject))];
+  // const existingFilament = await prisma.filament.findFirstOrThrow({
+  //   where:{
+  //     brand: parsedObject.brand,
+  //     color: parsedObject.color,
+  //     material: parsedObject.material,
+  //   },
+  //   select:{
+  //     id: true,
+  //     barcode: true,
+  //   }
+  // });
+  // const existingId = existingFilament.id;
 
-  return await prisma.filament.update({
-    where:{
-      brand: parsedObject.brand,
-      color: parsedObject.color,
-      material: parsedObject.material,
-      id: existingId,
-    },
-    data:{
-      stock_level: {
-        increment: 1,
-      },
-      barcode:{
-        set: existingBarcodes,
-      }
-    }
-  })
+  // return await prisma.filament.update({
+  //   where:{
+  //     brand: parsedObject.brand,
+  //     color: parsedObject.color,
+  //     material: parsedObject.material,
+  //     id: existingId,
+  //   },
+  //   data:{
+  //     stock_level: {
+  //       increment: 1,
+  //     },
+  //   }
+  // })
 
-}
-
-export async function loginWithPassword( username: string, password: string){
-  return prisma.user.findUnique({
-    where:{
-      username,
-      password,
-    },
-  })
 }
 
 export async function getAllUsers(){
-  return prisma.user.findMany({});
+  return await prisma.user.findMany({});
+}
+
+export async function getUserByUsername(username: string){
+  return prisma.user.findUnique({
+    where:{
+      username,
+    },
+  });
 }
 
 export async function pullFromStockByBarcode(barcode: string){
@@ -158,7 +153,12 @@ export async function getAllMaterials(){
     distinct: 'material',
     select: {
       material: true,
-    }
+    },
+    where: {
+      stock_level:{
+        gt: 0,
+      },
+    },
   })
 
   const result = materials.map(x => x.material);
@@ -221,13 +221,13 @@ export async function getFirstBarcodeForFilament(brand: string, material: string
 }
 
 // Create a new filament
-export async function createFilament( brand: string, material: string, color: string, diameter: number) {
+export async function createFilament({brand, material, color, diameter}: {brand: string, material: string, color: string, diameter:string}) {
  return await prisma.filament.create({
      data: {
         brand: brand.toUpperCase(),
         material: material.toUpperCase(),
         color: color.toUpperCase(),
-        diameter,
+        diameter: parseFloat(diameter),
         stock_level: 0,
      }
     });
@@ -314,14 +314,11 @@ export async function deleteFilament(barcode: string, id: number) {
       id,
     },
     select:{
-      barcode: true,
       brand: true,
       material: true,
       color: true,
     }
   })
-
-  const updatedBarcodes = existingBarcodes.barcode.filter(x => x !== barcode);
 
   return await prisma.filament.update({
      where: {
@@ -331,7 +328,6 @@ export async function deleteFilament(barcode: string, id: number) {
       color: existingBarcodes.color,
     },
      data: {
-        barcode: updatedBarcodes,
         stock_level:{
           decrement: 1,
         }
@@ -403,4 +399,45 @@ export async function createJob(classification: string, printer: string, barcode
     },
   });
   return result;
+}
+
+export async function checkUsername(username: string){
+  const result = await prisma.user.findFirst({
+    where:{
+      username,
+    },
+  });
+
+
+  console.log('result: ', result)
+
+  return result
+}
+
+export async function checkEmail(email: string){
+  return await prisma.user.findFirst({
+    where:{
+      email,
+    },
+  });
+}
+
+export async function checkPhone(phone: string){
+  return await prisma.user.findFirst({
+    where:{
+      phone,
+    },
+  });
+}
+
+export async function createUser({actualUsername, email, phone, secret, admin}: {actualUsername: string, email: string, phone: string, secret: string, admin?: boolean}){
+  return await prisma.user.create({
+    data:{
+      username: actualUsername,
+      email,
+      phone,
+      secret,
+      admin,
+    },
+  });
 }

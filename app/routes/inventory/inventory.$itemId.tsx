@@ -17,7 +17,7 @@ import {
   useParams,
 } from "react-router";
 import { useEffect, useState } from "react";
-import Badge from "../components/Badge";
+import Badge from "../../components/Badge";
 import { v4 as uuidv4 } from "uuid";
 import {
   addRollToFilament,
@@ -92,7 +92,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 export default function SelectedItem() {
   const { selectedFilament, barcodes } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
-
   const nav = useNavigation();
 
   useEffect(() => {
@@ -106,19 +105,19 @@ export default function SelectedItem() {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black/50">
         <div
-          className={`w-[400px]  bg-slate-600/70 backdrop-blur-xs rounded-2xl shadow-xl p-6 relative border-2 border-slate-300 `}
+          className={`w-[400px]  bg-slate-600/60 backdrop-blur-xs rounded-2xl shadow-xl p-6 relative border-2 border-slate-300 `}
         >
           <p
-            className="absolute top-2 right-2 cursor-pointer text-white text-xl"
+            className="fixed top-2 right-2 cursor-pointer text-white text-xl"
             onClick={() => navigate("..")}
           >
             ✖
           </p>
-          <p className="text-white font-bold">{selectedFilament.brand}</p>
-          <div className="flex gap-10">
-            <p className="">{selectedFilament.material}</p>
-
+          
+          <div className="flex justify-between mt-4">
+            <p className="text-white font-bold">{selectedFilament.brand}</p>
             <Badge size={2}>{selectedFilament.color}</Badge>
+            <p className="text-white font-bold">{selectedFilament.material}</p>
           </div>
 
           <div className="mt-4">

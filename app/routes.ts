@@ -15,14 +15,21 @@ export default [
   // ]),
 
   route("inventory", "./routes/inventory.tsx", [
+    route("create", "./routes/inventory/inventory.create.tsx"),
     //   index("./routes/inventory.tsx"),
-    route(":itemId", "./routes/inventory.$itemId.tsx", [
-      route("add", "./routes/inventory.$itemId.add.tsx"),
-      route("discard", "./routes/inventory.$itemId.discard.tsx"),
+    route(":itemId", "./routes/inventory/inventory.$itemId.tsx", [
+      route("add", "./routes/inventory/inventory.$itemId.add.tsx"),
+      route("discard", "./routes/inventory/inventory.$itemId.discard.tsx"),
     ]),
     //   route("trending", "./concerts/trending.tsx"),
   ]),
+  route("register", "./routes/register.tsx"),
   route("pull", "./routes/pullFilament.tsx"),
+  route("return", "./routes/returnFilament.tsx"),
+  route("user", "./routes/jobs/auth.tsx"),
+  route("logout", "./routes/logout.tsx"),
+  route("showQR", "./routes/showQR.tsx"),
+  
   ...prefix("job", [
     route("auth", "./routes/job.tsx"),
     route("create", "./routes/jobs/create.tsx", [
@@ -33,4 +40,7 @@ export default [
     ]),
   ]),
   route("barcode", "./routes/barcode.tsx"),
+  ...prefix("view", [
+    route("accounts", "./routes/view/view.accounts.tsx"),
+  ]),
 ] satisfies RouteConfig;
