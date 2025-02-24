@@ -1,4 +1,4 @@
-import { data, Form, Link, Outlet, useLoaderData, useNavigate } from "react-router";
+import { data, Form, Link, LoaderFunctionArgs, Outlet, useLoaderData, useNavigate } from "react-router";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
@@ -6,16 +6,19 @@ import Navbar from "../components/Navbar";
 import { AddFilament } from "./inventory/inventory.create";
 import Badge from "../components/Badge";
 import SelectedItem from "~/routes/inventory/inventory.$itemId";
-import { ActionFunction, ActionFunctionArgs, LoaderFunction } from "react-router";
+import { ActionFunctionArgs } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament, addRollToFilament, createNewRoll } from "~/services/filament.server";
+import { userSession } from "~/services/cookies.server";
 
-export const loader = async () => {
+export const loader = async ({request}: LoaderFunctionArgs) => {
+  const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
   const filaments = await getAllFilaments();
   const brands = await getAllBrands();
   const colors = await getAllColors();
   const materials = await getAllMaterials();
-  return {filaments, brands, colors, materials};
+  
+  return {filaments, brands, colors, materials, admin: session.admin || false}
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -66,15 +69,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   if (actionType === "delete") {
     console.log('test: ')
-    const id = parseInt(formData.get("id") as string, 10);
-    return await deleteFilament(id);
+    const id = formData.get("id");
+    return await deleteFilament(+id);
   }
 
   return json({ error: "Invalid action" }, { status: 400 });
 };
 
 export default function Inventory() {
-  const {filaments, brands, colors, materials} = useLoaderData<typeof loader>();
+  const {filaments, brands, colors, materials, admin} = useLoaderData<typeof loader>();
 
   const navigate = useNavigate();
   const [selectedFilters, setSelectedFilters] = useState<{brand: string[]; material: string[]; color: string[];}>({
@@ -135,25 +138,25 @@ export default function Inventory() {
           setFilterVisible={setFilterVisible}
         />
       </div>
-      <div className="w-5/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
+      <div className="w-7/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
         <div className="overflow-y-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
             <thead className="sticky top-0 z-3 text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
               <tr className="rounded-t-lg ">
-                <th scope="col" className="pl-6 py-3 w-1/4">
+                <th scope="col" className="pl-6 py-3 w-fit">
                   Brand
                 </th>
-                <th scope="col" className="text-center py-3 w-1/4">
+                <th scope="col" className="text-center py-3 w-fit">
                   Material
                 </th>
-                <th scope="col" className="text-center py-3 w-1/4">
+                <th scope="col" className="text-center py-3 w-fit">
                   Color
                 </th>
-                <th scope="col" className="text-center py-3 w-1/4">
+                <th scope="col" className="text-center py-3 w-2/12">
                   Stock
                 </th>
-                {/* <th scope="col" className="px-6 py-3">Update</th>
-            <th scope="col" className="px-6 py-3">Delete</th> */}
+                {/* <th scope="col" className="px-6 py-3">Update</th> */}
+                {admin && <th scope="col" className="text-center py-3 w-1/12">Delete</th>}
               </tr>
             </thead>
             <tbody className="">
@@ -181,6 +184,12 @@ export default function Inventory() {
                   <td className="text-center">
                     <p>{filament.stock_level}</p>
                   </td>
+                  {admin && <td className="flex justify-center">
+                    <Form method="post">
+                      <input type="hidden" name="id" value={filament.id}/>
+                      <button name="_action" value="delete"><TrashIcon className="size-6"/></button>
+                    </Form>
+                  </td>}
                 </tr>
               ))}
             </tbody>

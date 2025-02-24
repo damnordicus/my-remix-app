@@ -304,35 +304,24 @@ export async function createNewRoll(newId: string, weight: number, price: number
 }
 
 // Delete a filament
-export async function deleteFilament(barcode: string, id: number) {
+export async function deleteFilament(id: number) {
+  console.log('id: ',id)
 
-  // const decoded = atob(barcode);
-  // const parsed = JSON.parse(decoded);
+  const deleteRolls = await prisma.roll.deleteMany({
+    where:{
+      filament:{
+        id,
+      },
+    },
+  });
 
-  const existingBarcodes = await prisma.filament.findFirstOrThrow({
+  const deleteFilament = await prisma.filament.deleteMany({
     where:{
       id,
     },
-    select:{
-      brand: true,
-      material: true,
-      color: true,
-    }
-  })
+  });
 
-  return await prisma.filament.update({
-     where: {
-       id,
-      brand: existingBarcodes.brand,
-      material: existingBarcodes.material,
-      color: existingBarcodes.color,
-    },
-     data: {
-        stock_level:{
-          decrement: 1,
-        }
-     }
- });
+  return {deleteRolls, deleteFilament};
 }
 
 export async function getColorsByMaterial( material: string){

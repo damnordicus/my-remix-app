@@ -120,7 +120,7 @@ export default function PrintJobForm() {
             </div>
             <label htmlFor="details" className="flex pl-4 text-lg py-2" >Job Description: </label>
             <textarea name="details" className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 px-2"></textarea>
-            <div className="w-full text-center pt-2 mb-4 mt-1">
+            <div className="flex w-full justify-center pt-2 mb-4 mt-1">
                 <button name="_action" value="submit" type="submit" className="rounded-xl border-2 border-amber-600 bg-amber-500 px-2 py-1 text-black">Submit</button>
             </div>
             </Form>
