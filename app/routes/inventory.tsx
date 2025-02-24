@@ -138,21 +138,21 @@ export default function Inventory() {
           setFilterVisible={setFilterVisible}
         />
       </div>
-      <div className="w-7/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
+      <div className="w-5/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
         <div className="overflow-y-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
             <thead className="sticky top-0 z-3 text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
               <tr className="rounded-t-lg ">
-                <th scope="col" className="pl-6 py-3 w-fit">
+                <th scope="col" className={`text-center pl-6 py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
                   Brand
                 </th>
-                <th scope="col" className="text-center py-3 w-fit">
+                <th scope="col" className={`text-center py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
                   Material
                 </th>
-                <th scope="col" className="text-center py-3 w-fit">
+                <th scope="col" className={`text-center py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
                   Color
                 </th>
-                <th scope="col" className="text-center py-3 w-2/12">
+                <th scope="col" className={`text-center py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
                   Stock
                 </th>
                 {/* <th scope="col" className="px-6 py-3">Update</th> */}
@@ -172,7 +172,7 @@ export default function Inventory() {
                   } border-b border-gray-200 hover:bg-gray-600 `}
                   onClick={() => handleItemClick(filament.id)}
                 >
-                  <td className="">
+                  <td className="text-center">
                     <p className=" text-lg pl-2">{filament.brand}</p>
                   </td>
                   <td className="text-center">

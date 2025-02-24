@@ -79,7 +79,7 @@ export default function SelectedItem() {
         <select name="barcode" className="shadow-lg border-[1px] rounded-lg border-slate-400 px-2 bg-slate-600">
           {barcodes.map((x) => (
             <option key={x} value={x}>
-              {x.slice(x.length-10).toUpperCase()}
+              {x.slice(x.length-12).toUpperCase()}
             </option>
           ))}
         </select>

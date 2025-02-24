@@ -63,7 +63,7 @@ export async function loader({request}) {
   const contentFilename = `qr-code-${newId}.png`;
   const newQr = await generateQr(newId, "png");
     if (downloadType === "fetcher") {
-      return json({
+      return ({
         fileData: newQr.toString('base64'),
         fileName: contentFilename,
         fileType: contentType,
