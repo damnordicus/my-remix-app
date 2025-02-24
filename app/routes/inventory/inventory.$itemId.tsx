@@ -29,12 +29,14 @@ import {
 import { generateQr } from "~/services/qr.server";
 import { ActionFunctionArgs } from "react-router";
 import { error } from "console";
+import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({ request, params }) => {
+  const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
   const filamentId = +params.itemId;
   const selectedFilament = await getFilamentById(filamentId);
   const barcodes = await getBarcodesByFilamentId(filamentId);
-  return { selectedFilament, barcodes };
+  return { selectedFilament, barcodes, user: session.username || null };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -90,7 +92,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function SelectedItem() {
-  const { selectedFilament, barcodes } = useLoaderData<typeof loader>();
+  const { selectedFilament, barcodes, user } = useLoaderData<typeof loader>();
   const navigate = useNavigate();
   const nav = useNavigation();
 
@@ -134,7 +136,7 @@ export default function SelectedItem() {
                 className={`w-full p-2 mt-1 rounded-md ${quantity > 0 ? 'text-green-500': quantity === 0 ? 'text-white' : 'text-red-500'}  bg-black border-2 border-amber-500 shadow-lg`}
               /> */}
             <div className="w-full flex justify-around pt-4 ">
-              <Link
+              {user && <><Link
                 className="bg-red-500 px-2 py-1 mb-2 rounded-lg shadow-lg"
                 to="discard"
               >
@@ -145,7 +147,16 @@ export default function SelectedItem() {
                 to="add"
               >
                 + Add A Roll
-              </Link>
+              </Link></>}
+              {!user && <div className="flex-col w-full text-center text-slate-300 border-2 border-slate-400 bg-slate-800 rounded-lg">
+                {barcodes.map((x,index) => {
+                  return (
+                    <>
+                    <p>{x}</p>
+                    {index === barcodes.length - 1 ? null : <hr className="border border-slate-600 w-31/32 flex self-center"/>}
+                  </>)
+                })}
+              </div>}
             </div>
             <Outlet />
           </div>

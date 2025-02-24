@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router";
 
-export default function MainButton ({text, link}) {
+export default function 
+MainButton ({text, link}) {
 
     return (
         <Link 

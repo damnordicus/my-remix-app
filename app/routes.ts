@@ -29,6 +29,7 @@ export default [
   route("user", "./routes/jobs/auth.tsx"),
   route("logout", "./routes/logout.tsx"),
   route("showQR", "./routes/showQR.tsx"),
+  route("generateBarcode", "./routes/generateBarcode.tsx"),
   
   ...prefix("job", [
     route("auth", "./routes/job.tsx"),

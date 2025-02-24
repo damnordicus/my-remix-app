@@ -18,7 +18,7 @@ export const loader = async ({request}: LoaderFunctionArgs) => {
   const colors = await getAllColors();
   const materials = await getAllMaterials();
   
-  return {filaments, brands, colors, materials, admin: session.admin || false}
+  return {filaments, brands, colors, materials, user: session.username, admin: session.admin || false}
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -77,7 +77,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Inventory() {
-  const {filaments, brands, colors, materials, admin} = useLoaderData<typeof loader>();
+  const {filaments, brands, colors, materials, user, admin} = useLoaderData<typeof loader>();
 
   const navigate = useNavigate();
   const [selectedFilters, setSelectedFilters] = useState<{brand: string[]; material: string[]; color: string[];}>({
