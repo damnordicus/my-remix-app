@@ -23,20 +23,17 @@ export const action = async ({request}) => {
         const color = formData.get("color");
         console.log('brand: ', brand, ' material: ', material, ' color: ', color)
         const barcodes = await getFirstBarcodeForFilament(brand, material, color);
-        let barcode;
         console.log('barcode: ', barcodes)
-        if(barcodes.barcode?.length){
-            barcode = barcodes.barcode;
-        }else{
+        if(!barcodes){
             return {message: 'No rolls found for that selection', status: 400}
         }
 
         // const temp = {brand: brand, material: material, color: color, barcode: barcode?.barcode};
-        const barcodeParam = barcode;
+        // const barcodeParam = barcode;
         // const stringify = JSON.stringify(temp);
         // const results = btoa(stringify)
-        console.log(barcodeParam)
-        return redirect(`../../job/create?selection=${barcodeParam}`);
+        // console.log(barcodeParam)
+        return redirect(`../../job/create?selection=${barcodes}`);
     }
 
 }

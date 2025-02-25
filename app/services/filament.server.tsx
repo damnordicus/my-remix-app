@@ -1,4 +1,5 @@
 import { BriefcaseIcon } from "@heroicons/react/24/outline";
+import { equal } from "assert";
 import { connect } from "http2";
 import { parse } from "path";
 import { exit } from "process";
@@ -64,44 +65,59 @@ export async function addQRtoRoll(qrString: string, filamentId: number){
   })
 }
 
-export async function returnFilamentToStock(parsedObject: object) {
-  // const existingFilament = await prisma.filament.findFirstOrThrow({
-  //   where:{
-  //     brand: parsedObject.brand,
-  //     color: parsedObject.color,
-  //     material: parsedObject.material,
-  //   },
-  //   select:{
-  //     id: true,
-  //     barcode: true,
-  //   }
-  // });
-  // const existingId = existingFilament.id;
+export async function returnFilamentToStock(barcode: string, weight: number) {
+  const inUse = false;
 
-  // return await prisma.filament.update({
-  //   where:{
-  //     brand: parsedObject.brand,
-  //     color: parsedObject.color,
-  //     material: parsedObject.material,
-  //     id: existingId,
-  //   },
-  //   data:{
-  //     stock_level: {
-  //       increment: 1,
-  //     },
-  //   }
-  // })
-
+  return prisma.roll.update({
+    where: {
+      barcode,
+      inUse: true,
+    },
+    data: {
+      inUse,
+      weight,
+      filament:{
+        update:{
+          stock_level:{
+            increment: 1,
+          },
+        },
+      },
+    },
+  });
 }
 
 export async function getAllUsers(){
   return await prisma.user.findMany({});
 }
 
+export async function getJobsByUserId(id: number){
+  const result = await prisma.job.findMany({
+    where:{
+      user:{
+        id,
+      }
+    }
+  })
+
+  return result
+}
+
 export async function getUserByUsername(username: string){
   return prisma.user.findUnique({
     where:{
       username,
+    },
+  });
+}
+
+export async function getUserIdByUsername(username: string){
+  return await prisma.user.findUnique({
+    where: {
+      username,
+    },
+    select:{
+      id: true,
     },
   });
 }
@@ -214,7 +230,7 @@ export async function getFirstBarcodeForFilament(brand: string, material: string
     // }
 
     // Return only the first barcode
-    return { barcode: results.rolls[0].barcode };
+    return  results.rolls[0].barcode 
   } catch (error) {
     return { message: 'Filament not found.', status: 404 };
   }
@@ -292,6 +308,7 @@ export async function addRollToFilament(id: number){
 }
 
 export async function createNewRoll(newId: string, weight: number, price: number, id: number){
+  const inUse = false;
   return await prisma.roll.create({
     data:{
       barcode: newId,
@@ -299,6 +316,7 @@ export async function createNewRoll(newId: string, weight: number, price: number
       price,
       filamentId: id,
       purchase_date: new Date(Date.now()),
+      inUse,
     }
   })
 }
@@ -343,6 +361,9 @@ export async function getBrandsByColor( material: string, color: string){
     where:{
       material,
       color,
+      stock_level:{
+        gte: 1,
+      },
     },
     select:{
       brand: true,
@@ -362,6 +383,8 @@ export async function createJob(classification: string, printer: string, barcode
     }
   });
 
+  const inUse = true;
+
   const filament = await prisma.roll.update({
     where:{
       barcode,
@@ -373,7 +396,8 @@ export async function createJob(classification: string, printer: string, barcode
             decrement: 1,
           }
         }
-      }
+      },
+      inUse,
     }
   })
 
@@ -385,6 +409,7 @@ export async function createJob(classification: string, printer: string, barcode
       details,
       rollId: roll.id,
       userId,
+      date: new Date(Date.now()),
     },
   });
   return result;

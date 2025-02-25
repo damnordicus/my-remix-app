@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, useLoaderData, useNavigate } from "react-router";
+import { LoaderFunctionArgs, Outlet, useLoaderData, useNavigate } from "react-router";
 import { userSession } from "~/services/cookies.server";
 import { getAllUsers } from "~/services/filament.server";
 
@@ -13,10 +13,11 @@ export const loader = async ({ request }: LoaderFunctionArgs ) => {
 
 export default function Accounts () {
     const { allAccounts } = useLoaderData<typeof loader>();
+    console.log(allAccounts)
     const navigate = useNavigate();
 
-    function handleClick(index: number){
-        navigate('view/jobs');
+    function handleClick(id: number){
+        navigate(`./${id}/jobs`);
     }
 
     return (
@@ -39,7 +40,7 @@ export default function Accounts () {
             {allAccounts?.length && (
                 allAccounts.map((account, index) => {
                     return(
-                    <tr key={index} className={`text-center ${index < allAccounts.length -1 ? 'border-b-2 border-slate-400 ' : ''} hover:cursor-pointer hover:bg-slate-500`} onClick={() => handleClick(index)}>
+                    <tr key={account.id} className={`text-center ${index < allAccounts.length -1 ? 'border-b-2 border-slate-400 ' : ''} hover:cursor-pointer hover:bg-slate-500`} onClick={() => handleClick(account.id)}>
                         <td>
                             {account.username}
                         </td>
@@ -54,6 +55,7 @@ export default function Accounts () {
             )}
             </table>
             </div>
+            <Outlet />
         </div>
     );
 }

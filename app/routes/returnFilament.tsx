@@ -28,10 +28,10 @@ export const action: ActionFunction = async ({ request }) => {
 
   if(actionType === 'submit'){
     const barcodeObject = formData.get("barcode") as string;
-    const weight = formData.get("weight") as unknown as number;
-    const decoded = atob(barcodeObject);
-    const parsed = JSON.parse(decoded);
-    return await returnFilamentToStock(parsed);
+    const weight = formData.get("weight") as string;
+    // const decoded = atob(barcodeObject);
+    // const parsed = JSON.parse(decoded);
+    return await returnFilamentToStock(barcodeObject, +weight);
   }
   else {
     return null;
@@ -81,10 +81,10 @@ export default function  ReturnToStock() {
     }
   }, [])
 
-  const test = {brand:"ESUN", color:"GOLD", material:"PLA"}
-  const stringify = JSON.stringify(test);
-  const encoded = btoa(stringify);
-  console.log(encoded);
+  // const test = {brand:"ESUN", color:"GOLD", material:"PLA"}
+  // const stringify = JSON.stringify(test);
+  // const encoded = btoa(stringify);
+  // console.log(encoded);
 
   return (
     <>

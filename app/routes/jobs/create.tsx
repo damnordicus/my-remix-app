@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ActionFunctionArgs, Form, Link, Outlet, redirect, useActionData, useLoaderData, useNavigate, LoaderFunctionArgs } from "react-router";
 import InputDropDown from "~/components/InputDropDown";
 import Badge from "~/components/Badge";
-import { createJob, getFilamentByBarcode } from "~/services/filament.server";
+import { createJob, getFilamentByBarcode, getUserIdByUsername } from "~/services/filament.server";
 import { toast } from "react-hot-toast";
 import { userSession } from "~/services/cookies.server";
 
@@ -20,10 +20,12 @@ export async function loader({request}: LoaderFunctionArgs) {
     if(!session?.username){
         return redirect("..");
     }
+
+    const userId = await getUserIdByUsername(session.username);
     
     if(selection){
         const filament = await getFilamentByBarcode(selection);
-        return {filament, selection};
+        return {filament, selection, user: userId.id};
     }
         return {};
 }
@@ -33,14 +35,17 @@ export async function action ({ request }: ActionFunctionArgs) {
     const action = formData.get('_action');
 
     if(action === 'submit'){
-        const classification = formData.get("classification");
-        const printer = formData.get('printer');
-        const barcode = formData.get('barcode');
-        const details = formData.get('details');
-        const userId = 14;
-        if(!classification || !printer || !barcode || !details) return redirect('')   
+        const classification = formData.get("classification") as string;
+        const printer = formData.get('printer') as string;
+        const barcode = formData.get('barcode') as string;
+        const details = formData.get('details') as string;
+        const userId = formData.get('userId') as string;
+        // const date = formData.get("date");
+        if(!classification || !printer || !barcode || !details) return redirect('')  
+    
+        // console.log('data; ', date)
         
-        await createJob(classification, printer, barcode, details, userId);
+        await createJob(classification, printer, barcode, details, +userId);
         return redirect('/?success=true');
     }
     return redirect('/');
@@ -48,7 +53,7 @@ export async function action ({ request }: ActionFunctionArgs) {
 }
 
 export default function PrintJobForm() {
-    const { filament: selection, selection: barcode } = useLoaderData<typeof loader>();
+    const { filament: selection, selection: barcode , user} = useLoaderData<typeof loader>();
     const options = ["Left XL", "Right XL", "Left MK4", "Right MK4", "MK3 1", "MK3 2", "MK3 3", "MK3 4", "MK3 5", "MK3 6"];
     const [ selectedCategory, setSelectedCategory] = useState('');
     const [ selectedPrinter, setSelectedPrinter] = useState('');
@@ -56,6 +61,8 @@ export default function PrintJobForm() {
     const [ scannedBarcode, setScannedBarcode ] = useState('');
     const navigate = useNavigate();
     const actionData = useActionData<typeof action>();
+
+    console.log('user: ', user)
 
     useEffect(() => {
         if(selection){
@@ -93,6 +100,7 @@ export default function PrintJobForm() {
                 Job Details
             </h1>
             <Form method="POST">
+                <input type="hidden" name="userId" value={user} />
             <InputDropDown labelText={"Classification"} options={["Mission", "Personal"]} setSelectedOption={setSelectedCategory}/>
             <InputDropDown labelText={"Printer"} options={options} setSelectedOption={setSelectedPrinter}/>
             <div className="flex-col w-full">
@@ -120,6 +128,7 @@ export default function PrintJobForm() {
             </div>
             <label htmlFor="details" className="flex pl-4 text-lg py-2" >Job Description: </label>
             <textarea name="details" className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 px-2"></textarea>
+            {/* <input type="hidden" name="date" value={new Date(Date.now())} /> */}
             <div className="flex w-full justify-center pt-2 mb-4 mt-1">
                 <button name="_action" value="submit" type="submit" className="rounded-xl border-2 border-amber-600 bg-amber-500 px-2 py-1 text-black">Submit</button>
             </div>
