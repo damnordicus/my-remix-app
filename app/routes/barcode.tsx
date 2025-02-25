@@ -118,7 +118,7 @@ export default function Barcode() {
 
       localStorage.setItem('scannedBarcode', data)
       // window.close();
-      navigate(-1);
+      navigate(`../?selection=${data}`);
       console.log(`go get the data for ${data}`)
     }
   }, [data])

@@ -8,7 +8,7 @@ export const loader = async ({request}) => {
     // const colors = await getAllColors();
     const materials = await getAllMaterials();
     // const filaments = await getAllFilaments();
-
+    console.log('materials: ', materials)
     //return {brands, colors, materials, filaments};
     return {materials}
 }

@@ -6,6 +6,7 @@ import Badge from "~/components/Badge";
 import { createJob, getFilamentByBarcode, getUserIdByUsername } from "~/services/filament.server";
 import { toast } from "react-hot-toast";
 import { userSession } from "~/services/cookies.server";
+import { Route } from "./+types/create";
 
 export async function loader({request}: LoaderFunctionArgs) {
     // check request.headers.cookie for userId or sessionid
@@ -22,10 +23,11 @@ export async function loader({request}: LoaderFunctionArgs) {
     }
 
     const userId = await getUserIdByUsername(session.username);
+    const user = userId?.id;
     
     if(selection){
         const filament = await getFilamentByBarcode(selection);
-        return {filament, selection, user: userId.id};
+        return {filament, selection, user};
     }
         return {};
 }
@@ -46,14 +48,14 @@ export async function action ({ request }: ActionFunctionArgs) {
         // console.log('data; ', date)
         
         await createJob(classification, printer, barcode, details, +userId);
-        return redirect('/?success=true');
+        return redirect('/?success=job');
     }
     return redirect('/');
     
 }
 
-export default function PrintJobForm() {
-    const { filament: selection, selection: barcode , user} = useLoaderData<typeof loader>();
+export default function PrintJobForm({loaderData:{ filament: selection, selection: barcode , user}}: Route.ComponentProps) {
+    // const { filament: selection, selection: barcode , user} = loaderData;
     const options = ["Left XL", "Right XL", "Left MK4", "Right MK4", "MK3 1", "MK3 2", "MK3 3", "MK3 4", "MK3 5", "MK3 6"];
     const [ selectedCategory, setSelectedCategory] = useState('');
     const [ selectedPrinter, setSelectedPrinter] = useState('');
@@ -77,6 +79,7 @@ export default function PrintJobForm() {
         console.log('session: ', grabbedBarcode)
         if(grabbedBarcode){
           setScannedBarcode(grabbedBarcode);
+
         }
       }, [])
     // useEffect(() => {

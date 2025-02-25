@@ -14,11 +14,11 @@ export default function Layout({ children, backgroundUrl, user }: { children: Re
         className="min-h-screen "
       >
       <div className="fixed flex w-full justify-between">
-        <div className="bg-slate-800 w-[300px] h-[35px] rounded-ee-2xl border-b-4 border-r-4 border-slate-600 hover:bg-slate-500">
-         <p className="bg-opacity-0 text-white text-xl pl-3">
-          <Link to="/">Filament Inventory Manager</Link>
+        <Link to="/"><div className="bg-slate-800 w-[300px] h-[35px] rounded-ee-2xl border-b-4 border-r-4 border-slate-600 hover:bg-slate-500">
+          <p className="bg-opacity-0 text-white text-xl pl-3">
+            Filament Inventory Manager
           </p>
-        </div>
+        </div></Link>
       <div>
       {user ? (
         <Form method="POST" action="/logout" >

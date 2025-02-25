@@ -66,15 +66,15 @@ export async function addQRtoRoll(qrString: string, filamentId: number){
 }
 
 export async function returnFilamentToStock(barcode: string, weight: number) {
-  const inUse = false;
 
-  return prisma.roll.update({
+  try{
+    const result = await prisma.roll.update({
     where: {
       barcode,
       inUse: true,
     },
     data: {
-      inUse,
+      inUse: false,
       weight,
       filament:{
         update:{
@@ -84,7 +84,14 @@ export async function returnFilamentToStock(barcode: string, weight: number) {
         },
       },
     },
-  });
+   });
+
+   return {success: true, message: "Roll successfully returned to stock!"};
+  }catch(e){
+    console.error(e);
+    return { success: false, message: "An error occured while updating the filament."};
+    // return {};
+  }
 }
 
 export async function getAllUsers(){
@@ -210,15 +217,27 @@ export async function getBarcodesByFilamentId(id: number){
       filamentId: id
     },
   });
-  return result.map(x => x.barcode);
+  return result;
 }
 
 export async function getFirstBarcodeForFilament(brand: string, material: string, color: string) {
   try {
     const results = await prisma.filament.findFirstOrThrow({
-      where: { brand, color, material },
+      where: {
+         brand,
+         color,
+         material,
+         rolls:{
+          some:{
+            inUse: false,
+          },
+         },
+      },
       include: {
         rolls: {
+          where:{
+            inUse: false,
+          },
           select: { barcode: true },
         },
       },
@@ -308,7 +327,6 @@ export async function addRollToFilament(id: number){
 }
 
 export async function createNewRoll(newId: string, weight: number, price: number, id: number){
-  const inUse = false;
   return await prisma.roll.create({
     data:{
       barcode: newId,
@@ -316,7 +334,7 @@ export async function createNewRoll(newId: string, weight: number, price: number
       price,
       filamentId: id,
       purchase_date: new Date(Date.now()),
-      inUse,
+      inUse: false,
     }
   })
 }
@@ -364,6 +382,11 @@ export async function getBrandsByColor( material: string, color: string){
       stock_level:{
         gte: 1,
       },
+      rolls:{
+        some:{
+          inUse: false,
+        }
+      }
     },
     select:{
       brand: true,
@@ -383,8 +406,6 @@ export async function createJob(classification: string, printer: string, barcode
     }
   });
 
-  const inUse = true;
-
   const filament = await prisma.roll.update({
     where:{
       barcode,
@@ -397,7 +418,7 @@ export async function createJob(classification: string, printer: string, barcode
           }
         }
       },
-      inUse,
+      inUse: true,
     }
   })
 

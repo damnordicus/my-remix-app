@@ -1,11 +1,12 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, Link, LoaderFunction } from "react-router";
+import { ActionFunction, Link, LoaderFunction, redirect } from "react-router";
 import { json, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { CameraEnhancer } from "dynamsoft-camera-enhancer";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
 import { useEffect, useState } from "react";
 import BarcodeScanner from "~/components/BarcodeScanner";
 import { getAllMaterials, getFilamentByBarcode, pullFromStockByBarcode, returnFilamentToStock } from "~/services/filament.server";
+import Barcode from "~/routes/barcode";
 
 export const loader: LoaderFunction = async ({ request }) => {
 //   const url = new URL(request.url);
@@ -31,7 +32,10 @@ export const action: ActionFunction = async ({ request }) => {
     const weight = formData.get("weight") as string;
     // const decoded = atob(barcodeObject);
     // const parsed = JSON.parse(decoded);
-    return await returnFilamentToStock(barcodeObject, +weight);
+    const result = await returnFilamentToStock(barcodeObject, +weight);
+    if(result.success)
+      return redirect("../?success=return")
+    return redirect("../?fail=return")
   }
   else {
     return null;
@@ -106,6 +110,7 @@ export default function  ReturnToStock() {
               required
             />
             <Link to="../barcode"><CameraIcon className="size-7 ml-4 text-amber-500"/></Link>
+           
             </div>
             
             

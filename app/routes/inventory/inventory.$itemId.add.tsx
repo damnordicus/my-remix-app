@@ -1,5 +1,5 @@
 import { QrCodeIcon } from "@heroicons/react/24/outline";
-import { ActionFunctionArgs } from "react-router";
+import { ActionFunctionArgs, redirect } from "react-router";
 import { Form, Link, useActionData, useFetcher, useMatches, useNavigate } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -96,7 +96,7 @@ export default function SelectedItem() {
 
   const handleDownload = useCallback((id) => {
     if (fetcher.state !== "idle") return;
-    fetcher.load(`/api/generate?id=${id}&type=fetcher`);
+    //fetcher.load(`/api/generate?id=${id}&type=fetcher`);
     navigate("..")
   }, [])
 

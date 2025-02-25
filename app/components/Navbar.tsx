@@ -10,6 +10,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
         if(!updatedFilters[name].includes(value)){
             updatedFilters[name] = [...updatedFilters[name], value];
         }
+        //add name ("brand") = value ("hatchbox") to url
         
       } else {
         updatedFilters[name] = updatedFilters[name].filter((v) => v !== value);
@@ -25,7 +26,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
     <nav className="navbar relative">
       <button
         onClick={() => setFilterVisible((prev) => !prev)}
-        className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-e-full border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400 "
+        className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-xl border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400 "
       >
         Filter
       </button>

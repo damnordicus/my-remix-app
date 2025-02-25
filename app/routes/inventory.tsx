@@ -1,4 +1,4 @@
-import { data, Form, Link, LoaderFunctionArgs, Outlet, useLoaderData, useNavigate } from "react-router";
+import { data, Form, Link, LoaderFunctionArgs, Outlet, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCallback, useEffect, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
@@ -13,6 +13,13 @@ import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
+  const searchParams = new URL(request.url).searchParams;
+  const brandFilter = searchParams.getAll("brand");
+  const colorFilter = searchParams.getAll("color");
+  const materialFilter = searchParams.getAll("material");
+
+  console.log("tes: " ,brandFilter)
+
   const filaments = await getAllFilaments();
   const brands = await getAllBrands();
   const colors = await getAllColors();
@@ -78,6 +85,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export default function Inventory() {
   const {filaments, brands, colors, materials, user, admin} = useLoaderData<typeof loader>();
+  const [search, setSearch] = useSearchParams();
 
   const navigate = useNavigate();
   const [selectedFilters, setSelectedFilters] = useState<{brand: string[]; material: string[]; color: string[];}>({
@@ -125,8 +133,9 @@ export default function Inventory() {
   return (
     <div className="" style={{alignSelf: "start"}}>
       <div className="flex justify-center py-4 gap-1 ">
+      <button onClick={() => {const params = new URLSearchParams(); params.append('brand', '1'); params.append('brand', '2');setSearch(params);}}>Set Things</button>
         {/* <AddFilament /> */}
-        <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-s-full border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>
+        {admin && <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-s-full border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>}
         <Navbar
           setSelectedFilters={setSelectedFilters}
           filterList={filterList}

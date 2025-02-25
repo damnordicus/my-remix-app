@@ -1,22 +1,14 @@
 import {
-  ArrowPathIcon,
-  CameraIcon,
-  TrashIcon,
-  QrCodeIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@heroicons/react/24/outline";
 import {
-  Form,
   Link,
   Outlet,
-  redirect,
-  useFetcher,
-  useFetchers,
   useLoaderData,
   useNavigate,
   useNavigation,
-  useParams,
+  ActionFunctionArgs
 } from "react-router";
 import { useEffect, useState } from "react";
 import Badge from "../../components/Badge";
@@ -29,17 +21,16 @@ import {
   removeFilamentByQR,
 } from "~/services/filament.server";
 import { generateQr } from "~/services/qr.server";
-import { ActionFunctionArgs } from "react-router";
-import { error } from "console";
 import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({ request, params }) => {
   const session =
     (await userSession.parse(request.headers.get("Cookie"))) || {};
   const filamentId = +params.itemId;
+  const filters = (new URL(request.url).searchParams).get("filters");
   const selectedFilament = await getFilamentById(filamentId);
   const barcodes = await getBarcodesByFilamentId(filamentId);
-  return { selectedFilament, barcodes, user: session.username || null };
+  return { selectedFilament, barcodes, user: session.username || null, filters };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -117,12 +108,12 @@ export default function SelectedItem() {
         <div
           className={`w-[400px]  bg-slate-600/60 backdrop-blur-xs rounded-2xl shadow-xl p-6 relative border-2 border-slate-300 `}
         >
-          <p
+          <div
             className="fixed top-2 right-2 cursor-pointer text-white text-xl"
             onClick={() => navigate("..")}
           >
             ✖
-          </p>
+          </div>
 
           <div className="flex justify-between mt-4">
             <p className="text-white font-bold">{selectedFilament.brand}</p>
@@ -135,7 +126,7 @@ export default function SelectedItem() {
               {scannedBarcode && (
                 <p>Scanned code: {scannedBarcode}</p>
               )} */}
-            <button onClick={switchToggle}>
+            <button onClick={switchToggle} className="pb-2">
               Number of Rolls: {selectedFilament.stock_level}{" "}
               {!toggle && <ChevronDownIcon className="size-4 inline" />}
               {toggle && <ChevronUpIcon className="size-4 inline" />}
@@ -143,12 +134,12 @@ export default function SelectedItem() {
             {toggle && (
               <div className="flex-col text-center text-slate-300 border-2 border-slate-400 bg-slate-800 rounded-lg">
                 {barcodes.map((x, index) => {
-                  let last12 = x.slice(-12);
-                  let starting = x.slice(0, x.length - 12);
+                  let last12 = x.barcode.slice(-12);
+                  let starting = x.barcode.slice(0, x.barcode.length - 12);
                   return (
-                    <span key={index} onClick={switchToggle}>
+                    <span key={index} onClick={switchToggle} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'}`}>
                       {starting}
-                      <span className="text-white">{last12}</span>
+                      <span className={`${x.inUse ? 'text-amber-300': 'text-white'} `}>{last12}</span>
                       {index === barcodes.length - 1 ? null : (
                         <hr className="border border-slate-600 w-31/32 flex self-center" />
                       )}
