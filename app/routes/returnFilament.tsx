@@ -82,6 +82,7 @@ export default function  ReturnToStock() {
     console.log('session: ', grabbedBarcode)
     if(grabbedBarcode){
       setScannedBarcode(grabbedBarcode);
+      localStorage.removeItem("scannedBarcode")
     }
   }, [])
 
@@ -93,7 +94,7 @@ export default function  ReturnToStock() {
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="w-2/6 flex justify-center bg-slate-600/50 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-4">
+        <div className="w-1/6 flex justify-center bg-slate-600/50 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-4">
           <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl mb-4">
@@ -106,7 +107,8 @@ export default function  ReturnToStock() {
               type="text"
               placeholder="Barcode"
               name="barcode"
-              defaultValue={scannedBarcode}
+              value={scannedBarcode}
+              disabled
               required
             />
             <Link to="../barcode"><CameraIcon className="size-7 ml-4 text-amber-500"/></Link>

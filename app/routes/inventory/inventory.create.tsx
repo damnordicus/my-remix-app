@@ -1,5 +1,5 @@
 import { XCircleIcon } from "@heroicons/react/24/outline";
-import { Form, useNavigate, useNavigation } from "react-router";
+import { Form, redirect, useNavigate, useNavigation } from "react-router";
 import { useEffect, useState } from "react";
 import { createFilament } from "~/services/filament.server";
 
@@ -11,13 +11,13 @@ export const action = async({ request }) => {
       const material = formData.get("material");
       const color = formData.get("color");
       const diameter = formData.get("diameter"); 
-
       await createFilament({brand, material, color, diameter});
+      return redirect("..")
     }
 }
 
 export default function AddFilament () {
-    const [addVisible, setAddVisible] = useState(false);
+    //const [addVisible, setAddVisible] = useState(false);
     const [selectedColor, setSelectedColor] = useState('');
     const navigation = useNavigation();
     const inputClass = 'w-5/6 p-2 border-2 rounded-md border-orange-500 bg-slate-800 shadow-md shadow-gray-700';
@@ -35,11 +35,12 @@ export default function AddFilament () {
     const navigate = useNavigate();
 
     
-    useEffect(() => {
-        if(navigation.state === 'idle'){
-            setAddVisible(false);
-        } 
-    },[navigation.state]);
+    // useEffect(() => {
+    //     if(navigation.state === 'idle'){
+    //         setAddVisible(false);
+    //     } 
+
+    // },[navigation.state]);
 
     const toggleView = () => {
         setSelectedColor('');

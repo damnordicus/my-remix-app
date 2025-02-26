@@ -78,8 +78,8 @@ export default function SelectedItem() {
         <div className="flex gap-2 justify-center">
         <select name="barcode" className="shadow-lg border-[1px] rounded-lg border-slate-400 px-2 bg-slate-600">
           {barcodes.map((x) => (
-            <option key={x} value={x}>
-              {x.slice(x.length-12).toUpperCase()}
+            <option key={x} value={x.barcode}>
+              {x.barcode.slice(x.barcode.length-12)}
             </option>
           ))}
         </select>

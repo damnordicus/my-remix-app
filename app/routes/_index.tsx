@@ -53,6 +53,12 @@ export default function Index() {
           setSearchParams({}, {replace: true});
         }, 2000);
         break;
+      case "rollCreate":
+        toast.success("Filamnent profile created!");
+        setTimeout(() => {
+          setSearchParams({}, {replace: true});
+        }, 2000);
+        break;
     }
 
     switch(searchParams.get("fail")){

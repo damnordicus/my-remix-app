@@ -23,7 +23,12 @@ export default function UserJobs(){
                         <h2 className="text-amber-500  text-end">Printer:</h2><p className="ml-2 inline" >{x.printer}</p>
                         <h2 className="text-amber-500 text-end ">Job date:</h2><p className="ml-2 inline">{x.date.toLocaleString("en-US", {hour12: false})}</p>
                         <hr className="col-span-2 my-2 border-slate-400/60"/>
-                        <h2 className="text-amber-500 ">Filament:</h2><p className="ml-2 col-span-2">{x.barcode}</p>
+                        <h2 className="text-amber-500 ">Filament:</h2>{/* <p className="ml-2 col-span-2">{x.barcode}</p> */}
+                        <div className="ml-2 col-span-2">
+                            {x.barcode.split(",").map((code, index) => (
+                                <p key={index}>{code}</p>
+                            ))}
+                        </div>
                         <h2 className="text-amber-500">Detials:</h2><p className="ml-2 col-span-2">{x.details}</p>
                     </div>
                 ))}

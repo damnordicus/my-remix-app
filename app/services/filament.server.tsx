@@ -242,6 +242,16 @@ export async function getFirstBarcodeForFilament(brand: string, material: string
         },
       },
     });
+
+    await prisma.roll.update({
+      where:{
+        barcode: results.rolls[0].barcode,
+      },
+      data:{
+        inUse: true,
+      }
+    })
+    
     console.log('results: ', results)
     // Ensure at least one roll exists
     // if (results.rolls.length === 0) {
@@ -257,8 +267,8 @@ export async function getFirstBarcodeForFilament(brand: string, material: string
 
 // Create a new filament
 export async function createFilament({brand, material, color, diameter}: {brand: string, material: string, color: string, diameter:string}) {
- return await prisma.filament.create({
-     data: {
+ return await prisma.filament.upsert({
+    data: {
         brand: brand.toUpperCase(),
         material: material.toUpperCase(),
         color: color.toUpperCase(),

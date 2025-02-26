@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BrowserMultiFormatReader, Result } from "@zxing/library";
 import Webcam from "react-webcam";
-import { redirect, useNavigate } from "react-router";
+import { redirect, useNavigate, useSearchParams } from "react-router";
 
 export const BarcodeScannerComponent = ({
   onUpdate,
@@ -111,6 +111,8 @@ export default function Barcode() {
   const [data, setData] = useState("Not Found");
   const [stopStream, setStopStream] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const linkTo = searchParams.get('from')
 
   useEffect(() => {
     if (data !== '' && data !== 'Not Found') {
@@ -118,7 +120,13 @@ export default function Barcode() {
 
       localStorage.setItem('scannedBarcode', data)
       // window.close();
-      navigate(`../?selection=${data}`);
+      console.log('linkTo: ', linkTo)
+      if(linkTo) {
+        navigate(`../${linkTo}/?selection=${data}`);
+      }else{
+        navigate(`../return?selection=${data}`)
+      }
+      
       console.log(`go get the data for ${data}`)
     }
   }, [data])
