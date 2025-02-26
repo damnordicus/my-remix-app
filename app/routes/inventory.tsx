@@ -13,19 +13,19 @@ import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
-  const searchParams = new URL(request.url).searchParams;
-  const brandFilter = searchParams.getAll("brand");
-  const colorFilter = searchParams.getAll("color");
-  const materialFilter = searchParams.getAll("material");
+  // const searchParams = new URL(request.url).searchParams;
+  // const brandFilter = searchParams.getAll("brand");
+  // const colorFilter = searchParams.getAll("color");
+  // const materialFilter = searchParams.getAll("material");
 
-  console.log("tes: " ,brandFilter)
+  // console.log('filter', filter)
 
   const filaments = await getAllFilaments();
   const brands = await getAllBrands();
   const colors = await getAllColors();
   const materials = await getAllMaterials();
   
-  return {filaments, brands, colors, materials, user: session.username, admin: session.admin || false}
+  return {filaments, brands, colors, materials, user: session.username, admin: session.admin || false }
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -94,48 +94,69 @@ export default function Inventory() {
     color: [],
   });
   const [filterVisible, setFilterVisible] = useState(false);
-
+  const searchParams = new URLSearchParams();
   const [list, setList] = useState(null);
   const WARNING_AMOUNT = 5;
   const CRITICAL_AMOUNT = 2;
+
+  const brandFilter = search.getAll("brand");
+  const materialFilter = search.getAll("material");
+  const colorFilter = search.getAll("color");
+
+
+  const filteredFilaments = filaments.filter((filament) => {
+    const brandMatch = brandFilter.length ? brandFilter.includes(filament.brand) : true;
+    const materialMatch = materialFilter.length ? materialFilter.includes(filament.material) : true;
+    const colorMatch = colorFilter.length ? colorFilter.includes(filament.color) : true;
+    return brandMatch && materialMatch && colorMatch;
+  })
+
 
   useEffect(() => {
     setList(filaments);
   }, [filaments]);
 
   const handleItemClick = (id: number) => {
-    navigate(`/inventory/${id}`);
+    console.log('params?: ', search.toString())
+    navigate(`/inventory/${id}?${search.toString()}`);
   };
 
   const filterList = useCallback(() => {
     setFilterVisible(false);
-    const newList = filaments.filter((filament) => {
-      const brandMatch = selectedFilters.brand.length
-        ? selectedFilters.brand.includes(filament.brand)
-        : true;
-      const materialMatch = selectedFilters.material.length
-        ? selectedFilters.material.includes(filament.material)
-        : true;
-      const colorMatch = selectedFilters.color.length
-        ? selectedFilters.color.includes(filament.color)
-        : true;
-      return brandMatch && materialMatch && colorMatch;
-    });
-    setList(newList);
-  }, [filaments, selectedFilters]);
+
+    
+
+    selectedFilters.brand.forEach((brand) => searchParams.append("brand", brand));
+    selectedFilters.material.forEach((material) => searchParams.append("material", material));
+    selectedFilters.color.forEach((color) => searchParams.append("color", color));
+    setSearch(searchParams);
+
+    // const newList = filaments.filter((filament) => {
+    //   const brandMatch = selectedFilters.brand.length
+    //     ? selectedFilters.brand.includes(filament.brand)
+    //     : true;
+    //   const materialMatch = selectedFilters.material.length
+    //     ? selectedFilters.material.includes(filament.material)
+    //     : true;
+    //   const colorMatch = selectedFilters.color.length
+    //     ? selectedFilters.color.includes(filament.color)
+    //     : true;
+    //   return brandMatch && materialMatch && colorMatch;
+    // });
+    // console.log('newList: ', newList)
+    // setList(newList);
+  }, [selectedFilters, setSearch]);
 
   const isFiltered = !Object.values(selectedFilters).every(
     (arr) => arr.length > 0
   );
 
-  const filamentList = !isFiltered ? filaments : list ?? filaments;
+  const filamentList = filteredFilaments;
 
   return (
     <div className="" style={{alignSelf: "start"}}>
       <div className="flex justify-center py-4 gap-1 ">
-      <button onClick={() => {const params = new URLSearchParams(); params.append('brand', '1'); params.append('brand', '2');setSearch(params);}}>Set Things</button>
-        {/* <AddFilament /> */}
-        {admin && <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-s-full border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>}
+        {admin && <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-xl border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>}
         <Navbar
           setSelectedFilters={setSelectedFilters}
           filterList={filterList}

@@ -1,6 +1,12 @@
-import React, { RefCallback, useState } from 'react';
+import React, { RefCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
 
 const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list, filterVisible, setFilterVisible}: {setSelectedFilters: any, filterList: any, brands: string[], materials: string[], colors: string[], list: string[], filterVisible: boolean, setFilterVisible: any}) => {
+  const [searchParams] = useSearchParams();
+  let localBrandFilter: string[] = [];
+  let localColorFilter: string[] = [];
+  let localMaterialFilter: string[] = [];
+  
 
   const handleFilterChange = (e) => {
     const { name, value, checked } = e.target;
@@ -19,7 +25,12 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
     });
   };
 
-  console.log(filterVisible)
+  useEffect(() => {
+    searchParams.getAll("brand").forEach((brand) => localBrandFilter.push(brand));
+    searchParams.getAll("material").forEach((material) => localMaterialFilter.push(material));
+    searchParams.getAll("color").forEach((color) => localColorFilter.push(color));
+
+  },[searchParams])
 
    return (
     
@@ -45,7 +56,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
                     value={brand}
                     onChange={handleFilterChange}
                     className="mr-2"
-                    checked={list?.brand?.includes(brand) ?? false}
+                    checked={localBrandFilter.includes(brand) ? true : list?.brand?.includes(brand) ?? false}
                   />
                   {brand}
                 </label>
@@ -64,7 +75,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
                     value={material}
                     onChange={handleFilterChange}
                     className="mr-2"
-                    checked={list?.material?.includes(material) ?? false}
+                    checked={localMaterialFilter.includes(material) ? true : list?.material?.includes(material) ?? false}
                   />
                   {material}
                 </label>
@@ -83,7 +94,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
                     value={color}
                     onChange={handleFilterChange}
                     className="mr-2"
-                    checked={list?.color?.includes(color) ?? false}
+                    checked={localColorFilter.includes(color) ? true : list?.color?.includes(color) ?? false}
                   />
                   {color}
                 </label>

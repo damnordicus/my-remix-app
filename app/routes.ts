@@ -34,6 +34,7 @@ export default [
   ...prefix("job", [
     route("auth", "./routes/job.tsx"),
     route("create", "./routes/jobs/create.tsx", [
+      route("barcodeReturn", "./routes/jobs/barcodeReturn.tsx"),
       route("inventory", "./routes/jobs/create.inventory.tsx",[
         route("materials", "./routes/jobs/create.inventory.materials.tsx"),
         route("colors", "./routes/jobs/create.inventory.colors.tsx")

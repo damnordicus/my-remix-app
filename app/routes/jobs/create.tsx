@@ -1,6 +1,6 @@
-import { CameraIcon } from "@heroicons/react/24/outline";
+import { CameraIcon, PlusIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { ActionFunctionArgs, Form, Link, Outlet, redirect, useActionData, useLoaderData, useNavigate, LoaderFunctionArgs } from "react-router";
+import { ActionFunctionArgs, Form, Link, Outlet, redirect, useActionData, useLoaderData, useNavigate, LoaderFunctionArgs, useFetcher } from "react-router";
 import InputDropDown from "~/components/InputDropDown";
 import Badge from "~/components/Badge";
 import { createJob, getFilamentByBarcode, getUserIdByUsername } from "~/services/filament.server";
@@ -39,15 +39,15 @@ export async function action ({ request }: ActionFunctionArgs) {
     if(action === 'submit'){
         const classification = formData.get("classification") as string;
         const printer = formData.get('printer') as string;
-        const barcode = formData.get('barcode') as string;
+        const barcodes = formData.getAll('barcode') as string[];
         const details = formData.get('details') as string;
         const userId = formData.get('userId') as string;
         // const date = formData.get("date");
-        if(!classification || !printer || !barcode || !details) return redirect('')  
+        if(!classification || !printer || barcodes.length === 0 || !details) return redirect('')  
     
         // console.log('data; ', date)
         
-        await createJob(classification, printer, barcode, details, +userId);
+        await createJob(classification, printer, barcodes, details, +userId);
         return redirect('/?success=job');
     }
     return redirect('/');
@@ -59,7 +59,7 @@ export default function PrintJobForm({loaderData:{ filament: selection, selectio
     const options = ["Left XL", "Right XL", "Left MK4", "Right MK4", "MK3 1", "MK3 2", "MK3 3", "MK3 4", "MK3 5", "MK3 6"];
     const [ selectedCategory, setSelectedCategory] = useState('');
     const [ selectedPrinter, setSelectedPrinter] = useState('');
-    const [ selectedFilament, setSelectedFilament] = useState({});
+    const [ selectedFilament, setSelectedFilament] = useState([]);
     const [ scannedBarcode, setScannedBarcode ] = useState('');
     const navigate = useNavigate();
     const actionData = useActionData<typeof action>();
@@ -67,21 +67,55 @@ export default function PrintJobForm({loaderData:{ filament: selection, selectio
     console.log('user: ', user)
 
     useEffect(() => {
-        if(selection){
+        if(selection && !selectedFilament.some(f => f.barcode === barcode) ){
             // let array = atob(selection);
             // let converted = JSON.parse(array);
-            setSelectedFilament(selection)
+            // setSelectedFilament(selection);
+            setSelectedFilament(prev => [...prev, {
+                filament: selection,
+                barcode: barcode,
+            }]);
         }
-    },[selection])
+    },[selection, barcode])
 
     useEffect(() => {
         const grabbedBarcode = localStorage.getItem("scannedBarcode");
         console.log('session: ', grabbedBarcode)
         if(grabbedBarcode){
           setScannedBarcode(grabbedBarcode);
+          handleAddBarcode(grabbedBarcode);
 
         }
       }, [])
+const fetcher = useFetcher();
+
+useEffect(() => {
+    if (fetcher.data && fetcher.state === 'idle') {
+        console.log('Fetcher data:', fetcher.data);
+        console.log('scanned: ', scannedBarcode);
+        if (fetcher.data && scannedBarcode) {
+            setSelectedFilament(prev => [...prev, {
+                filament: fetcher.data,
+                barcode: scannedBarcode
+            }]);
+            setScannedBarcode('');
+            localStorage.removeItem("scannedBarcode");
+        }
+    }
+}, [fetcher.data, fetcher.state]);
+
+    const handleAddBarcode = async (grabbedBarcode: string) => {
+        if ((scannedBarcode ?? grabbedBarcode) && !selectedFilament.some(f => f.barcode === scannedBarcode)) {
+            console.log('Fetching barcode data for:', scannedBarcode ?? grabbedBarcode);
+            fetcher.load(`barcodeReturn?barcode=${scannedBarcode ?? grabbedBarcode}`);
+        } else {
+            console.log('Invalid or duplicate barcode:', scannedBarcode ?? grabbedBarcode);
+        }
+    };
+
+    const handleRemoveFilament = (barcodeToRemove) => {
+        setSelectedFilament(prev => prev.filter(item => item.barcode !== barcodeToRemove));
+    };
     // useEffect(() => {
     //     if(actionData?.success){
     //         toast.success(actionData.message);
@@ -96,6 +130,8 @@ export default function PrintJobForm({loaderData:{ filament: selection, selectio
     //     navigate('inventory');
     // }
 
+    console.log(selectedFilament)
+
     return (
         <div className="flex w-full min-h-screen items-center justify-center">
          <div className="flex-col pt-5 gap-2 w-[420px] bg-slate-600/60 backdrop-blur-sm rounded-xl border-2 border-slate-400 shadow-xl">
@@ -104,37 +140,107 @@ export default function PrintJobForm({loaderData:{ filament: selection, selectio
             </h1>
             <Form method="POST">
                 <input type="hidden" name="userId" value={user} />
-            <InputDropDown labelText={"Classification"} options={["Mission", "Personal"]} setSelectedOption={setSelectedCategory}/>
-            <InputDropDown labelText={"Printer"} options={options} setSelectedOption={setSelectedPrinter}/>
-            <div className="flex-col w-full">
-                <label htmlFor="printerSelect" className="flex pl-4 pb-2 text-lg" >Select Filament: </label>
-                {!selection && <div className="flex justify-center gap-4">
-                {!scannedBarcode && <><Link to={`../barcode`} className="bg-amber-500 px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 text-center"><CameraIcon className="size-6"/></Link>
-                <Link to={'inventory'}  className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center">Search Filament</Link></> }
-                {scannedBarcode && <div className="flex-col w-full">
-                <input type="text" defaultValue={scannedBarcode} className="text-center py-1 bg-slate-800/60 mx-4 rounded-xl border border-slate-500"></input>
-                <button onClick={()=>{setScannedBarcode(''); localStorage.removeItem("scannedBarcode");}} className="w-fit flex self-center py-1 px-2 mt-4 rounded-lg border-2 border-amber-600 bg-amber-500 text-black">Change Filament</button>
-                </div>}
-                </div>}
-                {selection && (
-                    <div className="flex-col  w-full text-lg">
-                        <div className="flex w-full ">
-                            <p className="flex mx-4">Brand: {selection.brand}</p>
-                            <p className="flex mx-4">Material: {selection.material}</p>
-                            <Badge size={4} >{selection.color}</Badge>
+                <InputDropDown labelText={"Classification"} options={["Mission", "Personal"]} setSelectedOption={setSelectedCategory}/>
+                <InputDropDown labelText={"Printer"} options={options} setSelectedOption={setSelectedPrinter}/>
+                <div className="flex-col w-full">
+                    <label className="flex pl-4 pb-2 text-lg">Select Filament(s): </label>
+                    
+                    {/* Display selected filaments */}
+                    {selectedFilament.length > 0 && (
+                        <div className="flex-col space-y-2 mb-4">
+                            {selectedFilament.map((item, index) => (
+                                <div key={item.barcode} className="flex-col mx-4 p-2 bg-slate-700/80 rounded-lg border border-slate-500">
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-semibold">Roll {index + 1}:</span>
+                                            <Badge size={4}>{item.filament.color}</Badge>
+                                        </div>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => handleRemoveFilament(item.barcode)}
+                                            className="text-gray-300 hover:text-red-500"
+                                        >
+                                            <XCircleIcon className="size-5" />
+                                        </button>
+                                    </div>
+                                    <div className="flex justify-between mt-1 text-sm">
+                                        <span>Brand: {item.filament.brand}</span>
+                                        <span>Material: {item.filament.material}</span>
+                                    </div>
+                                    <input 
+                                        type="hidden" 
+                                        name="barcode" 
+                                        value={item.barcode}
+                                    />
+                                </div>
+                            ))}
                         </div>
-                        <p className="flex w-full mx-4 mt-4">Barcode: </p>
-                        <input type="text" name="barcode" className="flex pl-2 bg-slate-800 rounded-xl border border-slate-500 mx-4" value={barcode}/>
-                        <Link to={'inventory'} className="bg-amber-500 px-3 mx-auto mt-2 rounded-xl py-1 border-2 border-amber-600 text-black text-center">Change Filament</Link>
-                    </div>
                     )}
-            </div>
-            <label htmlFor="details" className="flex pl-4 text-lg py-2" >Job Description: </label>
-            <textarea name="details" className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 px-2"></textarea>
-            {/* <input type="hidden" name="date" value={new Date(Date.now())} /> */}
-            <div className="flex w-full justify-center pt-2 mb-4 mt-1">
-                <button name="_action" value="submit" type="submit" className="rounded-xl border-2 border-amber-600 bg-amber-500 px-2 py-1 text-black">Submit</button>
-            </div>
+
+                    {/* Controls for adding filament */}
+                    <div className="flex justify-center gap-2 mb-4">
+                        {!scannedBarcode && 
+                            <>
+                                <Link to="../barcode" className="bg-amber-500 px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 text-center">
+                                    <CameraIcon className="size-6"/>
+                                </Link>
+                                <Link to="inventory" className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center">
+                                    Search Filament
+                                </Link>
+                            </>}
+                         {/* ) : ( */}
+                             {/* <div className="flex-col w-full px-4"> */}
+                                {/* <input  
+                        //             type="text" 
+                        //             value={scannedBarcode} 
+                        //             readOnly
+                        //             className="text-center py-1 w-full bg-slate-800/60 rounded-xl border border-slate-500"
+                        //         />
+                        //         <div className="flex justify-center gap-2 mt-2">
+                        //             <button 
+                        //                 type="button"
+                        //                 onClick={handleAddBarcode} 
+                        //                 className="py-1 px-2 rounded-lg border-2 border-green-600 bg-green-500 text-black flex items-center gap-1"
+                        //             >
+                        //                 <PlusIcon className="size-5" /> Add Filament
+                        //             </button>
+                        //             <button 
+                        //                 type="button"
+                        //                 onClick={() => {
+                        //                     setScannedBarcode(''); 
+                        //                     localStorage.removeItem("scannedBarcode");
+                        //                 }} 
+                        //                 className="py-1 px-2 rounded-lg border-2 border-amber-600 bg-amber-500 text-black"
+                        //             >
+                        //                 Cancel
+                        //             </button>
+                        //         </div>
+                        //     </div>
+                        // )}*/}
+                    </div>
+                </div>
+
+                <label htmlFor="details" className="flex pl-4 text-lg py-2">Job Description: </label>
+                <textarea 
+                    name="details" 
+                    className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 px-2 min-h-24"
+                ></textarea>
+                
+                <div className="flex w-full justify-center pt-4 mb-4 mt-1">
+                    <button 
+                        name="_action" 
+                        value="submit" 
+                        type="submit" 
+                        disabled={selectedFilament.length === 0}
+                        className={`rounded-xl border-2 px-4 py-2 text-black ${
+                            selectedFilament.length === 0 
+                                ? 'border-gray-400 bg-gray-400 cursor-not-allowed' 
+                                : 'border-amber-600 bg-amber-500'
+                        }`}
+                    >
+                        Submit Job
+                    </button>
+                </div>
             </Form>
         </div>
         <Outlet />

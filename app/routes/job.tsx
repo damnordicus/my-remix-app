@@ -68,12 +68,19 @@ export default function PrintJob() {
           </h1>
           <Form className="flex-col w-full items-center justify-center px-5 pb-5 gap-2 text-lg" method="POST">
               <div className="flex-col w-full">
-                <InputDropDown labelText="Username" options={getUsers} setSelectedOption={setSelectedUser}/>
+                {getUsers.length > 0 &&
+                <>
+                  <InputDropDown labelText="Username" options={getUsers} setSelectedOption={setSelectedUser}/>
+                  <div className="flex-col w-full px-4 py-2">
+                    <label htmlFor="otp" className="w-full pb-2">Enter Code: </label>
+                    <input type="text" name="otp" className="bg-slate-800/60 border border-slate-500 rounded-xl py-[1px]"/>
+                  </div>
+                </>
+                }
+                {getUsers.length === 0 && <p>No users found.</p>}
                 {/* <input type='hidden' name="username" value={selectedUser}/> */}
               </div>
-              <div>
-                <input type="text" name="otp" className="bg-slate-700/60"/>
-              </div>
+              
               <button type="submit" name="_action" value="submit" className="rounded-xl border-2 border-amber-400/60 bg-amber-600 hover:cursor-pointer hover:border-amber-600/60 hover:bg-amber-400 hover:text-amber-900 w-full px-2 py-1 mt-6 mb-2 text-white">
                 Login
               </button>

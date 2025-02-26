@@ -396,44 +396,72 @@ export async function getBrandsByColor( material: string, color: string){
   return result.map(item => item.brand);
 }
 
-export async function createJob(classification: string, printer: string, barcode: string, details: string, userId: number){
-  const roll = await prisma.roll.findFirstOrThrow({
-    where:{
-      barcode,
-    },
-    include:{
-      filament: true,
-    }
-  });
+export async function createJob(classification: string, printer: string, barcodes: string[], details: string, userId: number) {
+  return await prisma.$transaction(async (tx) => {
+     const rolls = await tx.roll.findMany({
+      where: {
+        barcode: {
+          in: barcodes,
+        },
+      },
+      include: {
+        filament: true,
+      }
+    });
 
-  const filament = await prisma.roll.update({
-    where:{
-      barcode,
-    },
-    data:{
-      filament:{
-        update:{
-          stock_level:{
-            decrement: 1,
+    if (rolls.length !== barcodes.length) {
+      throw new Error('One or more rolls not found');
+    }
+
+    const rollUpdates = await Promise.all(
+      rolls.map(roll => 
+        tx.roll.update({
+          where: {
+            id: roll.id,
+          },
+          data: {
+            inUse: true,
           }
+        })
+      )
+    );
+
+    const filamentUpdates = await Promise.all(
+      [...new Set(rolls.map(roll => roll.filamentId))].map(filamentId => {
+        const count = rolls.filter(roll => roll.filamentId === filamentId).length;
+        
+        return tx.filament.update({
+          where: {
+            id: filamentId,
+          },
+          data: {
+            stock_level: {
+              decrement: count,
+            }
+          }
+        });
+      })
+    );
+
+    const job = await tx.job.create({
+      data: {
+        classification,
+        printer,
+        details,
+        userId,
+        date: new Date(Date.now()),
+        barcode: barcodes.join(','),
+        roll: {
+          connect: rolls.map(roll => ({ id: roll.id })),
         }
       },
-      inUse: true,
-    }
-  })
+      include: {
+        roll: true,
+      }
+    });
 
-  const result = await prisma.job.create({
-    data:{
-      classification,
-      printer,
-      barcode,
-      details,
-      rollId: roll.id,
-      userId,
-      date: new Date(Date.now()),
-    },
+    return job;
   });
-  return result;
 }
 
 export async function checkUsername(username: string){

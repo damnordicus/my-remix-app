@@ -52,7 +52,7 @@ export default function SelectFromInventory(){
 
     function handleChange(e) {
         //e.target.name
-
+        console.log('test')
         switch(e.target.name){
             case 'material' :
                 if(e.target.value !== ''){

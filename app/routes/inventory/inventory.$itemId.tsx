@@ -8,7 +8,8 @@ import {
   useLoaderData,
   useNavigate,
   useNavigation,
-  ActionFunctionArgs
+  ActionFunctionArgs,
+  useSearchParams
 } from "react-router";
 import { useEffect, useState } from "react";
 import Badge from "../../components/Badge";
@@ -27,10 +28,10 @@ export const loader = async ({ request, params }) => {
   const session =
     (await userSession.parse(request.headers.get("Cookie"))) || {};
   const filamentId = +params.itemId;
-  const filters = (new URL(request.url).searchParams).get("filters");
+  // const filters = (new URL(request.url).searchParams).getAll("filters");
   const selectedFilament = await getFilamentById(filamentId);
   const barcodes = await getBarcodesByFilamentId(filamentId);
-  return { selectedFilament, barcodes, user: session.username || null, filters };
+  return { selectedFilament, barcodes, user: session.username || null };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -90,6 +91,7 @@ export default function SelectedItem() {
   const navigate = useNavigate();
   const nav = useNavigation();
   const [toggle, setToggle] = useState(false);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     console.log("navb", nav);
@@ -110,7 +112,7 @@ export default function SelectedItem() {
         >
           <div
             className="fixed top-2 right-2 cursor-pointer text-white text-xl"
-            onClick={() => navigate("..")}
+            onClick={() => navigate(`..?${searchParams.toString()}`)}
           >
             ✖
           </div>

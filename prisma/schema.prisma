@@ -49,8 +49,7 @@ model Job {
   printer String
   classification String
   barcode String
-  rollId Int
-  roll Roll @relation(fields: [rollId], references: [id])
+  roll Roll[] //@relation(fields: [rollId], references: [id])
   date DateTime
 }
 
