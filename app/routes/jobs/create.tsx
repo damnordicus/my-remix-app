@@ -27,29 +27,39 @@ import { userSession } from "~/services/cookies.server";
 import { Route } from "./+types/create";
 import { Filament } from "@prisma/client";
 
-
 type FilamentBarcodes = {
-    filament: Filament;
-    barcode: string;
-}
+  filament: Filament;
+  barcode: string;
+};
 
-export async function clientLoader({ request, serverLoader}: Route.ClientLoaderArgs) {
-    const data = await serverLoader();
-    const search = new URL(request.url).searchParams;
-    // const selectedBarcode = search.get('selection');
+export async function clientLoader({
+  request,
+  serverLoader,
+}: Route.ClientLoaderArgs) {
+  const data = await serverLoader();
+  const search = new URL(request.url).searchParams;
+  // const selectedBarcode = search.get('selection');
 
-    console.log('client-loader', data)
+  console.log("client-loader", data);
 
-    const storedBarcodeLS = localStorage.getItem("scannedBarcode")
-    const selectedFilamentLS: FilamentBarcodes[] = JSON.parse(localStorage.getItem("selectedFilament") ?? '[]')
+  const storedBarcodeLS = localStorage.getItem("scannedBarcode");
+  const selectedFilamentLS: FilamentBarcodes[] = JSON.parse(
+    localStorage.getItem("selectedFilament") ?? "[]"
+  );
 
-    if (data.selection && data.filament) {
-        selectedFilamentLS.push({filament: data.filament, barcode: data.selection})
-        localStorage.setItem('selectedFilament', JSON.stringify(selectedFilamentLS));
-    }
-    console.log(selectedFilamentLS)
+  if (data.selection && data.filament) {
+    selectedFilamentLS.push({
+      filament: data.filament,
+      barcode: data.selection,
+    });
+    localStorage.setItem(
+      "selectedFilament",
+      JSON.stringify(selectedFilamentLS)
+    );
+  }
+  console.log(selectedFilamentLS);
 
-    return {...data, storedBarcodeLS, selectedFilamentLS}
+  return { ...data, storedBarcodeLS, selectedFilamentLS };
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -73,14 +83,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
     const filament = await getFilamentByBarcode(selection);
     return { filament, selection, user };
   }
-  return {user};
+  return { user };
 }
+
 // force the client loader to run during hydration
 clientLoader.hydrate = true as const; // `as const` for type inference
+
 // HydrateFallback is rendered while the client loader is running
 export function HydrateFallback() {
-    return <div>Loading...</div>;
-  }
+  return <div>Loading...</div>;
+}
+
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const action = formData.get("_action");
@@ -104,7 +117,13 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function PrintJobForm({
-  loaderData: { filament: selection, selection: barcode, user, storedBarcodeLS, selectedFilamentLS },
+  loaderData: {
+    filament: selection,
+    selection: barcode,
+    user,
+    storedBarcodeLS,
+    selectedFilamentLS,
+  },
 }: Route.ComponentProps) {
   // const { filament: selection, selection: barcode , user} = loaderData;
 
@@ -126,45 +145,42 @@ export default function PrintJobForm({
   const [scannedBarcode, setScannedBarcode] = useState("");
   const navigate = useNavigate();
   const actionData = useActionData<typeof action>();
-    let submit = useSubmit();
+  const submit = useSubmit();
 
+  //   console.log("user: ", user);
 
+  //   useEffect(() => {
+  //     if (selection && !selectedFilament?.some((f) => f.barcode === barcode)) {
+  //       // let array = atob(selection);
+  //       // let converted = JSON.parse(array);
+  //       // setSelectedFilament(selection);
+  //       setSelectedFilament((prev) => {
+  //         const arr = [
+  //             ...prev,
+  //             {
+  //                 filament: fetcher.data,
+  //                 barcode: scannedBarcode,
+  //             },
+  //         ]
+  //     //   localStorage.setItem("selectedFilament", JSON.stringify(arr))
+  //         return arr;
+  //     });
+  //     }
+  //   }, [selection, barcode]);
 
-//   console.log("user: ", user);
-
-//   useEffect(() => {
-//     if (selection && !selectedFilament?.some((f) => f.barcode === barcode)) {
-//       // let array = atob(selection);
-//       // let converted = JSON.parse(array);
-//       // setSelectedFilament(selection);
-//       setSelectedFilament((prev) => {
-//         const arr = [
-//             ...prev,
-//             {
-//                 filament: fetcher.data,
-//                 barcode: scannedBarcode,
-//             },
-//         ]
-//     //   localStorage.setItem("selectedFilament", JSON.stringify(arr))
-//         return arr;
-//     });
-//     }
-//   }, [selection, barcode]);
-
-//   useEffect(() => {
-//     const grabbedBarcode = localStorage.getItem("scannedBarcode");
-//     console.log("session: ", grabbedBarcode);
-//     if (grabbedBarcode) {
-//       setScannedBarcode(grabbedBarcode);
-//     }
-//   }, []);
-  function handleSubmit (event: React.FormEvent<HTMLFormElement>) {
+  //   useEffect(() => {
+  //     const grabbedBarcode = localStorage.getItem("scannedBarcode");
+  //     console.log("session: ", grabbedBarcode);
+  //     if (grabbedBarcode) {
+  //       setScannedBarcode(grabbedBarcode);
+  //     }
+  //   }, []);
+  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     localStorage.clear();
-    const formData = new FormData(event.currentTarget)
-    formData.append('_action', 'submit')
-    submit(formData, { method: "POST"})
-
+    const formData = new FormData(event.currentTarget);
+    formData.append("_action", "submit");
+    submit(formData, { method: "POST" });
   }
 
   useEffect(() => {
@@ -181,17 +197,17 @@ export default function PrintJobForm({
       console.log("scanned: ", scannedBarcode);
       if (fetcher.data && scannedBarcode) {
         setSelectedFilament((prev) => {
-            const arr = [
-                ...prev,
-                {
-                    filament: fetcher.data,
-                    barcode: scannedBarcode,
-                },
-            ]
-          localStorage.setItem("selectedFilament", JSON.stringify(arr))
-            return arr;
+          const arr = [
+            ...prev,
+            {
+              filament: fetcher.data,
+              barcode: scannedBarcode,
+            },
+          ];
+          localStorage.setItem("selectedFilament", JSON.stringify(arr));
+          return arr;
         });
-        
+
         setScannedBarcode("");
         // localStorage.removeItem("scannedBarcode");
       }
@@ -200,11 +216,11 @@ export default function PrintJobForm({
 
   useEffect(() => {
     setSelectedFilament(selectedFilamentLS);
-  },[selectedFilamentLS])
+  }, [selectedFilamentLS]);
 
-  useEffect(() =>{
+  useEffect(() => {
     localStorage.setItem("selectedFilament", JSON.stringify(selectedFilament));
-  },[selectedFilament])
+  }, [selectedFilament]);
 
   const handleAddBarcode = async () => {
     if (
@@ -212,18 +228,18 @@ export default function PrintJobForm({
       !selectedFilament?.some((f) => f.barcode === scannedBarcode)
     ) {
       console.log("Fetching barcode data for:", scannedBarcode);
-      fetcher.load(`barcodeReturn?barcode=${scannedBarcode}`);
+      fetcher.load(`/api/barcodeReturn?barcode=${scannedBarcode}`);
     } else {
       console.log("Invalid or duplicate barcode:", scannedBarcode);
     }
   };
+  const removeFetcher = useFetcher();
 
-  const handleRemoveFilament = (barcodeToRemove) => {
+  const handleRemoveFilament = (barcodeToRemove: string) => {
+    removeFetcher.load(`/api/removeSelection?barcode=${barcodeToRemove}`);
     setSelectedFilament((prev) =>
       prev.filter((item) => item.barcode !== barcodeToRemove)
     );
-
-    // localStorage.removeItem("selectedFilament")
   };
   // useEffect(() => {
   //     if(actionData?.success){
@@ -264,7 +280,7 @@ export default function PrintJobForm({
             {/* Display selected filaments */}
             {selectedFilament?.length > 0 && (
               <div className="flex-col space-y-2 mb-4">
-                {selectedFilament.map(({filament, barcode}, index) => (
+                {selectedFilament.map(({ filament, barcode }, index) => (
                   <div
                     key={barcode}
                     className="flex-col mx-4 p-2 bg-slate-700/80 rounded-lg border border-slate-500"
@@ -276,7 +292,9 @@ export default function PrintJobForm({
                       </div>
                       <button
                         type="button"
-                        onClick={() => handleRemoveFilament(barcode)}
+                        onClick={() => {
+                          handleRemoveFilament(barcode);
+                        }}
                         className="text-gray-300 hover:text-red-500"
                       >
                         <XCircleIcon className="size-5" />
@@ -294,51 +312,51 @@ export default function PrintJobForm({
 
             {/* Controls for adding filament */}
             <div className="flex justify-center gap-2 mb-4">
-                {scannedBarcode ? (
-                    <div className="flex-col w-full px-4">
-                    <input  
-                        type="text" 
-                        value={scannedBarcode} 
-                        readOnly
-                        className="text-center py-1 w-full bg-slate-800/60 rounded-xl border border-slate-500"
-                    />
-                    <div className="flex justify-center gap-2 mt-2">
-                        <button 
-                        type="button"
-                        onClick={handleAddBarcode} 
-                        className="py-1 px-2 rounded-lg border-2 border-green-600 bg-green-500 text-black flex items-center gap-1"
-                        >
-                        <PlusIcon className="size-5" /> Add Filament
-                        </button>
-                        <button 
-                        type="button"
-                        onClick={() => {
-                            setScannedBarcode(""); 
-                            // localStorage.removeItem("scannedBarcode");
-                        }} 
-                        className="py-1 px-2 rounded-lg border-2 border-amber-600 bg-amber-500 text-black"
-                        >
-                        Cancel
-                        </button>
-                    </div>
-                    </div>
-                ) : (
-                    <>
-                    <Link
-                        to={`../barcode?from=job/create`}
-                        className="bg-amber-500 px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 text-center"
+              {scannedBarcode ? (
+                <div className="flex-col w-full px-4">
+                  <input
+                    type="text"
+                    value={scannedBarcode}
+                    readOnly
+                    className="text-center py-1 w-full bg-slate-800/60 rounded-xl border border-slate-500"
+                  />
+                  <div className="flex justify-center gap-2 mt-2">
+                    <button
+                      type="button"
+                      onClick={handleAddBarcode}
+                      className="py-1 px-2 rounded-lg border-2 border-green-600 bg-green-500 text-black flex items-center gap-1"
                     >
-                        <CameraIcon className="size-6" />
-                    </Link>
-                    <Link
-                        to="inventory"
-                        className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center"
+                      <PlusIcon className="size-5" /> Add Filament
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setScannedBarcode("");
+                        // localStorage.removeItem("scannedBarcode");
+                      }}
+                      className="py-1 px-2 rounded-lg border-2 border-amber-600 bg-amber-500 text-black"
                     >
-                        Search Filament
-                    </Link>
-                    </>
-                )}
+                      Cancel
+                    </button>
+                  </div>
                 </div>
+              ) : (
+                <>
+                  <Link
+                    to={`../barcode?from=job/create`}
+                    className="bg-amber-500 px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 text-center"
+                  >
+                    <CameraIcon className="size-6" />
+                  </Link>
+                  <Link
+                    to="inventory"
+                    className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center"
+                  >
+                    Search Filament
+                  </Link>
+                </>
+              )}
+            </div>
           </div>
 
           <label htmlFor="details" className="flex pl-4 text-lg py-2">

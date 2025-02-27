@@ -1,3 +1,4 @@
+import { fa } from "@faker-js/faker";
 import { BriefcaseIcon } from "@heroicons/react/24/outline";
 import { equal } from "assert";
 import { connect } from "http2";
@@ -171,16 +172,28 @@ export async function getAllBrands(){
   return [...result]
 }
 
+export async function getAllUnusedMaterials(){
+  const materials = await prisma.filament.findMany({
+    distinct: 'material',
+    select: {
+      material: true,
+      rolls: {
+        where: {
+          inUse: false
+        }
+      }
+    },
+  })
+
+  const result = materials.map(x => x.material);
+  return [...result]
+}
+
 export async function getAllMaterials(){
   const materials = await prisma.filament.findMany({
     distinct: 'material',
     select: {
       material: true,
-    },
-    where: {
-      stock_level:{
-        gt: 0,
-      },
     },
   })
 
@@ -221,83 +234,84 @@ export async function getBarcodesByFilamentId(id: number){
 }
 
 export async function getFirstBarcodeForFilament(brand: string, material: string, color: string) {
-  try {
-    const results = await prisma.filament.findFirstOrThrow({
-      where: {
-         brand,
-         color,
-         material,
-         rolls:{
-          some:{
-            inUse: false,
-          },
-         },
-      },
-      include: {
-        rolls: {
-          where:{
-            inUse: false,
-          },
-          select: { barcode: true },
+    const test = await prisma.roll.findMany({
+      where:{
+        filament: {
+          brand,
+          color,
+          material
         },
-      },
+        inUse: false
+      }
     });
 
-    await prisma.roll.update({
+    if (test.length === 0) throw new Error('Filament not found');
+
+    const updatedRoll = await prisma.roll.update({
       where:{
-        barcode: results.rolls[0].barcode,
+        barcode: test[0].barcode,
       },
       data:{
         inUse: true,
+      },
+      select: {
+        filamentId: true,
+        barcode: true
       }
-    })
+    });
+
+    // await prisma.filament.update({
+    //   where: {
+    //     id: updatedRoll.filamentId
+    //   },
+    //   data: {
+    //     stock_level: {
+    //       decrement: 1
+    //     }
+    //   }
+    // })
     
-    console.log('results: ', results)
     // Ensure at least one roll exists
     // if (results.rolls.length === 0) {
     //   return { message: 'No rolls available.', status: 404 };
     // }
 
     // Return only the first barcode
-    return  results.rolls[0].barcode 
-  } catch (error) {
-    return { message: 'Filament not found.', status: 404 };
-  }
+    return  updatedRoll.barcode;
 }
 
 // Create a new filament
 export async function createFilament({brand, material, color, diameter}: {brand: string, material: string, color: string, diameter:string}) {
- return await prisma.filament.upsert({
+ return await prisma.filament.create({
     data: {
-        brand: brand.toUpperCase(),
-        material: material.toUpperCase(),
-        color: color.toUpperCase(),
-        diameter: parseFloat(diameter),
-        stock_level: 0,
-     }
-    });
-}
-
-export async function removeFilamentByQR( barcode: string, id: number){
-  const rollDelete = await prisma.roll.delete({
-    where:{
-      barcode,
+      brand: brand.toUpperCase(),
+      material: material.toUpperCase(),
+      color: color.toUpperCase(),
+      diameter: parseFloat(diameter)
     }
   });
-
-  const updateFilament = await prisma.filament.update({
-    where:{
-      id,
-    },
-    data:{
-      stock_level:{
-        decrement: 1,
-      }
-    }
-  });
-
-  return updateFilament;
 }
+
+// export async function removeFilamentByQR( barcode: string, id: number){
+//   const rollDelete = await prisma.roll.delete({
+//     where:{
+//       barcode,
+//     }
+//   });
+
+//   const updateFilament = await prisma.filament.update({
+//     where:{
+//       id,
+//     },
+//     data:{
+//       stock_level:{
+//         decrement: 1,
+//       }
+//     }
+//   });
+
+//   return updateFilament;
+// }
 
 // Update filament stock
 // export async function updateFilamentStock(id: number, qrcode: string, weight: number, price: number) {
@@ -323,18 +337,18 @@ export async function removeFilamentByQR( barcode: string, id: number){
 //   })
 // }
 
-export async function addRollToFilament(id: number){
-  return await prisma.filament.update({
-    where:{
-      id,
-    },
-    data:{
-      stock_level:{
-        increment: 1,
-      }
-    }
-  })
-}
+// export async function addRollToFilament(id: number){
+//   return await prisma.filament.update({
+//     where:{
+//       id,
+//     },
+//     data:{
+//       rolls:{
+        
+//       }
+//     }
+//   })
+// }
 
 export async function createNewRoll(newId: string, weight: number, price: number, id: number){
   return await prisma.roll.create({
@@ -374,14 +388,21 @@ export async function getColorsByMaterial( material: string){
   const result = await prisma.filament.findMany({
     where:{
       material,
+      rolls: {
+        some: {
+          inUse: false,
+        }
+      }
     },
     select:{
       color: true,
     },
-    distinct: ['color'],
+    distinct: "color"
   });
-
-  return result.map(item => item.color);
+  console.log(result);
+  const colors = new Set()
+  result.map(r => colors.add(r.color))
+  return [...colors];
 }
 
 export async function getBrandsByColor( material: string, color: string){
@@ -389,13 +410,8 @@ export async function getBrandsByColor( material: string, color: string){
     where:{
       material,
       color,
-      stock_level:{
-        gte: 1,
-      },
-      rolls:{
-        some:{
-          inUse: false,
-        }
+      rolls: {
+          some: {inUse: false}
       }
     },
     select:{
@@ -403,7 +419,24 @@ export async function getBrandsByColor( material: string, color: string){
     },
     distinct: ['brand'],
   });
-  return result.map(item => item.brand);
+
+  console.log(result)
+  
+  const brands = result.map(item => item.brand)
+  return [...brands];
+}
+
+export async function unAssignFilament( barcode: string){
+  const result = await prisma.roll.update({
+    where:{
+      barcode,
+    },
+    data:{
+      inUse: false,
+    }
+  })
+
+  return result;
 }
 
 export async function createJob(classification: string, printer: string, barcodes: string[], details: string, userId: number) {

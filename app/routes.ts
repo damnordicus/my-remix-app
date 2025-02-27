@@ -34,10 +34,7 @@ export default [
   ...prefix("job", [
     route("auth", "./routes/job.tsx"),
     route("create", "./routes/jobs/create.tsx", [
-      route("barcodeReturn", "./routes/jobs/barcodeReturn.tsx"),
       route("inventory", "./routes/jobs/create.inventory.tsx",[
-        route("materials", "./routes/jobs/create.inventory.materials.tsx"),
-        route("colors", "./routes/jobs/create.inventory.colors.tsx")
       ]),
     ]),
   ]),
@@ -47,4 +44,10 @@ export default [
        route(":userId/jobs", "./routes/view/view.accounts.$userId.jobs.tsx"),
     ]),
   ]),
+  ...prefix('api', [
+    route("removeSelection", "./routes/jobs/create.removeSelection.tsx"),
+    route("barcodeReturn", "./routes/jobs/barcodeReturn.tsx"),
+    route("materials", "./routes/jobs/create.inventory.materials.tsx"),
+    route("colors", "./routes/jobs/create.inventory.colors.tsx")
+  ])
 ] satisfies RouteConfig;

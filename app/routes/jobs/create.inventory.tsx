@@ -1,12 +1,14 @@
+import { error } from "console";
 import React, { useEffect, useState } from "react";
-import { Form, Link, Navigate, Outlet, redirect, useFetcher, useLoaderData, useNavigate } from "react-router";
+import toast from "react-hot-toast";
+import { data, Form, Link, Navigate, Outlet, redirect, useActionData, useFetcher, useLoaderData, useNavigate } from "react-router";
 import CheckboxGroup from "~/components/CheckboxGroup";
-import { getAllBrands, getAllColors, getAllFilaments, getAllMaterials, getFirstBarcodeForFilament } from "~/services/filament.server";
+import { getAllBrands, getAllColors, getAllFilaments, getAllMaterials, getAllUnusedMaterials, getFirstBarcodeForFilament } from "~/services/filament.server";
 
 export const loader = async ({request}) => {
     // const brands = await getAllBrands();
     // const colors = await getAllColors();
-    const materials = await getAllMaterials();
+    const materials = await getAllUnusedMaterials();
     // const filaments = await getAllFilaments();
     console.log('materials: ', materials)
     //return {brands, colors, materials, filaments};
@@ -14,6 +16,7 @@ export const loader = async ({request}) => {
 }
 
 export const action = async ({request}) => {
+    try {
     const formData = await request.formData();
     const actionType = formData.get("_action");
     if(actionType === 'submit'){
@@ -21,9 +24,11 @@ export const action = async ({request}) => {
         const brand = formData.get("brand");
         const material = formData.get("material");
         const color = formData.get("color");
-        console.log('brand: ', brand, ' material: ', material, ' color: ', color)
+
+        if(!brand || !material || !color){
+            return  {message: 'All fields are required!', status: 400};
+        }
         const barcodes = await getFirstBarcodeForFilament(brand, material, color);
-        console.log('barcode: ', barcodes)
         if(!barcodes){
             return {message: 'No rolls found for that selection', status: 400}
         }
@@ -35,7 +40,21 @@ export const action = async ({request}) => {
         // console.log(barcodeParam)
         return redirect(`../../job/create?selection=${barcodes}`);
     }
+    if(actionType === 'clear'){
+        
+        return redirect("..");
+    }
+    } catch (e) {
+        console.error(e);
+        if (e instanceof Error)
+            return data({ message: e.message }, {
+                status: 404
+            })
 
+        return data({ message: 'There was an error.'}, {
+            status: 500
+        })
+    }
 }
 
 export default function SelectFromInventory(){
@@ -49,6 +68,7 @@ export default function SelectFromInventory(){
     const [colorOptions, setColorOptions] = useState([]);
     const [brandOptions, setBrandOptions] = useState([]);
     const [selectedMaterial, setSelectedMaterial] = useState('');
+    const actionData = useActionData<{message?: string}>();
 
     function handleChange(e) {
         //e.target.name
@@ -57,12 +77,12 @@ export default function SelectFromInventory(){
             case 'material' :
                 if(e.target.value !== ''){
                     setSelectedMaterial(e.target.value);
-                    materialFetcher.load(`materials?material=${e.target.value}`) 
+                    materialFetcher.load(`/api/materials?material=${e.target.value}`) 
                 }
                 break;
             case 'color':
                 if(e.target.value !== ''){
-                  colorFetcher.load(`colors?color=${e.target.value}&material=${selectedMaterial}`)  
+                  colorFetcher.load(`/api/colors?color=${e.target.value}&material=${selectedMaterial}`)  
                 }
                 break;
             default :
@@ -84,6 +104,8 @@ export default function SelectFromInventory(){
         }
 
     },[ materialFetcher.data, materialFetcher.state, colorFetcher.data, colorFetcher.state])
+
+    console.log('actionData: ', actionData)
 
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50">
@@ -120,10 +142,11 @@ export default function SelectFromInventory(){
                 </select>
                 </div>}
 
-                {false && <p className="text-center text-red-500">No Rolls Found</p>}
+                {actionData?.message && <p className="text-center text-red-500">{actionData.message}</p>}
                 <div className="flex justify-around mt-4 items-center">
-                    <Link to={''}className="fixed bottom-[14px] left-4 text-sm italic underline">Request a filament!</Link>
+                    <Link to={''}className="left-4 text-sm italic underline">Request a filament!</Link>
                     <button type="submit" name="_action" value="submit" className="bg-amber-600 px-2 py-1 rounded-xl border-2 border-amber-800 text-black">Select</button>
+                    <button type="submit" name="_action" value="clear" className="bg-red-500/80 px-2 py-1 rounded-xl border-2 border-red-700/80 text-white">Cancel</button>
                 </div>
                 </Form>
             </div>
