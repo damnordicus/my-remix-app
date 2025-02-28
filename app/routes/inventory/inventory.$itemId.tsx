@@ -93,6 +93,8 @@ export default function SelectedItem() {
   const [toggle, setToggle] = useState(false);
   const [searchParams] = useSearchParams();
 
+  console.log(selectedFilament)
+
   useEffect(() => {
     console.log("navb", nav);
     console.log("state", nav.location?.state);
@@ -101,6 +103,10 @@ export default function SelectedItem() {
   function switchToggle() {
     setToggle(!toggle);
   }
+
+  const avaialable = selectedFilament.rolls.filter(items => items.inUse === false).length;
+  const all = selectedFilament?.rolls.length;
+  
 
   if (selectedFilament === null) {
     return <div>No filament found.</div>;
@@ -129,7 +135,7 @@ export default function SelectedItem() {
                 <p>Scanned code: {scannedBarcode}</p>
               )} */}
             <button onClick={switchToggle} className="pb-2">
-              Number of Rolls: {selectedFilament.stock_level}{" "}
+             Available rolls: {avaialable} &nbsp;&nbsp;&nbsp;&nbsp; Total Rolls:  {all}{" "}
               {!toggle && <ChevronDownIcon className="size-4 inline" />}
               {toggle && <ChevronUpIcon className="size-4 inline" />}
             </button>
@@ -139,9 +145,9 @@ export default function SelectedItem() {
                   let last12 = x.barcode.slice(-12);
                   let starting = x.barcode.slice(0, x.barcode.length - 12);
                   return (
-                    <span key={index} onClick={switchToggle} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'}`}>
+                    <span key={index} onClick={switchToggle} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'}`} title={`${x.inUse ? 'In Use' : 'Available'}`}>
                       {starting}
-                      <span className={`${x.inUse ? 'text-amber-300': 'text-white'} `}>{last12}</span>
+                      <span className={`${x.inUse ? 'text-amber-300': 'text-white'} `} >{last12}</span>
                       {index === barcodes.length - 1 ? null : (
                         <hr className="border border-slate-600 w-31/32 flex self-center" />
                       )}

@@ -9,9 +9,33 @@ import { prisma } from "~/utils/db.server";
 // Fetch all filaments
 export async function getAllFilaments() {
   return await prisma.filament.findMany({
-    orderBy:{
-      stock_level: 'asc'
-    }
+    // orderBy:{
+    //   stock_level: 'asc'
+    // }
+    select: {
+      id: true,
+      brand: true,
+      material: true,
+      color:true,
+      diameter: true,
+      _count:{
+        select:{
+          rolls:{
+            // where:{
+            //   inUse:false,
+            // },
+          },
+        },
+      },
+    },
+    orderBy:[
+      // {brand: "asc"},
+      // {material: "asc"},
+      // {color: "asc"},
+      {rolls: {
+        _count: "asc",
+      }}
+    ],
   });
 }
 
@@ -45,23 +69,12 @@ export async function getFilamentByAttributes(selectedBrand: string, selectedMat
   })
 }
 
-export async function addQRtoRoll(qrString: string, filamentId: number){
-  const updateFilament = await prisma.filament.update({
-    where:{
-      id: filamentId
-    },
-    data:{
-      stock_level:{
-        increment: 1,
-      },
-    },
-  })
-
+export async function addQRtoRoll(qrString: string, filamentId: number, weight: number){
   return await prisma.roll.create({
     data:{
       barcode: qrString,
       filamentId,
-      weight: 1000,
+      weight,
     },
   })
 }
@@ -77,13 +90,6 @@ export async function returnFilamentToStock(barcode: string, weight: number) {
     data: {
       inUse: false,
       weight,
-      filament:{
-        update:{
-          stock_level:{
-            increment: 1,
-          },
-        },
-      },
     },
    });
 
@@ -219,7 +225,7 @@ export async function getFilamentById(id: number) {
     { 
         where: { id },
         include:{
-          rolls: true,
+          rolls:true,
         }
     });
 }

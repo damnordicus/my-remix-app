@@ -31,7 +31,7 @@ export const action: ActionFunction = async ({ request }) => {
     const newId = uuidv4()
     const qrString = qr.imageSync(newId, {type: 'svg'}).toString();
 
-    const addNewQR = await addQRtoRoll(qrString, filamentId.id);
+    const addNewQR = await addQRtoRoll(qrString, filamentId.id, weight);
 
     return qrString;
   }

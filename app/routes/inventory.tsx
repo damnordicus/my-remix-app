@@ -194,12 +194,12 @@ export default function Inventory() {
                 <tr
                   key={filament.id}
                   className={`w-full ${
-                    filament.stock_level > WARNING_AMOUNT
-                      ? "dark:bg-gray-800 dark:border-gray-700"
-                      : filament.stock_level > CRITICAL_AMOUNT
-                      ? "bg-yellow-400 text-black"
-                      : "bg-red-400 text-black"
-                  } border-b border-gray-200 hover:bg-gray-600 `}
+                    filament._count.rolls > WARNING_AMOUNT
+                      ? "dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-600"
+                      : filament._count.rolls > CRITICAL_AMOUNT
+                      ? "bg-yellow-400 text-black hover:bg-yellow-300"
+                      : "bg-red-400 text-black hover:bg-red-300"
+                  } border-b border-gray-200 `}
                   onClick={() => handleItemClick(filament.id)}
                 >
                   <td className="text-center">
@@ -212,7 +212,7 @@ export default function Inventory() {
                     <Badge>{filament.color}</Badge>
                   </td>
                   <td className="text-center">
-                    <p>{filament.stock_level}</p>
+                    <p>{filament._count.rolls }</p>
                   </td>
                   {admin && <td className="flex justify-center">
                     <Form method="post">
