@@ -1,4 +1,4 @@
-import { CameraIcon, PlusIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { CameraIcon, PlusIcon, TrashIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import {
   ActionFunctionArgs,
@@ -81,6 +81,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   if (selection) {
     const filament = await getFilamentByBarcode(selection);
+    searchParams.delete("selection");
     return { filament, selection, user };
   }
   return { user };
@@ -97,7 +98,7 @@ export function HydrateFallback() {
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
   const action = formData.get("_action");
-
+  console.log(action)
   if (action === "submit") {
     const classification = formData.get("classification") as string;
     const printer = formData.get("printer") as string;
@@ -113,6 +114,10 @@ export async function action({ request }: ActionFunctionArgs) {
     await createJob(classification, printer, barcodes, details, +userId);
     return redirect("/?success=job");
   }
+  // if(action === "cancel"){
+    console.log("here")
+  //   return redirect("/");
+  // }
   return redirect("/");
 }
 
@@ -279,30 +284,30 @@ export default function PrintJobForm({
 
             {/* Display selected filaments */}
             {selectedFilament?.length > 0 && (
-              <div className="flex-col space-y-2 mb-4">
+              <div className="flex-col w-full space-y-2 mb-4 max-h-100 overflow-y-scroll">
                 {selectedFilament.map(({ filament, barcode }, index) => (
                   <div
                     key={barcode}
                     className="flex-col mx-4 p-2 bg-slate-700/80 rounded-lg border border-slate-500"
                   >
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">Roll {index + 1}:</span>
+                    <div className="flex w-full  justify-between items-center">
+                      <div className="flex w-full justify-between pr-6 items-center gap-2">
+                      <span>{filament.brand}</span>
                         <Badge size={4}>{filament.color}</Badge>
+                        <span>{filament.material}</span>
                       </div>
                       <button
                         type="button"
                         onClick={() => {
                           handleRemoveFilament(barcode);
                         }}
-                        className="text-gray-300 hover:text-red-500"
+                        className="text-gray-300 hover:text-red-500 hover:cursor-pointer"
                       >
-                        <XCircleIcon className="size-5" />
+                        <TrashIcon className="size-4.5 text-red-500" />
                       </button>
                     </div>
                     <div className="flex justify-between mt-1 text-sm">
-                      <span>Brand: {filament.brand}</span>
-                      <span>Material: {filament.material}</span>
+                      <span className="text-slate-400">{barcode.toUpperCase()}</span>
                     </div>
                     <input type="hidden" name="barcode" value={barcode} />
                   </div>
@@ -367,7 +372,7 @@ export default function PrintJobForm({
             className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 px-2 min-h-24"
           ></textarea>
 
-          <div className="flex w-full justify-center pt-4 mb-4 mt-1">
+          <div className="flex w-full justify-center gap-x-2 pt-4 mb-4 mt-1">
             <button
               name="_action"
               value="submit"
@@ -381,6 +386,11 @@ export default function PrintJobForm({
             >
               Submit Job
             </button>
+            <Link to="/"
+              className={`rounded-xl border-2 px-4 py-2 border-red-400 bg-red-600 hover:cursor-pointer`}
+              >
+              Cancel
+            </Link>
           </div>
         </Form>
       </div>

@@ -134,10 +134,12 @@ export default function SelectedItem() {
               {scannedBarcode && (
                 <p>Scanned code: {scannedBarcode}</p>
               )} */}
-            <button onClick={switchToggle} className="pb-2">
-             Available rolls: {avaialable} &nbsp;&nbsp;&nbsp;&nbsp; Total Rolls:  {all}{" "}
-              {!toggle && <ChevronDownIcon className="size-4 inline" />}
-              {toggle && <ChevronUpIcon className="size-4 inline" />}
+            <button onClick={switchToggle} className="flex pb-2 w-full justify-between">
+            <p className="inline">Available rolls: {avaialable}</p>
+            <p className="inline">Total Rolls:  {all}
+              
+              {!toggle && <ChevronDownIcon className="size-4 inline ml-2" />}
+              {toggle && <ChevronUpIcon className="size-4 inline ml-2" />}</p>
             </button>
             {toggle && (
               <div className="flex-col text-center text-slate-300 border-2 border-slate-400 bg-slate-800 rounded-lg">
@@ -145,7 +147,7 @@ export default function SelectedItem() {
                   let last12 = x.barcode.slice(-12);
                   let starting = x.barcode.slice(0, x.barcode.length - 12);
                   return (
-                    <span key={index} onClick={switchToggle} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'}`} title={`${x.inUse ? 'In Use' : 'Available'}`}>
+                    <span key={index} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'}`} title={`${x.inUse ? 'In Use' : 'Available'}`}>
                       {starting}
                       <span className={`${x.inUse ? 'text-amber-300': 'text-white'} `} >{last12}</span>
                       {index === barcodes.length - 1 ? null : (

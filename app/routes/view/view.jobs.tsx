@@ -38,7 +38,7 @@ export default function AllJobs() {
               creator: { displayName: "Alice Johnson" },
               created: "2025-02-28T14:30:00.000Z",
               summary: "Fix login bug",
-              priority: "low",
+              priority: 1,
               description: {
                   content: [
                       { content: [{ text: "Users unable to log in after recent update." }] }
@@ -52,7 +52,7 @@ export default function AllJobs() {
               creator: { displayName: "Bob Smith" },
               created: "2025-02-27T09:15:00.000Z",
               summary: "Update dashboard UI",
-              priority: "low",
+              priority: 1,
               description: {
                   content: [
                       { content: [{ text: "Redesign the dashboard to improve user experience." }] }
@@ -66,7 +66,7 @@ export default function AllJobs() {
               creator: { displayName: "Charlie Davis" },
               created: "2025-02-26T17:45:00.000Z",
               summary: "Optimize database queries",
-              priority: "medium",
+              priority: 2,
               description: {
                   content: [
                       { content: [{ text: "Improve database performance by indexing critical tables." }] }
@@ -80,25 +80,81 @@ export default function AllJobs() {
               creator: { displayName: "Dana Lee" },
               created: "2025-02-25T12:00:00.000Z",
               summary: "Fix mobile responsiveness",
-              priority: "high",
+              priority: 3,
               description: {
                   content: [
                       { content: [{ text: "Adjust CSS and media queries for better mobile compatibility." }] }
                   ]
               }
           }
-      }
+      },
+      {
+        id: "5",
+        fields: {
+            creator: { displayName: "Alice Johnson" },
+            created: "2025-02-28T14:30:00.000Z",
+            summary: "Fix login bug",
+            priority: 1,
+            description: {
+                content: [
+                    { content: [{ text: "Users unable to log in after recent update." }] }
+                ]
+            }
+        }
+    },
+    {
+        id: "6",
+        fields: {
+            creator: { displayName: "Bob Smith" },
+            created: "2025-02-27T09:15:00.000Z",
+            summary: "Update dashboard UI",
+            priority: 2,
+            description: {
+                content: [
+                    { content: [{ text: "Redesign the dashboard to improve user experience." }] }
+                ]
+            }
+        }
+    },
+    {
+        id: "7",
+        fields: {
+            creator: { displayName: "Charlie Davis" },
+            created: "2025-02-26T17:45:00.000Z",
+            summary: "Optimize database queries",
+            priority: 3,
+            description: {
+                content: [
+                    { content: [{ text: "Improve database performance by indexing critical tables." }] }
+                ]
+            }
+        }
+    },
+    {
+        id: "8",
+        fields: {
+            creator: { displayName: "Dana Lee" },
+            created: "2025-02-25T12:00:00.000Z",
+            summary: "Fix mobile responsiveness",
+            priority: 1,
+            description: {
+                content: [
+                    { content: [{ text: "Adjust CSS and media queries for better mobile compatibility." }] }
+                ]
+            }
+        }
+    }
   ];
   
 
 
     return(
-        <div className="h-screen flex items-center justify-center">
-            <div className="w-4/5 grid grid-cols-4 gap-2 p-8 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl bg-slate-600">
+        <div className="h-screen items-center justify-center">
+            <div className="relative top-20 w-4/5  grid grid-cols-4 gap-2 p-8 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl bg-slate-600/60">
                 {/* Container for each job. */}
-                {jobs.map(issue => {
+                {jobs.sort((a, b) => b.fields.priority - a.fields.priority).map(issue => {
                     return (
-                        <div key="" className={`border-2 grid ${issue.fields.priority === "low" ? 'border-green-500 bg-green-500' : issue.fields.priority === "medium" ? 'border-yellow-500 bg-yellow-500' : 'border-red-500 bg-red-500'}  rounded-2xl shadow-lg shadow-slate-800`}>
+                        <div key="" className={`h-35 border-2 grid ${issue.fields.priority === 1 ? 'border-green-500 bg-green-500' : issue.fields.priority === 2 ? 'border-yellow-500 bg-yellow-500' : 'border-red-500 bg-red-500'}  rounded-2xl shadow-lg shadow-slate-800`}>
                             <div className="bg-gradient-to-br from-gray-600 to-gray-800 ml-3 rounded-e-2xl">
                               <div className="flex w-full justify-between items-center">
                                   <p className="inline pl-2 text-sm text-slate-300/70">{issue.fields.creator.displayName} </p>
