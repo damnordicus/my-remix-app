@@ -9,23 +9,23 @@ import { userSession } from "~/services/cookies.server";
 export const loader = async({request}: LoaderFunctionArgs) => {
   const session = await userSession.parse(request.headers.get("Cookie")) || {};
 
-  fetch(`https://travisspark.atlassian.net/rest/api/3/search?jql=project%20%3D%20%22Additive%20Manufacturing%22%20AND%20%22Contact%20Full%20Name%5BShort%20text%5D%22%20~%20'ignore-me'`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Basic ${Buffer.from(
-        `adam.nord@travisspark.com:${import.meta.env.VITE_JIRA_API_KEY}`
-      ).toString('base64')}`,
-      'Accept': 'application/json'
-    }
-  })
-    .then(response => {
-      console.log(
-        `Response: ${response.status} ${response.statusText}`
-      );
-      return response.text();
-    })
-    .then(text => console.log(text))
-    .catch(err => console.error(err));
+  // fetch(`https://travisspark.atlassian.net/rest/api/3/search?jql=project%20%3D%20%22Additive%20Manufacturing%22%20AND%20%22Contact%20Full%20Name%5BShort%20text%5D%22%20~%20'ignore-me'`, {
+  //   method: 'GET',
+  //   headers: {
+  //     'Authorization': `Basic ${Buffer.from(
+  //       `adam.nord@travisspark.com:${import.meta.env.VITE_JIRA_API_KEY}`
+  //     ).toString('base64')}`,
+  //     'Accept': 'application/json'
+  //   }
+  // })
+  //   .then(response => {
+  //     console.log(
+  //       `Response: ${response.status} ${response.statusText}`
+  //     );
+  //     return response.text();
+  //   })
+  //   .then(text => console.log(text))
+  //   .catch(err => console.error(err));
   return {user: session.username ?? null , admin: session.admin || false}
 }
 
@@ -93,7 +93,7 @@ export default function Index() {
         {user && 
         <>
           <MainButton text="Create Job" link={`${user ? 'job/create': 'job/auth'}`}/>
-          <MainButton text={`${admin ? 'View All Jobs' : 'My Print Jobs'}`} link=""/>
+          <MainButton text={`${admin ? 'View All Jobs' : 'My Print Jobs'}`} link="view/jobs"/>
         </>}
         {admin && 
         <>
