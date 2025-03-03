@@ -26,6 +26,7 @@ import { toast } from "react-hot-toast";
 import { userSession } from "~/services/cookies.server";
 import { Route } from "./+types/create";
 import { Filament } from "@prisma/client";
+import { createJiraBody, createJiraIssue } from "~/utils/jira.service";
 
 type FilamentBarcodes = {
   filament: Filament;
@@ -77,7 +78,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const userId = await getUserIdByUsername(session.username);
-  const user = userId?.id;
+  const user = session.username;//userId?.id;
 
   if (selection) {
     const filament = await getFilamentByBarcode(selection);
@@ -104,14 +105,33 @@ export async function action({ request }: ActionFunctionArgs) {
     const printer = formData.get("printer") as string;
     const barcodes = formData.getAll("barcode") as string[];
     const details = formData.get("details") as string;
+    const title = formData.get('title') as string;
     const userId = formData.get("userId") as string;
     // const date = formData.get("date");
     if (!classification || !printer || barcodes.length === 0 || !details)
       return redirect("");
 
     // console.log('data; ', date)
+    const job = await createJiraBody({classification, printer, barcodes, details, title, userId});
+    console.log('job: ',job)
 
-    await createJob(classification, printer, barcodes, details, +userId);
+    const newJob = await createJiraIssue(job)
+
+    // const fields = reuslt.issues.fields
+    // const content = fields.descript
+
+    // const response = await fetch(`https://travisspark.atlassian.net/rest/api/3/search?jql=project%20%3D%20%22Additive%20Manufacturing%22%20AND%20%22Contact%20Full%20Name%5BShort%20text%5D%22%20~%20'ignore-me'`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Authorization': `Basic ${Buffer.from(
+    //       `adam.nord@travisspark.com:${import.meta.env.VITE_JIRA_API_KEY}`
+    //     ).toString('base64')}`,
+    //     'Accept': 'application/json'
+    //   },
+    //   body: JSON.stringify(newJob),
+    // })
+
+    // await createJob(classification, printer, barcodes, details, +userId);
     return redirect("/?success=job");
   }
   // if(action === "cancel"){
@@ -363,7 +383,7 @@ export default function PrintJobForm({
               )}
             </div>
           </div>
-
+          
           <label htmlFor="details" className="flex pl-4 text-lg py-2">
             Job Description:{" "}
           </label>
