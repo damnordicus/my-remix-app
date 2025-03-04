@@ -553,3 +553,22 @@ export async function createUser({actualUsername, email, phone, secret, admin}: 
     },
   });
 }
+
+export async function deleteUserAccount(userId: number){
+
+  const removeJobs = await prisma.job.deleteMany({
+    where:{
+      userId,
+    }
+  });
+
+  if(removeJobs){
+    return await prisma.user.delete({
+    where:{
+      id: userId,
+    }
+    })
+  }
+  return {message: "Could not remove users jobs"};
+  
+}

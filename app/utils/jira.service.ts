@@ -12,10 +12,10 @@ async function makeJiraRequest(url: string, method?: RequestInit['method'], body
   });
 }
 
-export async function createJiraIssue(data: any) {
+export async function createJiraIssue(body: string) {
   // url = issue
   // makeJiraRequest(url, 'POST', {body})
-  const response = makeJiraRequest('issue', 'POST', data);
+  return await makeJiraRequest('issue', 'POST', body);
 }
 
 export function createJiraBody({classification, printer, barcodes, details, title, userId}: {classification: string; printer: string; barcodes: string[]; details: string; title: string; userId: string}){
@@ -24,29 +24,27 @@ export function createJiraBody({classification, printer, barcodes, details, titl
 
   switch(classification){
     case "Mission":
-      num = 5;
+      num = "2";
       break;
     case "Personal":
-      num = 1;
+      num = "5";
       break;
   }
 
   const body = {
     "fields": {
         "project": {
-            "id": "10012"
+            "id": "10047"
         },
         "summary": title,
         "issuetype": {
-            "id": "10009"
+            "id": "10075"
         },
         "priority": {
             "id": num
         },
-        "customfield_10133": userId,
-        "customfield_10030": {
-        "id": "10124"
-      },
+        "customfield_10201": userId,
+        
       "description":{
         "type": "doc",
         "version": 1,
@@ -54,9 +52,9 @@ export function createJiraBody({classification, printer, barcodes, details, titl
           "type": "paragraph",
           "content":[{
             "type": "text",
-            "text": details,
+            "text": details
           }]
-        }],
+        }]
       },
       "customfield_10162": {
         "type": "doc",
@@ -65,23 +63,22 @@ export function createJiraBody({classification, printer, barcodes, details, titl
           "type": "paragraph",
           "content": [{
             "type": "text",
-            "text": barcodes.join(", ")}
-          ],
-        }
-        ],
+            "text": barcodes.join(", ")
+            }]
+        }]
       },
       "customfield_10163": {
-        "value": printer,
-        "id": "10157",
-      }
+            "value": printer
+        }
     }
   }
 
-  return body
+  return JSON.stringify(body)
 }
 
 export async function getUserIssues(username: string) {
-  const url = `search?jql=project%20%3D%20%22Additive%20Manufacturing%20Old%22%20AND%20%22Contact%20Full%20Name%5BShort%20text%5D%22%20~%20'ignore-me'`;
+  const url = `search?jql=${encodeURIComponent(`project=10047 AND 'Inventory App User Id[Short text]'~'${username}'`)}`;
+  console.log(url);
   const response = await makeJiraRequest(url);
   if (response.ok) {
     const json = (await response.json()) as JiraIssuesResponse;
@@ -95,7 +92,7 @@ function issuesArrayToMap(issues: JiraIssuesResponse["issues"]): JiraIssueMap {
 
   for (const { id, fields } of issues) {
     const descriptionContentNode = fields.description?.content[0].content;
-    console.log(descriptionContentNode);
+    const printer = fields.customfield_10163;
     let description = "";
     if (
       descriptionContentNode &&
@@ -116,6 +113,7 @@ function issuesArrayToMap(issues: JiraIssuesResponse["issues"]): JiraIssueMap {
       created,
       creator,
       summary,
+      printer,
     });
   }
 

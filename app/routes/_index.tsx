@@ -93,11 +93,11 @@ export default function Index() {
         {user && 
         <>
           <MainButton text="Create Job" link={`${user ? 'job/create': 'job/auth'}`}/>
-          <MainButton text={`${admin ? 'View All Jobs' : 'My Print Jobs'}`} link="view/jobs"/>
+          <MainButton text='My Print Jobs' link="view/jobs"/>
         </>}
         {admin && 
         <>
-          <MainButton text="Create Barcode" link="generateBarcode"/>
+          {/* <MainButton text="Create Barcode" link="generateBarcode"/> */}
           <MainButton text="View All Users" link="view/accounts"/>
         </>}
       </div>   

@@ -31,6 +31,7 @@ interface JiraIssueFields {
   status: JiraStatus;
   components: unknown[];
   customfield_10059: null;
+  customfield_10063: string | null;
   aggregatetimeestimate: null | number;
   creator: JiraUser;
   subtasks: unknown[];
@@ -229,5 +230,6 @@ type JiraIssueMap = Map<
     created: JiraIssueFields["created"];
     creator: JiraIssueFields["creator"];
     summary: JiraIssueFields["summary"];
+    printer: JiraIssueFields["customfield_10063"]
   }
 >;

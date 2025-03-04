@@ -112,26 +112,10 @@ export async function action({ request }: ActionFunctionArgs) {
       return redirect("");
 
     // console.log('data; ', date)
-    const job = await createJiraBody({classification, printer, barcodes, details, title, userId});
-    console.log('job: ',job)
+    const job = createJiraBody({classification, printer, barcodes, details, title, userId});
 
     const newJob = await createJiraIssue(job)
 
-    // const fields = reuslt.issues.fields
-    // const content = fields.descript
-
-    // const response = await fetch(`https://travisspark.atlassian.net/rest/api/3/search?jql=project%20%3D%20%22Additive%20Manufacturing%22%20AND%20%22Contact%20Full%20Name%5BShort%20text%5D%22%20~%20'ignore-me'`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Authorization': `Basic ${Buffer.from(
-    //       `adam.nord@travisspark.com:${import.meta.env.VITE_JIRA_API_KEY}`
-    //     ).toString('base64')}`,
-    //     'Accept': 'application/json'
-    //   },
-    //   body: JSON.stringify(newJob),
-    // })
-
-    // await createJob(classification, printer, barcodes, details, +userId);
     return redirect("/?success=job");
   }
   // if(action === "cancel"){
@@ -157,12 +141,12 @@ export default function PrintJobForm({
     "Right XL",
     "Left MK4",
     "Right MK4",
-    "MK3 1",
-    "MK3 2",
-    "MK3 3",
-    "MK3 4",
-    "MK3 5",
-    "MK3 6",
+    "MK3S 1",
+    "MK3S 2",
+    "MK3S 3",
+    "MK3S 4",
+    "MK3S 5",
+    "MK3S 6",
   ];
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedPrinter, setSelectedPrinter] = useState("");
@@ -287,6 +271,10 @@ export default function PrintJobForm({
         <h1 className="text-2xl text-center text-amber-500">Job Details</h1>
         <Form method="POST" onSubmit={handleSubmit}>
           <input type="hidden" name="userId" value={user} />
+          <div className="flex-col gap-2 px-4 text-lg ">
+            <label htmlFor="title " >Name Your Project: </label>
+            <input type="text" name="title" className="bg-slate-800 rounded-xl border border-slate-500 mb-2"/>
+          </div>
           <InputDropDown
             labelText={"Classification"}
             options={["Mission", "Personal"]}
@@ -366,20 +354,20 @@ export default function PrintJobForm({
                   </div>
                 </div>
               ) : (
-                <>
+                <div className="grid grid-cols-2 w-full">
                   <Link
                     to={`../barcode?from=job/create`}
-                    className="bg-amber-500 px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 text-center"
+                    className="bg-amber-500 w-fit px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 justify-self-end -mr-6"
                   >
-                    <CameraIcon className="size-6" />
+                    <CameraIcon className="size-8" />
                   </Link>
                   <Link
                     to="inventory"
-                    className="bg-amber-500 px-3 rounded-xl py-1 border-2 border-amber-600 text-black text-center"
+                    className="text-sm italic justify-self-center self-end "
                   >
                     Search Filament
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </div>

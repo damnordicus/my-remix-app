@@ -108,7 +108,7 @@ export default function SelectedItem() {
     if (actionData && actionData.newId) setNewId(actionData.newId)
   }, [actionData]);
 
-  function handleSubmit(e) {
+  function handleSave() {
     // e.preventDefault();
     // //console.log('submitting');
     // e.currentTarget.submit();
@@ -164,6 +164,7 @@ export default function SelectedItem() {
             name="_action"
             value="addRoll"
             className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg"
+            onClick={handleSave}
           >
             <QrCodeIcon className="size-7 mr-1" /> Save
           </button>

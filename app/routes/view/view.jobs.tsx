@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, useLoaderData } from "react-router";
+import { Link, LoaderFunctionArgs, useLoaderData } from "react-router";
 import { userSession } from "~/services/cookies.server";
 import { getUserIssues } from "~/utils/jira.service";
 
@@ -14,6 +14,13 @@ export default function AllJobs() {
   return (
     <div className="h-screen items-center justify-center">
       <div className="relative top-20 w-4/5  grid grid-cols-4 gap-2 p-8 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl bg-slate-600/60">
+        <div className="flex col-span-4 w-full -mt-2 justify-between text-lg">
+          <Link to="/" className="">Back</Link>
+          <p className="text-2xl -mt-2 pb-2 text-amber-400">
+            Your Prints
+          </p>
+          <p></p>
+        </div>
         {Array.from(result.entries())
           .sort(([_, a], [__, b]) => +a.priority.id - +b.priority.id)
           .map(([id, issue]) => {
