@@ -33,7 +33,7 @@ export default function InputDropDown({
       {options && options.length > 0 ? (
         <select
           name={labelText.toLowerCase()}
-          className="flex ml-4 text-lg w-11/12 py-1 pl-4 bg-slate-800/80 rounded-xl border border-slate-500"
+          className="flex ml-4 text-base w-11/12 py-3 pl-4 bg-slate-800/80 rounded-xl border border-slate-500"
           onChange={(e) => handleChange(e)}
         >
           <option key={0} value=''></option>

@@ -41,6 +41,7 @@ export default [
   route("barcode", "./routes/barcode.tsx"),
   ...prefix("view", [
     route("jobs","./routes/view/view.jobs.tsx"),
+    route(":userId", "./routes/view/user.$userId.tsx"),
     route("accounts", "./routes/view/view.accounts.tsx",[
        route(":userId/jobs", "./routes/view/view.accounts.$userId.jobs.tsx"),
     ]),

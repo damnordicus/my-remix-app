@@ -1,5 +1,5 @@
 import {
-  ClientLoaderFunctionArgs,
+  // ClientLoaderFunctionArgs,
   isRouteErrorResponse,
   Links,
   Meta,
@@ -13,7 +13,7 @@ import type { LinksFunction } from "react-router";
 import { default as RootLayout } from "./components/Layout";
 
 import "./tailwind.css";
-import { useCallback, useMemo } from "react";
+// import { useCallback, useMemo } from "react";
 import { Toaster } from "react-hot-toast";
 import { userSession } from "./services/cookies.server";
 
@@ -32,34 +32,34 @@ export const links: LinksFunction = () => [
 
 export const loader = async ({ request }) => {
   const session = await userSession.parse(request.headers.get("Cookie")) || {};
-  return { user: session.username || null, admin: session.admin || false };
+  return { user: session.username || null, id: session.id ,admin: session.admin || false };
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
 
-  const getNumber = useMemo(() => {
-    const randomBuffer = new Uint8Array(1);
-    crypto.getRandomValues(randomBuffer);
+  // const getNumber = useMemo(() => {
+  //   const randomBuffer = new Uint8Array(1);
+  //   crypto.getRandomValues(randomBuffer);
 
-    // Scale the random number to the range 1-15
-    const randomNumber = 1 + (randomBuffer[0] % 14);
-    return randomNumber
-  }, [])
+  //   // Scale the random number to the range 1-15
+  //   const randomNumber = 1 + (randomBuffer[0] % 14);
+  //   return randomNumber
+  // }, [])
 
-  const get2 = useCallback(() => {
-    const randomBuffer = new Uint8Array(1);
-    crypto.getRandomValues(randomBuffer);
+  // const get2 = useCallback(() => {
+  //   const randomBuffer = new Uint8Array(1);
+  //   crypto.getRandomValues(randomBuffer);
 
-    // Scale the random number to the range 1-15
-    const randomNumber = 1 + (randomBuffer[0] % 14);
-    return randomNumber
-  }, [])
+  //   // Scale the random number to the range 1-15
+  //   const randomNumber = 1 + (randomBuffer[0] % 14);
+  //   return randomNumber
+  // }, [])
 
   // console.log(get2())
 
   // const { rand } = useLoaderData<typeof clientLoader>();
   const backgroundUrl = `/fil7.jpg`;
-  const { user } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
   
   return (
     <html lang="en">
@@ -71,7 +71,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body className="bg-black text-white">
       <Toaster position="top-center"/>
-    <RootLayout backgroundUrl={backgroundUrl} user={user}>
+    <RootLayout backgroundUrl={backgroundUrl} user={data}>
         {children}
         </RootLayout>
         <ScrollRestoration />

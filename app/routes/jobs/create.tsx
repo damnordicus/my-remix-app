@@ -273,7 +273,7 @@ export default function PrintJobForm({
           <input type="hidden" name="userId" value={user} />
           <div className="flex-col gap-2 px-4 text-lg ">
             <label htmlFor="title " >Name Your Project: </label>
-            <input type="text" name="title" className="bg-slate-800 rounded-xl border border-slate-500 mb-2"/>
+            <input type="text" name="title" className="bg-slate-800 rounded-xl py-2 border border-slate-500 mb-2"/>
           </div>
           <InputDropDown
             labelText={"Classification"}

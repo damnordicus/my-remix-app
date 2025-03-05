@@ -572,3 +572,11 @@ export async function deleteUserAccount(userId: number){
   return {message: "Could not remove users jobs"};
   
 }
+
+export async function getUserById(id: number){
+  return await prisma.user.findFirstOrThrow({
+    where:{
+      id,
+    }
+  });
+}

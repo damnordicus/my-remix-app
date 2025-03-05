@@ -1,4 +1,5 @@
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import { ActionFunctionArgs, Form, LoaderFunctionArgs, Outlet, useLoaderData, useNavigate } from "react-router";
 import { userSession } from "~/services/cookies.server";
 import { deleteUserAccount, getAllUsers } from "~/services/filament.server";
@@ -16,8 +17,9 @@ export const action = async ({ request }: ActionFunctionArgs ) => {
     const formData = await request.formData();
     const action = formData.get("_action");
     const userId = formData.get("userId") as string;
-    if(action === 'delete'){
-        await deleteUserAccount(+userId);
+    if(action === 'edit'){
+        // await deleteUserAccount(+userId);
+
         return {message: "User account deleted!"};
     }
 }
@@ -26,28 +28,30 @@ export default function Accounts () {
     const { allAccounts } = useLoaderData<typeof loader>();
     console.log(allAccounts)
     const navigate = useNavigate();
+    const [showEdit, setShowEdit] = useState(false);
 
     function handleClick(id: number){
-        navigate(`./${id}/jobs`);
+        setShowEdit(!showEdit);
+        // navigate(`./${id}/jobs`);
     }
 
     return (
-        <div className="flex w-full min-h-screen items-center justify-center">
-            <div className="flex-col pt-5 gap-5 w-[600px] bg-slate-600 rounded-xl border-2 border-slate-400 shadow-xl">
-            <table>
+        <div className="flex-col w-full items-center justify-center">
+            <div className="relative flex flex-col mt-20 w-1/2 overflow-scroll text-slate-300 bg-gray-700 shadow-md rounded-lg bg-clip-border border-2 border-slate-400">
+            <table className="w-full text-center table-auto min-w-max text-white">
                 <thead >
-                    <tr className="border-b border-slate-500">
-                        <th>
+                    <tr className="text-slate-300 border-b border-slate-300 bg-gray-900">
+                        <th className="p-4">
                             Username
                         </th>
-                        <th>
+                        <th className="p-4">
                             Email
                         </th>
-                        <th>
+                        <th className="p-4">
                             Phone
                         </th>
-                        <th>
-                            Delete
+                        <th className="p-4">
+                            Edit
                         </th>
                     </tr>
                 </thead>
@@ -55,28 +59,31 @@ export default function Accounts () {
                 allAccounts.map((account, index) => {
                     return(
                     <tr key={account.id} className={`text-center ${index < allAccounts.length -1 ? 'border-b-2 border-slate-400 ' : ''} hover:cursor-pointer hover:bg-slate-500`}>
-                        <td>
+                        <td className="p-2">
                             {account.username}
                         </td>
-                        <td>
+                        <td className="p-2">
                             {account.email}
                         </td>
-                        <td>
+                        <td className="p-2">
                             {account.phone}
                         </td>
-                        <td className="flex justify-center">
-                        <Form method="POST">
-                            <input type="hidden" name="userId" value={account.id} />
-                            <button name="_action" value="delete" type="submit">
-                                <TrashIcon className="size-6 text-red-400" />
+                        <td className="flex justify-center p-2 self-center">
+                        {/* <Form method="POST"> */}
+                            {/* <input type="hidden" name="userId" value={account.id} /> */}
+                            <button name="_action" value="edit" type="submit" onClick={() => handleClick(account.id)} >
+                                <EllipsisVerticalIcon className="size-6 text-gray-200" />
                             </button>
-                        </Form>
+                        {/* </Form> */}
                         </td>
                     </tr>
                 )})
             )}
             </table>
             </div>
+            {showEdit && <div>
+
+                </div>}
             <Outlet />
         </div>
     );

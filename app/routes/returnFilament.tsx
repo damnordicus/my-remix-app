@@ -94,7 +94,7 @@ export default function  ReturnToStock() {
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="w-1/6 flex justify-center bg-slate-600/50 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-4">
+        <div className="flex justify-center bg-slate-600/60 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-8">
           <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl mb-4">

@@ -48,7 +48,7 @@ export const action = async ({ request }) => {
       }
 
       const headers = new Headers();
-      headers.append("Set-Cookie", await userSession.serialize({ username: user.username, admin: user.admin }));
+      headers.append("Set-Cookie", await userSession.serialize({ username: user.username, id: user.id, admin: user.admin }));
   
       return redirect("../job/create", { headers });
 };
@@ -62,7 +62,7 @@ export default function PrintJob() {
 
   return (
     <div className="flex w-full min-h-screen items-center justify-center">
-      <div className="flex-col pt-5 gap-5 w-[400px] bg-slate-600/60 rounded-xl border-2 border-slate-400 shadow-xl">
+      <div className="flex-col pt-5 gap-5 w-[400px] bg-slate-600/60 backdrop-blur-sm rounded-xl border-2 border-slate-400 shadow-xl">
           <h1 className="text-2xl text-center text-amber-500">
             Print Job Login
           </h1>

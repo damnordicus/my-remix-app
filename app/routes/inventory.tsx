@@ -168,9 +168,9 @@ export default function Inventory() {
           setFilterVisible={setFilterVisible}
         />
       </div>
-      <div className="w-5/12 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl z-0">
-        <div className="overflow-y-auto">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
+      <div className=" mx-8 max-h-[700px] border-2 border-slate-400 rounded-lg overflow-y-scroll drop-shadow-xl z-0">
+        <div className="overflow-auto">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed ">
             <thead className="sticky top-0 z-3 text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
               <tr className="rounded-t-lg ">
                 <th scope="col" className={`text-center pl-6 py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>

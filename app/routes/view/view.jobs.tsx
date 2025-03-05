@@ -13,14 +13,8 @@ export default function AllJobs() {
 
   return (
     <div className="h-screen items-center justify-center">
-      <div className="relative top-20 w-4/5  grid grid-cols-4 gap-2 p-8 mx-auto border-2 border-slate-400 rounded-lg overflow-hidden drop-shadow-xl bg-slate-600/60">
-        <div className="flex col-span-4 w-full -mt-2 justify-between text-lg">
-          <Link to="/" className="">Back</Link>
-          <p className="text-2xl -mt-2 pb-2 text-amber-400">
-            Your Prints
-          </p>
-          <p></p>
-        </div>
+      <div className="relative top-20 lg:w-4/5  grid grid-cols-1 gap-2 p-8 mx-auto lg:border-2 lg:border-slate-400 rounded-lg overflow-hidden lg:drop-shadow-xl lg:bg-slate-600/60">
+        {result.size === 0 && <div className="col-span-1 flex justify-center text-2xl gap-2"><p>You don't have any jobs.</p> <Link to="../job/create" className=""><p className="underline text-blue-300 italic"> Print something?</p></Link></div>}
         {Array.from(result.entries())
           .sort(([_, a], [__, b]) => +a.priority.id - +b.priority.id)
           .map(([id, issue]) => {
@@ -56,7 +50,7 @@ export default function AllJobs() {
                 <div className="bg-gradient-to-br from-gray-600 to-gray-800 ml-3 rounded-e-2xl">
                   <div className="flex w-full justify-between items-center">
                     <p className="inline pl-2 text-sm text-slate-300/70">
-                      {issue.creator.displayName} - {issue.id}{" "}
+                      {issue.creator.displayName} - {"#"}{issue.id}{" "}
                     </p>
                     <p className="italic pr-2">{issue.created.slice(0, 10)}</p>
                   </div>
