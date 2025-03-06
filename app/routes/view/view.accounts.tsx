@@ -1,6 +1,6 @@
 import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { ActionFunctionArgs, Form, LoaderFunctionArgs, Outlet, useLoaderData, useNavigate } from "react-router";
+import { ActionFunctionArgs, Form, LoaderFunctionArgs, Outlet, redirect, useLoaderData, useNavigate } from "react-router";
 import { userSession } from "~/services/cookies.server";
 import { deleteUserAccount, getAllUsers } from "~/services/filament.server";
 
@@ -10,6 +10,7 @@ export const loader = async ({ request }: LoaderFunctionArgs ) => {
         const allAccounts = await getAllUsers();
         return { allAccounts };
     }
+    if(!session.username) return redirect("..")
     return {};
 }
 

@@ -1,8 +1,11 @@
-import { LoaderFunctionArgs, useLoaderData, useSearchParams } from "react-router";
+import { LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from "react-router";
 import {generateQr} from "~/services/qr.server";
 import {v4 as uuidv4 } from "uuid"
+import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+    const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..");
     const searchParams = new URL(request.url).searchParams;
     const uri = searchParams.get("uri") as string;
 

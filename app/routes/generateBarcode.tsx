@@ -1,13 +1,16 @@
 import { QrCodeIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, LoaderFunction } from "react-router";
+import { ActionFunction, LoaderFunction, redirect } from "react-router";
 import { json, useFetcher, useLoaderData } from "react-router";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import CheckboxGroup from "~/components/CheckboxGroup";
 import { v4 as uuidv4 } from "uuid";
 import * as qr from 'qr-image';
 import { addQRtoRoll, getAllBrands, getAllColors, getAllMaterials, getFilamentByAttributes, returnFilamentToStock } from "~/services/filament.server";
+import { userSession } from "~/services/cookies.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..");
 
   const brands = await getAllBrands();
   const colors = await getAllColors();

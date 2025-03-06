@@ -1,4 +1,4 @@
-import { Form, useFetcher, useFetchers, useLoaderData, useNavigate } from "react-router";
+import { Form, redirect, useFetcher, useFetchers, useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import {
   getBarcodesByFilamentId,
@@ -7,8 +7,11 @@ import {
 } from "~/services/filament.server";
 import { ActionFunctionArgs } from "react-router";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({ request, params }) => {
+  const session = await userSession.parse(request.headers.get("Cookie"));
+    if(!session.username) return redirect("..")
   const filamentId = +params.itemId;
   const selectedFilament = await getFilamentById(filamentId);
   const barcodes = await getBarcodesByFilamentId(filamentId);

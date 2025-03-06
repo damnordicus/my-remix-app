@@ -34,13 +34,13 @@ export default function Layout({ children, backgroundUrl, user }: { children: Re
         <NavButton to={"return"} >
           <CameraIcon className="size-8"/>
         </NavButton>
-        <NavButton to={"view/jobs"}>
+        {user.id && <NavButton to={"view/jobs"}>
           <BriefcaseIcon className="size-8 "/>
-        </NavButton>
-        <NavButton to={user.id ? "job/create" : "job/auth"}>
+        </NavButton>}
+        {user.id && <NavButton to={"job/create"}>
           <PlusIcon className="size-8 "/>
-        </NavButton>
-        <NavButton to={user.id ? `view/${user.id}`: 'job/auth'}>
+        </NavButton>}
+        <NavButton to={user.id ? `view/${user.id}`: `job/auth?from=login`}>
           <UserIcon className="size-8 "/>
         </NavButton>
       

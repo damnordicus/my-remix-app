@@ -108,14 +108,14 @@ export const BarcodeScannerComponent = ({
 };
 
 export default function Barcode() {
-  const [data, setData] = useState("Not Found");
+  const [data, setData] = useState("No Barcode Scanned");
   const [stopStream, setStopStream] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const linkTo = searchParams.get('from')
 
   useEffect(() => {
-    if (data !== '' && data !== 'Not Found') {
+    if (data !== '' && data !== 'No Barcode Scanned') {
       setStopStream(true);
 
       localStorage.setItem('scannedBarcode', data)
@@ -143,11 +143,11 @@ export default function Barcode() {
             if (result) {
               setData(result.text);
             }
-            else setData("Not Found");
+            else setData("No Barcode Scanned");
           }
         }}
       />
-      <p>{data}</p>
+      <p className="w-full text-center pt-2">{data}</p>
       </div>
     </div>
   );

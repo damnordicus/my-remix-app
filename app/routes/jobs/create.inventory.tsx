@@ -3,15 +3,13 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { data, Form, Link, Navigate, Outlet, redirect, useActionData, useFetcher, useLoaderData, useNavigate } from "react-router";
 import CheckboxGroup from "~/components/CheckboxGroup";
+import { userSession } from "~/services/cookies.server";
 import { getAllBrands, getAllColors, getAllFilaments, getAllMaterials, getAllUnusedMaterials, getFirstBarcodeForFilament } from "~/services/filament.server";
 
 export const loader = async ({request}) => {
-    // const brands = await getAllBrands();
-    // const colors = await getAllColors();
+    const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..")
     const materials = await getAllUnusedMaterials();
-    // const filaments = await getAllFilaments();
-    console.log('materials: ', materials)
-    //return {brands, colors, materials, filaments};
     return {materials}
 }
 

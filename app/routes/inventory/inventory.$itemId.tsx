@@ -1,6 +1,7 @@
 import {
   ChevronDownIcon,
   ChevronUpIcon,
+  XCircleIcon,
 } from "@heroicons/react/24/outline";
 import {
   Link,
@@ -9,7 +10,8 @@ import {
   useNavigate,
   useNavigation,
   ActionFunctionArgs,
-  useSearchParams
+  useSearchParams,
+  redirect
 } from "react-router";
 import { useEffect, useState } from "react";
 import Badge from "../../components/Badge";
@@ -25,8 +27,8 @@ import { generateQr } from "~/services/qr.server";
 import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({ request, params }) => {
-  const session =
-    (await userSession.parse(request.headers.get("Cookie"))) || {};
+  const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
+  // if(!session.username) return redirect("..")
   const filamentId = +params.itemId;
   // const filters = (new URL(request.url).searchParams).getAll("filters");
   const selectedFilament = await getFilamentById(filamentId);
@@ -120,7 +122,7 @@ export default function SelectedItem() {
             className="fixed top-2 right-2 cursor-pointer text-white text-xl"
             onClick={() => navigate(`..?${searchParams.toString()}`)}
           >
-            ✖
+            <XCircleIcon className="size-6" />
           </div>
 
           <div className="flex justify-between mt-4">

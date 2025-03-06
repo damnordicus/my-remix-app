@@ -1,8 +1,11 @@
-import { LoaderFunctionArgs } from "react-router";
+import { LoaderFunctionArgs, redirect } from "react-router";
+import { userSession } from "~/services/cookies.server";
 import {generateQr} from "~/services/qr.server";
 // import { default as generateQr } from "~/services/........."
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..");
   // const formData = await request.formData();
   //     const selectedBrand = formData.get("brands") as string;
   //     const selectedMaterial = formData.get("materials") as string;

@@ -7,8 +7,9 @@ import {
 } from "~/services/filament.server";
 import { v4 as uuidv4 } from "uuid";
 import * as qr from "qr-image";
-import { ActionFunctionArgs, json } from "react-router";
+import { ActionFunctionArgs, json, redirect } from "react-router";
 import { generateQr } from "~/services/qr.server";
+import { userSession } from "~/services/cookies.server";
 
 // export async function loader({ request, params }) {
 //   const formData = await request.formData();
@@ -54,6 +55,8 @@ import { generateQr } from "~/services/qr.server";
 // }
 
 export async function loader({request}) {
+  const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..");
   const search = new URL(request.url).searchParams
   const newId = search.get('id')
   if (!newId) throw new Error('id is required.')

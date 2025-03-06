@@ -1,8 +1,11 @@
 import { CheckBadgeIcon } from "@heroicons/react/24/outline";
-import { Form, Link, LoaderFunctionArgs, useLoaderData } from "react-router"
+import { Form, Link, LoaderFunctionArgs, redirect, useLoaderData } from "react-router"
+import { userSession } from "~/services/cookies.server";
 import { getUserById, getUserByUsername } from "~/services/filament.server";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+    const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..");
     const userId = params.userId;
     if(!userId){
         return {}

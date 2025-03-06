@@ -1,9 +1,10 @@
-import { Link, LoaderFunctionArgs, useLoaderData } from "react-router";
+import { Link, LoaderFunctionArgs, redirect, useLoaderData } from "react-router";
 import { userSession } from "~/services/cookies.server";
 import { getUserIssues } from "~/utils/jira.service";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await userSession.parse(request.headers.get("Cookie"));
+  if(!session.username) return redirect("..")
   const result = await getUserIssues(session.username);
   return { result };
 };
@@ -14,7 +15,7 @@ export default function AllJobs() {
   return (
     <div className="h-screen items-center justify-center">
       <div className="relative top-20 lg:w-4/5  grid grid-cols-1 gap-2 p-8 mx-auto lg:border-2 lg:border-slate-400 rounded-lg overflow-hidden lg:drop-shadow-xl lg:bg-slate-600/60">
-        {result.size === 0 && <div className="col-span-1 flex justify-center text-2xl gap-2"><p>You don't have any jobs.</p> <Link to="../job/create" className=""><p className="underline text-blue-300 italic"> Print something?</p></Link></div>}
+        {result.size === 0 && <div className="col-span-1 flex justify-center text-2xl gap-2 py-2 bg-slate-500/60 backdrop-blur-sm border-2 border-slate-500 rounded-lg"><p>You don't have any jobs.</p> <Link to="../job/create" className=""><p className="underline text-blue-300 italic"> Print something?</p></Link></div>}
         {Array.from(result.entries())
           .sort(([_, a], [__, b]) => +a.priority.id - +b.priority.id)
           .map(([id, issue]) => {

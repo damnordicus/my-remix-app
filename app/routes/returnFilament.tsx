@@ -9,12 +9,6 @@ import { getAllMaterials, getFilamentByBarcode, pullFromStockByBarcode, returnFi
 import Barcode from "~/routes/barcode";
 
 export const loader: LoaderFunction = async ({ request }) => {
-//   const url = new URL(request.url);
-//   const barcode = url.searchParams.get("barcode");
-
-//   if (!barcode) {
-//     return json({ error: "No barcode provided" }, { status: 400 });
-//   }
 
   const materials = await getAllMaterials();
 
@@ -94,7 +88,7 @@ export default function  ReturnToStock() {
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="flex justify-center bg-slate-600/60 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-8">
+        <div className="flex w-2/3 justify-center bg-slate-600/60 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-8">
           <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl mb-4">
@@ -111,7 +105,7 @@ export default function  ReturnToStock() {
               disabled
               required
             />
-            <Link to="../barcode"><CameraIcon className="size-7 ml-4 text-amber-500"/></Link>
+            <Link to="../barcode"><div className="px-2 py-1 ml-2 bg-amber-500 rounded-xl border-2 border-amber-600"><CameraIcon className="size-7  text-amber-700"/></div></Link>
            
             </div>
             

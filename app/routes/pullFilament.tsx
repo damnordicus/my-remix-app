@@ -1,11 +1,14 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, LoaderFunction } from "react-router";
+import { ActionFunction, LoaderFunction, redirect } from "react-router";
 import { Form, Link, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import InputText from "~/components/InputText";
 import { getFilamentByBarcode, pullFromStockByBarcode } from "~/services/filament.server";
+import { userSession } from "~/services/cookies.server";
 
 export const loader: LoaderFunction = async ({ request }) => {
+  const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..");
   const url = new URL(request.url);
   const barcode = url.searchParams.get("barcode");
 

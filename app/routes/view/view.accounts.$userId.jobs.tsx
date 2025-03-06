@@ -1,7 +1,10 @@
-import { useLoaderData } from "react-router";
+import { redirect, useLoaderData } from "react-router";
+import { userSession } from "~/services/cookies.server";
 import { getJobsByUserId } from "~/services/filament.server";
 
 export const loader = async ({ request, params }) => {
+    const session = await userSession.parse(request.headers.get("Cookie"));
+      if(!session.username) return redirect("..");
     const userId = params.userId;
 
     const userJobs = await getJobsByUserId(+userId);
