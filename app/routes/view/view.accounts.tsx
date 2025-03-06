@@ -38,7 +38,7 @@ export default function Accounts () {
 
     return (
         <div className="flex-col w-full items-center justify-center">
-            <div className="relative flex flex-col mt-20 w-1/2 overflow-scroll text-slate-300 bg-gray-700 shadow-md rounded-lg bg-clip-border border-2 border-slate-400">
+            <div className="relative flex flex-col mt-20  overflow-scroll text-slate-300 bg-gray-700 shadow-md rounded-lg bg-clip-border border-2 border-slate-400">
             <table className="w-full text-center table-auto min-w-max text-white">
                 <thead >
                     <tr className="text-slate-300 border-b border-slate-300 bg-gray-900">
@@ -82,8 +82,11 @@ export default function Accounts () {
             )}
             </table>
             </div>
-            {showEdit && <div>
-
+            {showEdit && <div className="flex-col w-1/2 bg-slate-600 h-[300px] mt-5 rounded-xl">
+                <Form>
+                    <p className="w-full pl-4 py-2 "> Delete Account: </p>
+                    <button name="_action" value="delete" type="submit" className="flex w-full justify-center bg-red-500 mx-6">Delete User Account</button>
+                </Form>
                 </div>}
             <Outlet />
         </div>

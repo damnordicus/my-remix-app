@@ -1,4 +1,12 @@
-import { Form, redirect, useFetcher, useFetchers, useLoaderData, useNavigate } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useFetcher,
+  useFetchers,
+  useLoaderData,
+  useNavigate,
+} from "react-router";
 import { useEffect, useState } from "react";
 import {
   getBarcodesByFilamentId,
@@ -6,12 +14,12 @@ import {
   removeFilamentByQR,
 } from "~/services/filament.server";
 import { ActionFunctionArgs } from "react-router";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { CameraIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({ request, params }) => {
   const session = await userSession.parse(request.headers.get("Cookie"));
-    if(!session.username) return redirect("..")
+  if (!session.username) return redirect("..");
   const filamentId = +params.itemId;
   const selectedFilament = await getFilamentById(filamentId);
   const barcodes = await getBarcodesByFilamentId(filamentId);
@@ -73,30 +81,43 @@ export default function SelectedItem() {
   } else {
     return (
       <>
-      {barcodes.length > 0 ? (
-        <div className="bg-slate-400/60 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
-        <Form method="post">
-        <p className="w-full text-center mb-2">Select the barcode to remove:</p>
-        <input type="hidden" name="id" value={selectedFilament.id}/>
-        <div className="flex gap-2 justify-center">
-        <select name="barcode" className="shadow-lg border-[1px] rounded-lg border-slate-400 px-2 bg-slate-600">
-          {barcodes.map((x) => (
-            <option key={x} value={x.barcode}>
-              {x.barcode.slice(x.barcode.length-12)}
-            </option>
-          ))}
-        </select>
-        <button name="_action" value="submit" className="p-1 bg-red-400 border-2 rounded-lg border-red-600 text-red-800 shadow-lg">
-          <TrashIcon className="size-6" />
-          
-        </button>
-        </div>
-      </Form>
-      </div>
-      ):(
-        <p className="text-center">There are no rolls to discard.</p>
-      )}
-      
+        {barcodes.length > 0 ? (
+          <div className="bg-slate-400/60 rounded-lg pb-4 pt-1 mt-2 drop-shadow-md">
+            <Form method="post">
+              <p className="w-full text-center mb-2">
+                Select the barcode to remove:
+              </p>
+              <input type="hidden" name="id" value={selectedFilament.id} />
+              <div className="text-center">
+                <div className="flex gap-2 justify-center">
+                  <select
+                    name="barcode"
+                    className="shadow-lg border-[1px] rounded-lg border-slate-400 px-2 bg-slate-600"
+                  >
+                    {barcodes.map((x) => (
+                      <option key={x} value={x.barcode}>
+                        {x.barcode.slice(x.barcode.length - 12)}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    name="_action"
+                    value="submit"
+                    className="p-1 bg-red-400 border-2 rounded-lg border-red-600 text-red-800 shadow-lg"
+                  >
+                    <TrashIcon className="size-6" />
+                  </button>
+                </div>
+                <p className="self-center"> - or - </p>
+                <Link to="">
+                  <CameraIcon className="size-8" />
+                </Link>
+              </div>
+            </Form>
+          </div>
+        ) : (
+          <p className="text-center">There are no rolls to discard.</p>
+        )}
       </>
     );
   }

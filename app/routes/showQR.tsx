@@ -5,7 +5,7 @@ import { userSession } from "~/services/cookies.server";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     const session = await userSession.parse(request.headers.get("Cookie"));
-      if(!session.username) return redirect("..");
+    //   if(!session.username) return redirect("..");
     const searchParams = new URL(request.url).searchParams;
     const uri = searchParams.get("uri") as string;
 

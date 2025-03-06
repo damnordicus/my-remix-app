@@ -132,7 +132,7 @@ export default function SelectedItem() {
           type="number"
           name="weight"
           placeholder="Weight in grams"
-          className="border border-slate-400 bg-slate-600 rounded-lg px-2 mx-2"
+          className="border border-slate-400 bg-slate-600 rounded-lg p-2 mx-2"
           min={0}
           step={100}
         />
@@ -140,7 +140,7 @@ export default function SelectedItem() {
           type="number"
           name="price"
           placeholder="Cost"
-          className="border border-slate-400 bg-slate-600 rounded-lg px-2 m-2"
+          className="border border-slate-400 bg-slate-600 rounded-lg p-2 m-2"
           min={0.0}
           step={0.01}
         />

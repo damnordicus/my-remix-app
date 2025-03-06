@@ -49,6 +49,15 @@ export async function getFilamentByBarcode(barcode: string){
     }
   });
 
+  const update = await prisma.roll.updateMany({
+    where:{
+      barcode,
+    },
+    data:{
+      inUse: true,
+    }
+  })
+
   if (!roll.filament) {
     throw new Error("No filament found");
   }
@@ -239,6 +248,17 @@ export async function getBarcodesByFilamentId(id: number){
   return result;
 }
 
+export async function markBarocdeInUse(barcode: string){
+  return await prisma.roll.updateMany({
+    where:{
+      barcode,
+    },
+    data:{
+      inUse: true,
+    }
+  })
+}
+
 export async function getFirstBarcodeForFilament(brand: string, material: string, color: string) {
     const test = await prisma.roll.findMany({
       where:{
@@ -298,26 +318,26 @@ export async function createFilament({brand, material, color, diameter}: {brand:
   });
 }
 
-// export async function removeFilamentByQR( barcode: string, id: number){
-//   const rollDelete = await prisma.roll.delete({
-//     where:{
-//       barcode,
-//     }
-//   });
+export async function removeFilamentByQR( barcode: string, id: number){
+  const rollDelete = await prisma.roll.delete({
+    where:{
+      barcode,
+    }
+  });
 
-//   const updateFilament = await prisma.filament.update({
-//     where:{
-//       id,
-//     },
-//     data:{
-//       stock_level:{
-//         decrement: 1,
-//       }
-//     }
-//   });
+  const updateFilament = await prisma.filament.update({
+    where:{
+      id,
+    },
+    data:{
+      stock_level:{
+        decrement: 1,
+      }
+    }
+  });
 
-//   return updateFilament;
-// }
+  return updateFilament;
+}
 
 // Update filament stock
 // export async function updateFilamentStock(id: number, qrcode: string, weight: number, price: number) {
@@ -343,18 +363,18 @@ export async function createFilament({brand, material, color, diameter}: {brand:
 //   })
 // }
 
-// export async function addRollToFilament(id: number){
-//   return await prisma.filament.update({
-//     where:{
-//       id,
-//     },
-//     data:{
-//       rolls:{
+export async function addRollToFilament(id: number){
+  return await prisma.filament.update({
+    where:{
+      id,
+    },
+    data:{
+      rolls:{
         
-//       }
-//     }
-//   })
-// }
+      }
+    }
+  })
+}
 
 export async function createNewRoll(newId: string, weight: number, price: number, id: number){
   return await prisma.roll.create({

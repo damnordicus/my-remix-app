@@ -1,5 +1,5 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
-import { ActionFunction, Link, LoaderFunction, redirect } from "react-router";
+import { ActionFunction, Form, Link, LoaderFunction, redirect } from "react-router";
 import { json, useFetcher, useLoaderData, useNavigate } from "react-router";
 import { CameraEnhancer } from "dynamsoft-camera-enhancer";
 import { BarcodeReader } from "dynamsoft-javascript-barcode";
@@ -24,11 +24,12 @@ export const action: ActionFunction = async ({ request }) => {
   if(actionType === 'submit'){
     const barcodeObject = formData.get("barcode") as string;
     const weight = formData.get("weight") as string;
+    console.log('barcode: ', barcodeObject)
     // const decoded = atob(barcodeObject);
     // const parsed = JSON.parse(decoded);
     const result = await returnFilamentToStock(barcodeObject, +weight);
     if(result.success)
-      return redirect("../?success=return")
+      return redirect("../inventory")
     return redirect("../?fail=return")
   }
   else {
@@ -45,27 +46,27 @@ export default function  ReturnToStock() {
   const [isActive, setIsActive] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const fetcher = useFetcher();
-  let filament = fetcher.data?.filament;
-  console.log(filament)
+  let filament = fetcher.data;
+  console.log('filament:', filament)
 
-  const handleBarcode = async (e) => {
-    const barcode = e.target.value;
-    setScannedBarcode(barcode);
+  // const handleBarcode = async (e) => {
+  //   const barcode = e.target.value;
+  //   setScannedBarcode(barcode);
 
-    if (barcode.length >= 5) {
-      fetcher.load(`/pullFilament?barcode=${barcode}`)
-    }else{
-        filament = null;
-    }
-  };
+  //   if (barcode.length >= 5) {
+  //     fetcher.load(`/pullFilament?barcode=${barcode}`)
+  //   }else{
+  //       filament = null;
+  //   }
+  // };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
 
-    e.preventDefault();
+  //   e.preventDefault();
 
-    fetcher.submit(e.target);
+  //   fetcher.submit(e.target);
 
-  };
+  // };
 
   const handleCamera = () => {
     setIsActive(!isActive);
@@ -89,20 +90,19 @@ export default function  ReturnToStock() {
     <>
       <div className="min-h-screen flex justify-center items-center">
         <div className="flex w-2/3 justify-center bg-slate-600/60 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-8">
-          <fetcher.Form className="flex flex-col items-center gap-4 w-full" method="post" onSubmit={handleSubmit}>
+          <Form className="flex flex-col items-center gap-4 w-full" method="post" >
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl mb-4">
               Return Roll to Inventory
             </p>
-            <input type="hidden" name="id" value={filament?.id}/>
+            {/* <input type="hidden" name="id" value={filament?.id}/> */}
             <div className="flex items-center w-full">
             <input
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border border-slate-500 rounded-lg bg-slate-800"
               type="text"
               placeholder="Barcode"
               name="barcode"
               value={scannedBarcode}
-              disabled
               required
             />
             <Link to="../barcode"><div className="px-2 py-1 ml-2 bg-amber-500 rounded-xl border-2 border-amber-600"><CameraIcon className="size-7  text-amber-700"/></div></Link>
@@ -111,7 +111,7 @@ export default function  ReturnToStock() {
             
             
             <input
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full p-2 border border-slate-500 rounded-lg bg-slate-800"
               placeholder="Estimated weight (g)"
               name="weight"
               value={filament?.weight_grams ? `${filament.weight_grams} g` : null}
@@ -124,7 +124,7 @@ export default function  ReturnToStock() {
             >
               Submit
             </button>
-          </fetcher.Form>
+          </Form>
         </div>
       </div>
     </>

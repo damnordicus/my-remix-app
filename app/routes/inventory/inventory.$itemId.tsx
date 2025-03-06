@@ -33,7 +33,7 @@ export const loader = async ({ request, params }) => {
   // const filters = (new URL(request.url).searchParams).getAll("filters");
   const selectedFilament = await getFilamentById(filamentId);
   const barcodes = await getBarcodesByFilamentId(filamentId);
-  return { selectedFilament, barcodes, user: session.username || null };
+  return { selectedFilament, barcodes, user: session || null };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -95,7 +95,7 @@ export default function SelectedItem() {
   const [toggle, setToggle] = useState(false);
   const [searchParams] = useSearchParams();
 
-  console.log(selectedFilament)
+  console.log(user)
 
   useEffect(() => {
     console.log("navb", nav);
@@ -116,7 +116,7 @@ export default function SelectedItem() {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black/50">
         <div
-          className={`w-[400px]  bg-slate-600/60 backdrop-blur-xs rounded-2xl shadow-xl p-6 relative border-2 border-slate-300 `}
+          className={`w-[500px]  bg-slate-600/60 backdrop-blur-xs rounded-2xl shadow-xl relative border-2 p-6 border-slate-300 `}
         >
           <div
             className="fixed top-2 right-2 cursor-pointer text-white text-xl"
@@ -144,21 +144,19 @@ export default function SelectedItem() {
               {toggle && <ChevronUpIcon className="size-4 inline ml-2" />}</p>
             </button>
             {toggle && (
-              <div className="flex-col text-center text-slate-300 border-2 border-slate-400 bg-slate-800 rounded-lg">
+                <ul key="" className="flex-col max-h-[300px] text-slate-300  border-2 border-slate-400 bg-slate-800 rounded-lg overflow-y-scroll">
                 {barcodes.map((x, index) => {
                   let last12 = x.barcode.slice(-12);
                   let starting = x.barcode.slice(0, x.barcode.length - 12);
                   return (
-                    <span key={index} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'}`} title={`${x.inUse ? 'In Use' : 'Available'}`}>
+                    <li key={index} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'} ${index !== (barcodes.length -1) ? 'border-b border-white/40' : ''} text-center`} title={`${x.inUse ? 'In Use' : 'Available'}`}>
                       {starting}
                       <span className={`${x.inUse ? 'text-amber-300': 'text-white'} `} >{last12}</span>
-                      {index === barcodes.length - 1 ? null : (
-                        <hr className="border border-slate-600 w-31/32 flex self-center" />
-                      )}
-                    </span>
+                      <span className="pl-2">({x.weight}g)</span>
+                    </li>
                   );
                 })}
-              </div>
+               </ul>
             )}
 
             {/* <input
@@ -169,7 +167,7 @@ export default function SelectedItem() {
                 className={`w-full p-2 mt-1 rounded-md ${quantity > 0 ? 'text-green-500': quantity === 0 ? 'text-white' : 'text-red-500'}  bg-black border-2 border-amber-500 shadow-lg`}
               /> */}
             <div className="w-full flex justify-around pt-4 ">
-              {user && (
+              {user.admin && (
                 <>
                   <Link
                     className="bg-red-500 px-2 py-1 mb-2 rounded-lg shadow-lg"
