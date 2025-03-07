@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { ClientLoaderFunctionArgs, LoaderFunctionArgs, useLoaderData, useSearchParams } from "react-router";
+import { ClientLoaderFunctionArgs, LoaderFunctionArgs, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import Layout from "~/components/Layout";
 import MainButton from "~/components/MainButton";
 import { userSession } from "~/services/cookies.server";
@@ -64,6 +64,12 @@ export default function Index() {
         break;
     }
   }, [searchParams]);
+
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    navigate("inventory");
+  },[])
   
   return (
     // <div className="h-screen flex items-center justify-center">

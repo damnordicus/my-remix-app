@@ -171,7 +171,7 @@ export default function Inventory() {
       </div>
       <div className=" mx-8 max-h-[700px] border-2 border-slate-400 rounded-lg overflow-y-scroll drop-shadow-xl z-0">
         <div className="overflow-auto">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed ">
+          <table className="lg:w-1/2 md:w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed ">
             <thead className="sticky top-0 z-3 text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
               <tr className="rounded-t-lg ">
                 <th scope="col" className={`text-center pl-6 py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
