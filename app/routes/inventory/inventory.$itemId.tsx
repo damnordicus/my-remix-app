@@ -108,6 +108,24 @@ export default function SelectedItem() {
 
   const avaialable = selectedFilament.rolls.filter(items => items.inUse === false).length;
   const all = selectedFilament?.rolls.length;
+
+  const handelClick = async (barcode) => {
+    const response = await fetch("http://dymo.travisspark.com:8080/print-qrcode", {
+      method:"POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body : new URLSearchParams({barcode}),
+    });
+    console.log(response)
+
+    const result = await response.json();
+    if(result.message){
+      alert(result.message);
+    } else  {
+      alert(result.error || "Unknown Error");
+    }
+  }
   
 
   if (selectedFilament === null) {
@@ -149,7 +167,7 @@ export default function SelectedItem() {
                   let last12 = x.barcode.slice(-12);
                   let starting = x.barcode.slice(0, x.barcode.length - 12);
                   return (
-                    <li key={index} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'} ${index !== (barcodes.length -1) ? 'border-b border-white/40' : ''} text-center`} title={`${x.inUse ? 'In Use' : 'Available'}`}>
+                    <li key={index} className={`${x.inUse ? 'text-amber-300': 'text-slate-300'} ${index !== (barcodes.length -1) ? 'border-b border-white/40' : ''} text-center`} title={`${x.inUse ? 'In Use' : 'Available'}`} onClick={() => handelClick(x.barcode)}>
                       {starting}
                       <span className={`${x.inUse ? 'text-amber-300': 'text-white'} `} >{last12}</span>
                       <span className="pl-2">({x.weight}g)</span>
