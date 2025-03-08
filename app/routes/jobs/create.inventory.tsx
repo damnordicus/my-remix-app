@@ -106,8 +106,8 @@ export default function SelectFromInventory(){
     console.log('actionData: ', actionData)
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-            <div className={`w-[400px] bg-slate-600 backdrop-blur-xs rounded-2xl shadow-xl py-2 relative border-2 border-slate-300 `}>
+        <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xs bg-black/30">
+            <div className={`w-[400px] bg-slate-600 rounded-2xl shadow-xl py-2 relative border-2 border-slate-300 `}>
                 <h1 className="text-center text-2xl text-amber-500 pb-2">
                     Select A Roll
                 </h1>

@@ -155,7 +155,7 @@ export default function Inventory() {
   const filamentList = filteredFilaments;
 
   return (
-    <div className="" style={{alignSelf: "start"}}>
+    <div className=" mt-0 lg:mt-15" style={{alignSelf: "start"}}>
       <div className="flex justify-center py-4 gap-1 ">
         {admin && <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-xl border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>}
         <Navbar

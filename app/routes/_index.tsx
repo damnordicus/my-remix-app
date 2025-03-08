@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import toast from "react-hot-toast";
-import { ClientLoaderFunctionArgs, LoaderFunctionArgs, useLoaderData, useNavigate, useSearchParams } from "react-router";
+import { ClientLoaderFunctionArgs, LoaderFunctionArgs, Outlet, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import Layout from "~/components/Layout";
 import MainButton from "~/components/MainButton";
 import { userSession } from "~/services/cookies.server";

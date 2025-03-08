@@ -132,7 +132,7 @@ export default function SelectedItem() {
     return <div>No filament found.</div>;
   } else {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+      <div className="fixed inset-0 flex items-center justify-center backdrop-blur-xs bg-black/30">
         <div
           className={`w-[500px]  bg-slate-600/60 backdrop-blur-xs rounded-2xl shadow-xl relative border-2 p-6 border-slate-300 `}
         >

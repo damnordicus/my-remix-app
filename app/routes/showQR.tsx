@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, redirect, useLoaderData, useSearchParams } from "react-router";
+import { Link, LoaderFunctionArgs, redirect, useLoaderData, useParams, useSearchParams } from "react-router";
 import {generateQr} from "~/services/qr.server";
 import {v4 as uuidv4 } from "uuid"
 import { userSession } from "~/services/cookies.server";
@@ -12,7 +12,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     try{
         const qrBuffer = await generateQr(uri, 'png')
         const qrBase64 = qrBuffer.toString('base64');
-        return {qrBase64};
+        return {qrBase64, uri};
     }catch(error){
         console.error("error generating qr code: ", error);
         return { qrBase64: null};
@@ -23,22 +23,20 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 }
 
 export default function QRPage() {
-    const [searchParams] = useSearchParams();
-    const uri = searchParams.get("uri");
 
-    const { qrBase64 } = useLoaderData<typeof loader>();
+    const { qrBase64, uri } = useLoaderData<typeof loader>();
 
     if (!uri) {
         return <p>Error: No QR code available.</p>;
     }
 
     return (
-        <div className="h-screen flex flex-col items-center justify-center">
+        <div className="h-screen flex flex-col items-center justify-center backdrop-blur-sm">
             <h1 className="text-2xl mb-4">Scan This QR Code</h1>
-            <div className="bg-white flex p-2 rounded-xl border-6 border-slate-400 shadow-inner shadow-gray-400">
-            <img src={`data:image/png;base64,${qrBase64}`} alt="QR Code" />
+            <div className="bg-white flex p-2 rounded-xl border-10 border-slate-600 shadow-inner shadow-gray-400">
+            <Link to=".."><img src={`data:image/png;base64,${qrBase64}`} alt="QR Code" /></Link>
             </div>
-            <p className="mt-4 text-sm text-white">Scan this in your authenticator app</p>
+            <p className="mt-4 text-lg text-white">Click QR code after scanning</p>
         </div>
     );
 }
