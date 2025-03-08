@@ -6,6 +6,7 @@ import {
   useFetchers,
   useLoaderData,
   useNavigate,
+  useSearchParams,
 } from "react-router";
 import { useEffect, useState } from "react";
 import {
@@ -21,9 +22,12 @@ export const loader = async ({ request, params }) => {
   const session = await userSession.parse(request.headers.get("Cookie"));
   if (!session.username) return redirect("..");
   const filamentId = +params.itemId;
+  const searchParams = new URL(request.url).searchParams;
+  const selection = searchParams.get("selection");
+
   const selectedFilament = await getFilamentById(filamentId);
   const barcodes = await getBarcodesByFilamentId(filamentId);
-  return { selectedFilament, barcodes };
+  return { selectedFilament, barcodes, filamentId, selection: selection || null };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -40,7 +44,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     if (errors.length > 0) return { errors };
     try {
       const id = +test.id;
-      const barcode = test.barcode;
+      const barcode = test.barcode.toString();
 
       return await removeFilamentByQR(barcode, id);
     } catch (e) {
@@ -55,7 +59,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function SelectedItem() {
-  const { selectedFilament, barcodes } = useLoaderData<typeof loader>();
+  const { selectedFilament, barcodes, filamentId , selection} = useLoaderData<typeof loader>();
+  console.log(selection)
 
   console.log("barocde: ", barcodes);
   const navigate = useNavigate();
@@ -65,6 +70,20 @@ export default function SelectedItem() {
   useEffect(() => {
     console.log("fetchers:", fetchers);
   }, [fetchers]);
+
+  useEffect(() => {
+    if(selection && barcodes.some(b => b.barcode === selection)){
+      fetcher.submit(
+        {
+          _action: "submit",
+          id:filamentId.toString(),
+          barcode: selection,
+        },
+        { method: "POST"}
+      );
+      navigate(`..`, {replace: true})
+    }
+  },[selection])
 
   const fetcher = useFetcher();
 
@@ -109,9 +128,9 @@ export default function SelectedItem() {
                   </button>
                 </div>
                 <p className="self-center"> - or - </p>
-                <Link to="">
+                <div className="flex justify-center"><Link to={`/barcode?from=inventory/${filamentId}/discard`} className=" bg-amber-500 px-2 py-1.5 mt-2 rounded-xl border-2 border-amber-600 text-amber-700">
                   <CameraIcon className="size-8" />
-                </Link>
+                </Link></div>
               </div>
             </Form>
           </div>
