@@ -50,6 +50,7 @@ export default [
     route("removeSelection", "./routes/jobs/create.removeSelection.tsx"),
     route("barcodeReturn", "./routes/jobs/barcodeReturn.tsx"),
     route("materials", "./routes/jobs/create.inventory.materials.tsx"),
-    route("colors", "./routes/jobs/create.inventory.colors.tsx")
+    route("colors", "./routes/jobs/create.inventory.colors.tsx"),
+    route("generate", "./routes/api.generate.tsx"),
   ])
 ] satisfies RouteConfig;

@@ -25,6 +25,7 @@
     "@zxing/library": "^0.21.3",
     "canvas": "^3.1.0",
     "codemod-cli": "^3.2.0",
+    "ipp": "^2.0.1",
     "isbot": "^5.1.22",
     "mkcert": "^3.2.0",
     "otpauth": "^9.3.6",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@react-router/dev": "^7.2.0",
     "@tailwindcss/vite": "4.0.7",
+    "@types/ipp": "^2.0.5",
     "@types/qr-image": "^3.2.9",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

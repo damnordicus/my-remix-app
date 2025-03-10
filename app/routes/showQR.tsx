@@ -33,8 +33,8 @@ export default function QRPage() {
     return (
         <div className="h-screen flex flex-col items-center justify-center backdrop-blur-sm">
             <h1 className="text-2xl mb-4">Scan This QR Code</h1>
-            <div className="bg-white flex p-2 rounded-xl border-10 border-slate-600 shadow-inner shadow-gray-400">
-            <Link to=".."><img src={`data:image/png;base64,${qrBase64}`} alt="QR Code" /></Link>
+            <div className="bg-white flex  rounded-xl border-10 border-slate-600 shadow-inner shadow-gray-400">
+            <Link to=".."><img height={300} width={300} src={`data:image/png;base64,${qrBase64}`} alt="QR Code" /></Link>
             </div>
             <p className="mt-4 text-lg text-white">Click QR code after scanning</p>
         </div>

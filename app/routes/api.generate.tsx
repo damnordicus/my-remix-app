@@ -8,7 +8,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import * as qr from "qr-image";
 import { ActionFunctionArgs, json, redirect } from "react-router";
-import { generateQr } from "~/services/qr.server";
+import { generateQr, printQRCode } from "~/services/qr.server";
 import { userSession } from "~/services/cookies.server";
 
 // export async function loader({ request, params }) {
@@ -72,7 +72,7 @@ export async function loader({request}) {
         fileType: contentType,
       });
     }
-    
+  await printQRCode(newQr);
   return new Response(newQr, {
     status: 200,
     headers: {
@@ -83,17 +83,45 @@ export async function loader({request}) {
 }
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-        const search = new URL(request.url).searchParams
-        const newId = search.get('id')
-        if (!newId) throw new Error('id is required.')
-        const contentType = "image/png";
-        const contentFilename = `qr-code-${newId}.png`;
-        const newQr = await generateQr(newId, "png");
-        return new Response(newQr, {
-          status: 200,
-          headers: {
-            "Content-Type": contentType,
-            "Content-Disposition": `attachment; filename="${contentFilename}"`,
-          },
-        });
+
+  // const session = await userSession.parse(request.headers.get("Cookie"));
+  // if(!session.username) return redirect("..");
+// const search = new URL(request.url).searchParams
+// const newId = search.get('barcode')
+const form = await request.formData();
+const newId = form.get('barcode')
+if (!newId) throw new Error('id is required.')
+// const downloadType = search.get('type')
+
+const contentType = "image/png";
+const contentFilename = `qr-code-${newId}.png`;
+const newQr = await generateQr(newId.toString(), "png");
+// if (downloadType === "fetcher") {
+//   return ({
+//     fileData: newQr.toString('base64'),
+//     fileName: contentFilename,
+//     fileType: contentType,
+//   });
+// }
+await printQRCode(newQr);
+return new Response(newQr, {
+status: 200,
+headers: {
+  "Content-Type": contentType,
+  "Content-Disposition": `attachment; filename="${contentFilename}"`,
+},
+});
+        // const search = new URL(request.url).searchParams
+        // const newId = search.get('id')
+        // if (!newId) throw new Error('id is required.')
+        // const contentType = "image/png";
+        // const contentFilename = `qr-code-${newId}.png`;
+        // const newQr = await generateQr(newId, "png");
+        // return new Response(newQr, {
+        //   status: 200,
+        //   headers: {
+        //     "Content-Type": contentType,
+        //     "Content-Disposition": `attachment; filename="${contentFilename}"`,
+        //   },
+        // });
 };

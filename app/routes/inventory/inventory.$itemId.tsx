@@ -109,8 +109,9 @@ export default function SelectedItem() {
   const avaialable = selectedFilament.rolls.filter(items => items.inUse === false).length;
   const all = selectedFilament?.rolls.length;
 
-  const handelClick = async (barcode) => {
-    const response = await fetch("http://dymo.travisspark.com:8080/print-qrcode", {
+  const handelClick = async (barcode: string) => {
+    console.log('window: ',window.location.origin)
+    const response = await fetch( window.location.origin + '/api/generate', {
       method:"POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

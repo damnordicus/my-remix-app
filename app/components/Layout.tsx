@@ -23,30 +23,38 @@ export default function Layout({ children, backgroundUrl, user }: { children: Re
       >
        {/* Desktop Navigation */}
        <div className="hidden lg:flex fixed top-0 w-full justify-between bg-slate-800 h-[60px] px-6 items-center z-10">
-        <Link to="/" className="text-white text-2xl font-bold">
+        <nav className=" flex w-full relative items-center">
+        <Link to="/" className="text-white text-2xl font-bold absolute">
           Filament Inventory Manager
         </Link>
-        <div className="flex gap-6 ">
+        <ul className="flex w-full gap-6 justify-center">
+          <li>
           <NavButton to="inventory">
-            <p className="">Inventory</p>
+            Inventory
           </NavButton>
+          </li>
+          <li>
           <NavButton to="return">
-            <p className=" w-fit">Return Filament</p>
+            Return Filament
           </NavButton>
+          </li>
           {user?.id && (
             <>
+            <li>
               <NavButton to="view/jobs">
-                <p className=" w-fit">View Jobs</p>
-              </NavButton>
-              <NavButton to="job/create">
-                <p className=" w-fit">Create Job</p>
-              </NavButton>
+                View Jobs
+              </NavButton></li>
+              <li><NavButton to="job/create">
+                Create Job
+              </NavButton></li>
             </>
           )}
+          <li>
           <NavButton to={user?.id ? `view/${user.id}` : `job/auth?from=login`}>
-            {user?.id ? <p>Profile</p> : <p>Login</p> }
-          </NavButton>
-        </div>
+            {user?.id ? 'Profile' : 'Login' }
+          </NavButton></li>
+        </ul>
+        </nav>
       </div>
       <div className="lg:hidden fixed bottom-0 flex w-full justify-around bg-slate-800 h-[100px] z-2">
         {/* <Link to="/"><div className="bg-slate-800 w-[300px] h-[35px] rounded-ee-2xl border-b-4 border-r-4 border-slate-600 hover:bg-slate-500">

@@ -81,9 +81,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const user = session.username;//userId?.id;
 
   if (selection) {
-    const filament = await getFilamentByBarcode(selection);
-    searchParams.delete("selection");
-    return { filament, selection, user };
+    try{
+      const filament = await getFilamentByBarcode(selection);
+      searchParams.delete("selection");
+      return { filament, selection, user };
+    }catch(error){
+      return { error: error }
+    }
   }
   return { user };
 }
@@ -134,7 +138,12 @@ export default function PrintJobForm({
     selectedFilamentLS,
   },
 }: Route.ComponentProps) {
-  // const { filament: selection, selection: barcode , user} = loaderData;
+   const data = useLoaderData();
+  useEffect(() => {
+    if(data?.error){
+      toast.error(data.error)
+    }
+  },[data])
 
   const options = [
     "Left XL",

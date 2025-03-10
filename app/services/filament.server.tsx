@@ -43,6 +43,7 @@ export async function getFilamentByBarcode(barcode: string){
   const roll =  await prisma.roll.findFirstOrThrow({
     where: {
       barcode,
+      inUse: false,
     },
     select: {
       filament: true,

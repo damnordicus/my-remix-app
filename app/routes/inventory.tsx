@@ -312,6 +312,7 @@ export default function Inventory() {
           </table>
         </div>
       </div>
+      <Outlet />
     </div>
     </div>
   );
