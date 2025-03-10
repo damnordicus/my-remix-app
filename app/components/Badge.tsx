@@ -1,4 +1,6 @@
-export default function Badge({children, size}) {
+import { ReactNode } from "react";
+
+export default function Badge({children, size}: {children: ReactNode, size?: number}) {
     let pillDetails = '';
     const BG_COLORS: string[] = ["RED","ORANGE","AMBER","YELLOW","LIME","GREEN","EMERALD","TEAL","CYAN","SKY","BLUE","INDIGO","VIOLET","PURPLE","FUCSHIA","PINK","ROSE","SLATE","GRAY","ZINC","NEUTRAL","STONE"]
 
@@ -9,7 +11,7 @@ export default function Badge({children, size}) {
 
     switch(children){
         case 'BLACK':
-            pillDetails = 'text-white bg-black border-black p-1';
+            pillDetails = 'text-white bg-black border-gray-500/40 p-1';
             break;
         case 'GRAY':
             pillDetails = 'text-gray-800 bg-gray-400 border-gray-500 p-1';
@@ -47,7 +49,7 @@ export default function Badge({children, size}) {
         
     }
     return (
-        <div className={`rounded-full text-center border-4 ${size ? 'h-[25px] w-[80px]' : 'h-[35px] w-[200px]'} ${pillDetails}`}>
+        <div className={`rounded-full text-center text-sm border-4 ${size ? 'h-[25px] w-[80px]' : 'h-[35px] w-[200px]'} ${pillDetails}`}>
             {children === 'RAINBOW' ? (
                 <>
                     <span className=" text-red-500">R</span>

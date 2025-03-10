@@ -1,6 +1,6 @@
 import { data, Form, Link, LoaderFunctionArgs, Outlet, redirect, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useCallback, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
 import Navbar from "../components/Navbar";
 import { AddFilament } from "./inventory/inventory.create";
@@ -10,6 +10,7 @@ import { ActionFunctionArgs } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament, addRollToFilament, createNewRoll } from "~/services/filament.server";
 import { userSession } from "~/services/cookies.server";
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
@@ -81,8 +82,17 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return await deleteFilament(+id);
   }
 
-  return json({ error: "Invalid action" }, { status: 400 });
+  return { error: "Invalid action", status: 400 }
 };
+
+type Filament = {
+  brand: string
+  material: string
+  color: string
+  stock: number
+  delete?: ReactNode
+}
+
 
 export default function Inventory() {
   const {filaments, brands, colors, materials, user, admin} = useLoaderData<typeof loader>();
@@ -125,6 +135,7 @@ export default function Inventory() {
   const filterList = useCallback(() => {
     setFilterVisible(false);
 
+   
     
 
     selectedFilters.brand.forEach((brand) => searchParams.append("brand", brand));
@@ -154,9 +165,49 @@ export default function Inventory() {
 
   const filamentList = filteredFilaments;
 
+  const columns = useMemo(() => [
+    {
+      accessorKey: 'brand',
+      header: 'Brand',
+      cell: info => info.getValue(),
+    },
+    {
+      accessorKey: 'material',
+      header: 'Material',
+      cell: info => info.getValue(),
+    },
+    {
+      accessorKey: 'color',
+      header: 'Color',
+      cell: info => <Badge>{info.getValue()}</Badge>,
+    },
+    {
+      accessorKey: '_count.rolls',
+      header: 'Stock',
+      cell: info => info.getValue(),
+    },
+    admin && {
+      accessorKey: 'delete',
+      header: 'Delete',
+      cell: ({ row }) => (
+        <Form method="post">
+          <input type="hidden" name="id" value={row.original.id} />
+          <button name="_action" value="delete"><TrashIcon className="size-6" /></button>
+        </Form>
+      ),
+    }
+  ].filter(Boolean), [admin]);
+
+  const table = useReactTable({
+    data: filaments,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
+
   return (
     <div className=" mt-0 lg:mt-15" style={{alignSelf: "start"}}>
-      <div className="flex justify-center py-4 gap-1 ">
+      {/* <div className="flex justify-center py-4 gap-1 ">
         {admin && <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-xl border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>}
         <Navbar
           setSelectedFilters={setSelectedFilters}
@@ -186,7 +237,7 @@ export default function Inventory() {
                 <th scope="col" className={`text-center py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
                   Stock
                 </th>
-                {/* <th scope="col" className="px-6 py-3">Update</th> */}
+                
                 {admin && <th scope="col" className="text-center py-3 w-1/12">Delete</th>}
               </tr>
             </thead>
@@ -227,7 +278,41 @@ export default function Inventory() {
           </table>
         </div>
       </div>
-      <Outlet />
+      <Outlet /> */}
+       <div className="mt-0 lg:mt-15" style={{ alignSelf: "start" }}>
+      <div className="flex justify-center py-4 gap-2">
+        {admin && <Link to="create" className="bg-amber-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-amber-400">Create New</Link>}
+        <Navbar setSelectedFilters={() => {}} filterList={() => {}} brands={brands} materials={materials} colors={colors} list={{}} filterVisible={false} setFilterVisible={() => {}} />
+      </div>
+      <div className="flex justify-center w-full max-h-[700px] drop-shadow-xl">
+        <div className="overflow-y-scroll no-scrollbar lg:w-3/4 md:w-full md:mx-8 border-2 border-slate-400 rounded-lg">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="sticky top-0 bg-gray-50 dark:bg-slate-400  text-white text-lg">
+              {table.getHeaderGroups().map(headerGroup => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map(header => (
+                    <th key={header.id} className="text-center py-3">
+                      {flexRender(header.column.columnDef.header?.toUpperCase(), header.getContext())}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map(row => (
+                <tr key={row.id} className="hover:bg-gray-600 cursor-pointer bg-slate-900 even:bg-slate-800 text-lg" onClick={() => navigate(`/inventory/${row.original.id}`)}>
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id} className={`text-center py-2 ${cell.id.endsWith('_color') ? 'flex justify-center' : ''}`}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     </div>
   );
 }

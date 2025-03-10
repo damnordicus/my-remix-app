@@ -1,9 +1,10 @@
 import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ActionFunctionArgs, Form, LoaderFunctionArgs, Outlet, redirect, useLoaderData, useNavigate } from "react-router";
 import { userSession } from "~/services/cookies.server";
 import { deleteUserAccount, getAllUsers } from "~/services/filament.server";
 import * as OTPAuth from "otpauth"
+import { flexRender, getCoreRowModel, RowExpanding, useReactTable } from "@tanstack/react-table";
 
 export const loader = async ({ request }: LoaderFunctionArgs ) => {
     const session = await userSession.parse(request.headers.get("Cookie")) || {};
@@ -48,16 +49,49 @@ export default function Accounts () {
     const [selectedAccount, setSelectedAccount] = useState("");
 
     function handleClick(id: number){
-        const secret = (allAccounts?.find(account => account.id === id))
-        setSelectedAccount(secret)
         setShowEdit(!showEdit);
+        const localId = allAccounts[id].id;
+        const secret = (allAccounts?.find(account => account.id === localId))
+        setSelectedAccount(secret)
+        
         // navigate(`./${id}/jobs`);
     }
 
+    const columns = useMemo(() => [
+        {
+            accessorKey: 'username',
+            header:'Username',
+            cell: info => info.getValue(),
+        },
+        {
+            accessorKey: 'email',
+            header: 'Email',
+            cell: info => info.getValue(),
+        },
+        {
+            accessorKey: 'phone',
+            header: 'Phone',
+            cell: info => info.getValue(),
+        },
+        {
+            accessorKey: 'edit',
+            header: 'Edit',
+            cell: ({ row }) => (
+                <button name="_action" value="edit" type="submit" onClick={() => handleClick(row.id)}><EllipsisVerticalIcon className="size-6 text-gray-200"/></button>
+            ),
+        }
+    ], allAccounts);
+
+    const table = useReactTable({
+        data: allAccounts,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+    });
+
     return (
-        <div className="flex-col w-full items-center justify-center">
-            <div className="relative flex flex-col mt-20  overflow-scroll text-slate-300 bg-gray-700 shadow-md rounded-lg bg-clip-border border-2 border-slate-400">
-            <table className="w-full text-center table-auto min-w-max text-white">
+        <div className="flex-col w-full px-10 items-center justify-center">
+            <div className="relative md:w-full lg:w-1/2 flex-col mt-20  overflow-scroll no-scrollbar text-slate-300 bg-gray-700 shadow-md rounded-xl bg-clip-border border-2 border-slate-400">
+            {/* <table className="w-full text-center table-auto min-w-max text-white">
                 <thead >
                     <tr className="text-slate-300 border-b border-slate-300 bg-gray-900">
                         <th className="p-4">
@@ -88,24 +122,50 @@ export default function Accounts () {
                             {account.phone}
                         </td>
                         <td className="flex justify-center p-2 self-center">
-                        {/* <Form method="POST"> */}
-                            {/* <input type="hidden" name="userId" value={account.id} /> */}
                             <button name="_action" value="edit" type="submit" onClick={() => handleClick(account.id)} >
                                 <EllipsisVerticalIcon className="size-6 text-gray-200" />
                             </button>
-                        {/* </Form> */}
                         </td>
                     </tr>
                 )})
             )}
+            </table> */}
+            <table className="w-full text-center text-white text-xl">
+                <thead className="sticky top-0 bg-gray-50 dark:bg-gray-500 border-b-2 border-slate-600">
+                {table.getHeaderGroups().map(headerGroup => (
+                    <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                        <th key={header.id} className="text-center py-3">
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        </th>
+                    ))}
+                    </tr>
+                ))}
+                </thead>
+                <tbody>
+              {table.getRowModel().rows.map(row => (
+                <tr key={row.id} className=" hover:bg-gray-600 cursor-pointer odd:bg-slate-800 text-gray-300" >
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id} className="text-center py-2">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
             </table>
             </div>
-            {showEdit && <div className="flex-col w-1/2 bg-slate-600 h-[300px] mt-5 rounded-xl">
+            {showEdit && <div className="md:w-full lg:w-1/2 mt-5 py-5 rounded-xl bg-slate-700 border-2 border-slate-400">
                 <Form method="POST">
-                    <div className="flex w-full justify-center"><button name="_action" value="delete" type="submit" className="mt-6 px-4 py-2 rounded-xl border-2 border-red-700 bg-red-600 ">Delete User Account</button></div>
                     <input type="hidden" name="secret" value={selectedAccount.secret}/>
                     <input type="hidden" name="username" value={selectedAccount.username}/>
-                    <div className="flex w-full justify-center"><button name="_action" value="otpauth" type="submit" className="mt-6 px-4 py-2 rounded-xl border-2 border-green-700 bg-green-600 ">Show OTPAuth QR</button></div>
+                    <div className="flex w-full justify-center text-2xl pb-4">
+                        <p> Options for</p> <p className="italic pl-2 text-slate-300">{selectedAccount.username}:</p> 
+                    </div>
+                    <div className="flex w-full justify-around text-xl">
+                        <button name="_action" value="delete" type="submit" className=" px-4 py-4 rounded-xl border-2 border-red-700 bg-red-600 ">Delete User Account</button>
+                        <button name="_action" value="otpauth" type="submit" className=" px-4 py-2 rounded-xl border-2 border-green-700 bg-green-600 ">Show OTPAuth QR</button>
+                    </div>
                 </Form>
                 </div>}
             <Outlet />
