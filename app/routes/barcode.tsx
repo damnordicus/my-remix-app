@@ -122,7 +122,7 @@ export default function Barcode() {
       // window.close();
       console.log('linkTo: ', linkTo)
       if(linkTo) {
-        navigate(`../${linkTo}/?selection=${data}`);
+        navigate(`../${linkTo}/?selection=${data}&${searchParams.toString()}`);
       }else{
         navigate(`../return?selection=${data}`)
       }

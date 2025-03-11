@@ -27,6 +27,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       console.log('id: ', id, ' weight: ', weight, ' price: ', price, ' newId: ', newId)
       const addToFilament = await addRollToFilament(id);
       const addNewRoll = await createNewRoll(newId, weight, price, id);
+
+      const response = await fetch( new URL(request.url).origin + '/api/generate', {
+        method:"POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body : new URLSearchParams({newId}),
+      });
+  
+      const result = await response.json();
       return { newId, errors: [] };
     } catch (e) {
       console.error(e);
