@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import { NavLink } from "react-router";
 
-export default function NavButton({to, children}:{to: string; children: ReactNode}){
+export default function NavButton({to, children, isMobile}:{to: string; children: ReactNode, isMobile: Boolean}){
     return (
-        <NavLink to={to} className={({ isActive }) => `h-full px-6 py-7 justify-center self-center ${isActive ? "text-slate-500 border-t-5 " : "text-slate-300"}`}>
+        <NavLink to={to} className={({ isActive }) => `h-full px-6 lg:py-4 md:py-7 justify-center self-center ${isActive && !isMobile ? "text-slate-500 border-b-4 border-slate-300" : "text-slate-300"} ${isActive && isMobile ? "text-slate-500 border-t-4 border-slate-300" : "text-slate-300"}`}>
             {children}
         </NavLink>
     )

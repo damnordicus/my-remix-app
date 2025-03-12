@@ -62,20 +62,20 @@ export default function Layout({ children, backgroundUrl, user }: { children: Re
             Filament Inventory Manager
           </p>
         </div></Link> */}
-        <NavButton to={"inventory"}>
+        <NavButton to={"inventory"} isMobile={true}>
           <ClipboardDocumentListIcon className="size-8 "/>
         </NavButton>
 
-        <NavButton to={"return"} >
+        <NavButton to={"return"} isMobile={true}>
           <CameraIcon className="size-8"/>
         </NavButton>
-        {user.id && <NavButton to={"view/jobs"}>
+        {user.id && <NavButton to={"view/jobs"} isMobile={true}>
           <BriefcaseIcon className="size-8 "/>
         </NavButton>}
-        {user.id && <NavButton to={"job/create"}>
+        {user.id && <NavButton to={"job/create"} isMobile={true}>
           <PlusIcon className="size-8 "/>
         </NavButton>}
-        <NavButton to={user.id ? `view/${user.id}`: `job/auth?from=login`}>
+        <NavButton to={user.id ? `view/${user.id}`: `job/auth?from=login`} isMobile={true}>
           <UserIcon className="size-8 "/>
         </NavButton>
       

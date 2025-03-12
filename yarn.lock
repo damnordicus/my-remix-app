@@ -6662,6 +6662,7 @@ __metadata:
     react-router: "npm:^7.2.0"
     react-webcam: "npm:^7.2.0"
     sharp: "npm:^0.33.5"
+    tailwind-nord: "npm:^1.3.0"
     tailwindcss: "npm:^4.0.7"
     tsx: "npm:^4.19.2"
     typescript: "npm:^5.7.3"
@@ -8967,6 +8968,13 @@ __metadata:
   version: 1.0.0
   resolution: "supports-preserve-symlinks-flag@npm:1.0.0"
   checksum: 10c0/6c4032340701a9950865f7ae8ef38578d8d7053f5e10518076e6554a9381fa91bd9c6850193695c141f32b21f979c985db07265a758867bac95de05f7d8aeb39
+  languageName: node
+  linkType: hard
+
+"tailwind-nord@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "tailwind-nord@npm:1.3.0"
+  checksum: 10c0/888422ba6770d6fb02ec38717d4f309af6836c4ad760d28f14c8b920650f615b441785ba9d677a52a2b7a6caf97254d1df6092078bb377bf9852b7203f1e1171
   languageName: node
   linkType: hard
 

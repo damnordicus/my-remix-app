@@ -50,6 +50,8 @@ export async function getFilamentByBarcode(barcode: string){
     }
   });
 
+  console.log('test', roll)
+
   const update = await prisma.roll.updateMany({
     where:{
       barcode,
@@ -274,37 +276,18 @@ export async function getFirstBarcodeForFilament(brand: string, material: string
 
     if (test.length === 0) throw new Error('Filament not found');
 
-    const updatedRoll = await prisma.roll.update({
+    const updatedRoll = await prisma.roll.findMany({
       where:{
         barcode: test[0].barcode,
-      },
-      data:{
-        inUse: true,
+        inUse: false,
       },
       select: {
         filamentId: true,
         barcode: true
       }
     });
-
-    // await prisma.filament.update({
-    //   where: {
-    //     id: updatedRoll.filamentId
-    //   },
-    //   data: {
-    //     stock_level: {
-    //       decrement: 1
-    //     }
-    //   }
-    // })
     
-    // Ensure at least one roll exists
-    // if (results.rolls.length === 0) {
-    //   return { message: 'No rolls available.', status: 404 };
-    // }
-
-    // Return only the first barcode
-    return  updatedRoll.barcode;
+    return  updatedRoll[0].barcode;
 }
 
 // Create a new filament
