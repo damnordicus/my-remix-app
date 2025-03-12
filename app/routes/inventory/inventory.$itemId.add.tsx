@@ -164,6 +164,8 @@ export default function SelectedItem() {
           name="quantity"
           placeholder="Quantity"
           className="border border-slate-400 bg-slate-600 rounded-lg p-2 mx-2 my-1 "
+          required
+          min={1}
         />
         <div className="w-full flex justify-center text-center items-center">
           {/* <Link
