@@ -159,8 +159,8 @@ export default function PrintJobForm({
     "MK3S 6",
   ];
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState(searchParams.get("classification") || "");
-  const [selectedPrinter, setSelectedPrinter] = useState(searchParams.get("printer") || "");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedPrinter, setSelectedPrinter] = useState("");
   const [selectedFilament, setSelectedFilament] = useState(selectedFilamentLS);
   const [scannedBarcode, setScannedBarcode] = useState("");
   const navigate = useNavigate();
@@ -273,17 +273,17 @@ export default function PrintJobForm({
   // const handleClick = () => {
   //     navigate('inventory');
   // }
-  function handleChange(e){
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-      if(e.currentTarget.value.length > 0){
-        newParams.set(e.currentTarget.name, e.currentTarget.value);
-      }else{
-        newParams.delete(e.currentTarget.name);
-      }
-      return newParams
-    })
-  }
+  // function handleChange(e){
+  //   setSearchParams((prev) => {
+  //     const newParams = new URLSearchParams(prev);
+  //     if(e.currentTarget.value.length > 0){
+  //       newParams.set(e.currentTarget.name, e.currentTarget.value);
+  //     }else{
+  //       newParams.delete(e.currentTarget.name);
+  //     }
+  //     return newParams
+  //   })
+  // }
 
   // useEffect(() => {
   //   setSearchParams((prev) => {
@@ -321,19 +321,17 @@ export default function PrintJobForm({
           <input type="hidden" name="userId" value={user} />
           <div className="flex-col gap-2 px-4 text-lg ">
             <label htmlFor="title " >Name Your Project: </label>
-            <input type="text" name="title" className="bg-slate-800 rounded-xl py-2 border border-slate-500 mb-2 pl-4" defaultValue={searchParams.get("title") || ""} onChange={handleChange}/>
+            <input type="text" name="title" className="bg-slate-800 rounded-xl py-2 border border-slate-500 mb-2 pl-4" defaultValue={""} />
           </div>
           <InputDropDown
             labelText={"Classification"}
             options={["Mission", "Personal"]}
             setSelectedOption={setSelectedCategory}
-            selectedOption={selectedCategory}
           />
           <InputDropDown
             labelText={"Printer"}
             options={options}
             setSelectedOption={setSelectedPrinter}
-            selectedOption={selectedPrinter}
           />
           <div className="flex-col w-full">
           <label className="flex pl-4 pb-2 text-lg">
@@ -430,8 +428,8 @@ export default function PrintJobForm({
           <textarea
             name="details"
             className="flex text-lg w-11/12 mx-auto bg-slate-800/80 rounded-xl border border-slate-500 px-2 min-h-24"
-            defaultValue={searchParams.get("details") || ""}
-            onChange={handleChange}
+            defaultValue={""}
+          
           ></textarea>
 
           <div className="flex w-full justify-center gap-x-2 pt-4 mb-4 mt-1">

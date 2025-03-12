@@ -16,31 +16,34 @@ export default function InputDropDown({
   labelText,
   options,
   setSelectedOption,
-  selectedOption,
 }: {
   labelText: string;
   options: unknown[];
   setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
-  selectedOption: string;
 }) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  // const [searchParams, setSearchParams] = useSearchParams();
+
+  // const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const item = e.target.value;
+  //   setSelectedOption(item);
+
+  //   setSearchParams((prev) => {
+  //     const newParams = new URLSearchParams(prev);
+
+  //     if (item.length > 0) {
+  //       newParams.set(labelText.toLowerCase(), item);
+  //     } else {
+  //       newParams.delete(labelText.toLowerCase());
+  //     }
+
+  //     return newParams;
+  //   });
+  // };
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const item = e.target.value;
     setSelectedOption(item);
-
-    setSearchParams((prev) => {
-      const newParams = new URLSearchParams(prev);
-
-      if (item.length > 0) {
-        newParams.set(labelText.toLowerCase(), item);
-      } else {
-        newParams.delete(labelText.toLowerCase());
-      }
-
-      return newParams;
-    });
-  };
+  }
 
   return (
     <div className="flex-col w-full mb-2">
@@ -51,7 +54,7 @@ export default function InputDropDown({
         <select
           name={labelText.toLowerCase()}
           className="flex ml-4 w-11/12 text-xl bg-slate-800/80 rounded-xl border border-slate-500 p-2"
-          defaultValue={selectedOption || ''}
+          defaultValue={''}
           onChange={(e) => handleChange(e)}
         >
           <option key={0} value=''></option>
