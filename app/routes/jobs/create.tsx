@@ -336,13 +336,15 @@ export default function PrintJobForm({
             selectedOption={selectedPrinter}
           />
           <div className="flex-col w-full">
-            <label className="flex pl-4 pb-2 text-lg">
-              Select Filament(s):{" "}
-            </label>
+          <label className="flex pl-4 pb-2 text-lg">
+          {selectedFilament.length === 0
+            ? "Select Filament"
+            : `${selectedFilament.length} Selected Filament${selectedFilament.length > 1 ? "s" : ""}`}
+          </label>
 
             {/* Display selected filaments */}
             {selectedFilament?.length > 0 && (
-              <div className="flex-col w-full space-y-2 mb-4 max-h-100 overflow-y-scroll">
+              <div className="flex-col w-full space-y-2 mb-4 max-h-40 overflow-y-scroll">
                 {selectedFilament.map(({ filament, barcode }, index) => (
                   <div
                     key={barcode}
