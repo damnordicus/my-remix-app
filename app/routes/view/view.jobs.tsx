@@ -11,6 +11,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function AllJobs() {
   const { result } = useLoaderData<typeof loader>();
+  console.log(result.size)
 
   return (
     <div className="mt-0 lg:mt-15 h-screen items-center justify-center">

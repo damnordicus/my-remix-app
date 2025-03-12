@@ -1,4 +1,4 @@
-import { data, Form, Link, LoaderFunctionArgs, Outlet, redirect, useLoaderData, useNavigate, useSearchParams } from "react-router";
+import { data, Form, Link, LoaderFunctionArgs, Outlet, redirect, useActionData, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import { ArrowPathIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import BarcodeScanner from "../components/BarcodeScanner";
@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFilament, updateFilamentStock, deleteFilament, addRollToFilament, createNewRoll } from "~/services/filament.server";
 import { userSession } from "~/services/cookies.server";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
+import { e } from "node_modules/react-router/dist/development/route-data-BmvbmBej.mjs";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
@@ -79,7 +80,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (actionType === "delete") {
     console.log('test: ')
     const id = formData.get("id");
-    return await deleteFilament(+id);
+    await deleteFilament(+id);
+    return {deleted: true}
   }
 
   return { error: "Invalid action", status: 400 }
@@ -165,6 +167,21 @@ export default function Inventory() {
 
   const filamentList = filteredFilaments;
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedFilament, setSelectedFilament] = useState(null);
+  const actionData = useActionData();
+
+  useEffect(() => {
+    if(actionData){
+      setModalOpen(false);
+    }
+  },[actionData])
+
+  const handleDeleteClick = (filament) => {
+    setSelectedFilament(filament);
+    setModalOpen(true);
+  }
+
   const columns = useMemo(() => [
     {
       accessorKey: 'brand',
@@ -190,10 +207,9 @@ export default function Inventory() {
       accessorKey: 'delete',
       header: 'Delete',
       cell: ({ row }) => (
-        <Form method="post">
-          <input type="hidden" name="id" value={row.original.id} />
-          <button name="_action" value="delete"><TrashIcon className="size-6" /></button>
-        </Form>
+        
+          <button name="_action" value="delete" className="hover:cursor-pointer hover:bg-slate-300 hover:border-2 hover:rounded-lg hover:p-1" onClick={(e) => {e.stopPropagation(); handleDeleteClick(row.original);}}><TrashIcon className="size-6" /></button>
+        
       ),
     }
   ].filter(Boolean), [admin]);
@@ -312,6 +328,22 @@ export default function Inventory() {
           </table>
         </div>
       </div>
+      {modalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+          <div className="bg-white border-3 border-slate-300 p-6 text-black rounded-lg shadow-xl text-center">
+            <h2 className="text-xl text-red-500 font-bold py-2">Confirm Deletion</h2>
+            <p>Are you sure you want to delete {selectedFilament?.brand} - {selectedFilament?.material} ({selectedFilament?.color}) and {selectedFilament._count.rolls} associated rolls?</p>
+            {selectedFilament.rolls.filter(x => x.inUse === true).length > 0 && <p>{selectedFilament.rolls.filter(x => x.inUse === true).length}{" roll(s) currently in use"}</p>}
+            <div className="mt-4 flex justify-center gap-4">
+              <Form method="post">
+                <input type="hidden" name="id" value={selectedFilament?.id} />
+                <button name="_action" value="delete" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-red-400 disabled:hover:cursor-not-allowed" disabled={selectedFilament?.rolls.filter(x => x.inUse === true).length > 0 ? true : false} >Delete</button>
+              </Form>
+              <button onClick={() => setModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-gray-300">Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
       <Outlet />
     </div>
     </div>

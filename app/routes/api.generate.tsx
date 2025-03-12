@@ -89,7 +89,8 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 // const search = new URL(request.url).searchParams
 // const newId = search.get('barcode')
 const form = await request.formData();
-const newId = form.get('barcode') || form.get('newId');
+console.log(form)
+const newId = form.get('barcode') || form.get('newId') || form.get('roll');
 if (!newId) throw new Error('id is required.')
 // const downloadType = search.get('type')
 

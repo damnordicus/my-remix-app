@@ -4,6 +4,7 @@ import { Form, Link, useActionData, useFetcher, useMatches, useNavigate } from "
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { addRollToFilament, createNewRoll } from "~/services/filament.server";
+import toast from "react-hot-toast";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
@@ -22,22 +23,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       const id = +test.id;
       const weight = +test.weight;
       const price = +test.price;
-      const newId = uuidv4();
+      const quantity = +test.quantity;
+      // const newId = uuidv4();
 
-      console.log('id: ', id, ' weight: ', weight, ' price: ', price, ' newId: ', newId)
+      // console.log('id: ', id, ' weight: ', weight, ' price: ', price, ' newId: ', newId)
       const addToFilament = await addRollToFilament(id);
-      const addNewRoll = await createNewRoll(newId, weight, price, id);
+      const addNewRoll = await createNewRoll(weight, price, id, quantity, new URL(request.url).origin);
 
-      const response = await fetch( new URL(request.url).origin + '/api/generate', {
-        method:"POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body : new URLSearchParams({newId}),
-      });
+      // const response = await fetch( new URL(request.url).origin + '/api/generate', {
+      //   method:"POST",
+      //   headers: {
+      //     "Content-Type": "application/x-www-form-urlencoded",
+      //   },
+      //   body : new URLSearchParams({newId}),
+      // });
   
-      const result = await response.json();
-      return { newId, errors: [] };
+      // const result = await response.json();
+      return { successfull: quantity, errors: [] };
     } catch (e) {
       console.error(e);
       if (e instanceof Error) {
@@ -115,7 +117,10 @@ export default function SelectedItem() {
   }, [newId, handleDownload]);
 
   useEffect(() => {
-    if (actionData && actionData.newId) setNewId(actionData.newId)
+    if (actionData && actionData.newId){
+      setNewId(actionData.newId)
+      toast.success(`Printing QR for: ${newId}`);
+    } 
   }, [actionData]);
 
   function handleSave() {
@@ -142,7 +147,7 @@ export default function SelectedItem() {
           type="number"
           name="weight"
           placeholder="Weight in grams"
-          className="border border-slate-400 bg-slate-600 rounded-lg p-2 mx-2"
+          className="border border-slate-400 bg-slate-600 rounded-lg p-2 mx-2 my-1"
           min={0}
           step={100}
         />
@@ -150,9 +155,15 @@ export default function SelectedItem() {
           type="number"
           name="price"
           placeholder="Cost"
-          className="border border-slate-400 bg-slate-600 rounded-lg p-2 m-2"
+          className="border border-slate-400 bg-slate-600 rounded-lg p-2 my-1 mx-2"
           min={0.0}
           step={0.01}
+        />
+
+        <input type="number"
+          name="quantity"
+          placeholder="Quantity"
+          className="border border-slate-400 bg-slate-600 rounded-lg p-2 mx-2 my-1 "
         />
         <div className="w-full flex justify-center text-center items-center">
           {/* <Link
@@ -173,10 +184,10 @@ export default function SelectedItem() {
             type="submit"
             name="_action"
             value="addRoll"
-            className="flex bg-amber-500 items-center p-1 rounded-lg  mt-2 shadow-lg"
+            className="flex bg-amber-600 items-center p-2 border-2 border-amber-500 rounded-lg  mt-2 shadow-lg"
             onClick={handleSave}
           >
-            <QrCodeIcon className="size-7 mr-1" /> Save
+            <QrCodeIcon className="size-7 mr-1" /> Print
           </button>
         </div>
       </Form>

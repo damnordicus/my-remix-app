@@ -1,10 +1,6 @@
-import { fa } from "@faker-js/faker";
-import { BriefcaseIcon } from "@heroicons/react/24/outline";
-import { equal } from "assert";
-import { connect } from "http2";
-import { parse } from "path";
-import { exit } from "process";
 import { prisma } from "~/utils/db.server";
+
+import { v4 as uuidv4 } from "uuid";
 
 // Fetch all filaments
 export async function getAllFilaments() {
@@ -27,6 +23,7 @@ export async function getAllFilaments() {
           },
         },
       },
+      rolls:true,
     },
     orderBy:[
       // {brand: "asc"},
@@ -360,10 +357,13 @@ export async function addRollToFilament(id: number){
   })
 }
 
-export async function createNewRoll(newId: string, weight: number, price: number, id: number){
-  return await prisma.roll.create({
+export async function createNewRoll(weight: number, price: number, id: number, quantity: number, url: string){
+  console.log(url)
+  const rolls = await Promise.all(
+    Array.from({length: quantity}, () => 
+    prisma.roll.create({
     data:{
-      barcode: newId,
+      barcode: uuidv4(),
       weight,
       price,
       filamentId: id,
@@ -371,6 +371,24 @@ export async function createNewRoll(newId: string, weight: number, price: number
       inUse: false,
     }
   })
+  ));
+
+  const qrCodes = rolls.map(roll => roll.barcode)
+  console.log(qrCodes)
+
+  // Send a single print job with all QR codes
+  for(const roll of qrCodes){
+    await fetch(`${url}/api/generate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({newId: roll}),
+  });
+  }
+  
+
+  return { rolls };
 }
 
 // Delete a filament

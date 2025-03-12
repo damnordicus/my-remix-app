@@ -110,22 +110,22 @@ export default function SelectedItem() {
   const all = selectedFilament?.rolls.length;
 
   const handelClick = async (barcode: string) => {
-    console.log('window: ',window.location.origin)
-    const response = await fetch( window.location.origin + '/api/generate', {
-      method:"POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body : new URLSearchParams({barcode}),
-    });
-    console.log(response)
+    // console.log('window: ',window.location.origin)
+    // const response = await fetch( window.location.origin + '/api/generate', {
+    //   method:"POST",
+    //   headers: {
+    //     "Content-Type": "application/x-www-form-urlencoded",
+    //   },
+    //   body : new URLSearchParams({barcode}),
+    // });
+    // console.log(response)
 
-    const result = await response.json();
-    if(result.message){
-      alert(result.message);
-    } else  {
-      alert(result.error || "Unknown Error");
-    }
+    // const result = await response.json();
+    // if(result.message){
+    //   alert(result.message);
+    // } else  {
+    //   alert(result.error || "Unknown Error");
+    // }
   }
   
 

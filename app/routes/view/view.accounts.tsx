@@ -1,6 +1,6 @@
 import { EllipsisVerticalIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useMemo, useState } from "react";
-import { ActionFunctionArgs, Form, LoaderFunctionArgs, Outlet, redirect, useLoaderData, useNavigate } from "react-router";
+import { useEffect, useMemo, useState } from "react";
+import { ActionFunctionArgs, Form, LoaderFunctionArgs, Outlet, redirect, useActionData, useLoaderData, useNavigate } from "react-router";
 import { userSession } from "~/services/cookies.server";
 import { deleteUserAccount, getAllUsers } from "~/services/filament.server";
 import * as OTPAuth from "otpauth"
@@ -25,7 +25,7 @@ export const action = async ({ request }: ActionFunctionArgs ) => {
     if(action === 'delete'){
         await deleteUserAccount(+userId);
 
-        return {message: "User account deleted!"};
+        return {deleted: true};
     }
     if(action === 'otpauth'){
         const totp = new OTPAuth.TOTP({
@@ -47,12 +47,22 @@ export default function Accounts () {
     const navigate = useNavigate();
     const [showEdit, setShowEdit] = useState(false);
     const [selectedAccount, setSelectedAccount] = useState("");
+    const [modalOpen, setModalOpen] = useState(false);
+    const actionData = useActionData();
+
+    useEffect(() => {
+        if(actionData){
+            setModalOpen(false);
+            setShowEdit(false);
+        }
+    }, [actionData])
 
     function handleClick(id: number){
         setShowEdit(!showEdit);
         const localId = allAccounts[id].id;
         const secret = (allAccounts?.find(account => account.id === localId))
         setSelectedAccount(secret)
+        console.log(secret)
         
         // navigate(`./${id}/jobs`);
     }
@@ -77,7 +87,7 @@ export default function Accounts () {
             accessorKey: 'edit',
             header: 'Edit',
             cell: ({ row }) => (
-                <button name="_action" value="edit" type="submit" onClick={() => handleClick(row.id)}><EllipsisVerticalIcon className="size-6 text-gray-200"/></button>
+                <button name="_action" value="edit" type="submit" className="p-2 hover:bg-gray-500 hover:rounded-lg hover:cursor-pointer" onClick={(e) => {e.stopPropagation(); handleClick(row.id)}}><EllipsisVerticalIcon className="size-6 text-gray-200"/></button>
             ),
         }
     ], allAccounts);
@@ -163,11 +173,29 @@ export default function Accounts () {
                         <p> Options for</p> <p className="italic pl-2 text-slate-300">{selectedAccount.username}:</p> 
                     </div>
                     <div className="flex w-full justify-around text-xl">
-                        <button name="_action" value="delete" type="submit" className=" px-4 py-4 rounded-xl border-2 border-red-700 bg-red-600 ">Delete User Account</button>
+                        <button onClick={() => {
+                            setModalOpen(true);
+                        }} className=" px-4 py-4 rounded-xl border-2 border-red-700 bg-red-600 ">Delete User Account</button>
                         <button name="_action" value="otpauth" type="submit" className=" px-4 py-2 rounded-xl border-2 border-green-700 bg-green-600 ">Show OTPAuth QR</button>
                     </div>
                 </Form>
                 </div>}
+
+                {modalOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
+                    <div className="bg-white border-3 border-slate-300 p-6 text-black rounded-lg shadow-xl text-center">
+                        <h2 className="text-xl text-red-500 font-bold py-2">Confirm Deletion</h2>
+                        <p>Are you sure you want to delete {selectedAccount?.username}</p>
+                        <div className="mt-4 flex justify-center gap-4">
+                        <Form method="post">
+                            <input type="hidden" name="userId" value={selectedAccount?.id} />
+                            <button name="_action" value="delete" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-red-400">Delete</button>
+                        </Form>
+                        <button onClick={() => setModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
+                        </div>
+                    </div>
+                    </div>
+                )}
             <Outlet />
         </div>
     );
