@@ -81,7 +81,7 @@ export default function PrintJob() {
                   <InputDropDown labelText="Username" options={getUsers} setSelectedOption={setSelectedUser}/>
                   <div className="flex-col w-full px-4 py-2">
                     <label htmlFor="otp" className="w-full pb-2">Enter Code: </label>
-                    <input type="text" name="otp" className="bg-slate-800/60 border border-slate-500 rounded-xl p-2"/>
+                    <input type="number" name="otp" className="bg-slate-800/60 border border-slate-500 rounded-xl p-2" maxLength={6} required/>
                   </div>
                 </>
                 }

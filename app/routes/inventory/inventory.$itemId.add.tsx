@@ -68,7 +68,6 @@ const base64ToUint8Array = (base64: string): Uint8Array => {
 };
 
 export function showThrobber(show) {
-  console.log('here', typeof document)
   if (typeof document !== "undefined") {
     const throbber = document.getElementById("throbber");
     if (throbber) {

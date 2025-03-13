@@ -407,7 +407,7 @@ export async function createNewRoll(weight: number, price: number, id: number, q
   }catch(error){
     return{error: error.message}
   } finally{
-    
+    showThrobber(false);
   }
 
   return { rolls };

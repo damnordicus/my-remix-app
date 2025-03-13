@@ -1,4 +1,4 @@
-import { CheckBadgeIcon } from "@heroicons/react/24/outline";
+import { CheckBadgeIcon } from "@heroicons/react/24/solid";
 import { Form, Link, LoaderFunctionArgs, redirect, useLoaderData } from "react-router"
 import { userSession } from "~/services/cookies.server";
 import { getUserById, getUserByUsername } from "~/services/filament.server";

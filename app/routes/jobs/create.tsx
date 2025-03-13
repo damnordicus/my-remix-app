@@ -359,9 +359,9 @@ export default function PrintJobForm({
                         onClick={() => {
                           handleRemoveFilament(barcode);
                         }}
-                        className="text-gray-300 hover:text-red-500 hover:cursor-pointer"
+                        className="text-gray-300 hover:text-red-500 hover:cursor-pointer relative top-3"
                       >
-                        <TrashIcon className="size-4.5 text-red-500" />
+                        <TrashIcon className="size-6 text-red-500" />
                       </button>
                     </div>
                     <div className="flex justify-between mt-1 text-sm">

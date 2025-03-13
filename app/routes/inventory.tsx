@@ -223,8 +223,8 @@ export default function Inventory() {
 
   return (
     <div className=" mt-0 lg:mt-15" style={{alignSelf: "start"}}>
-      {/* <div className="flex justify-center py-4 gap-1 ">
-        {admin && <Link to="create" className="bg-amber-600 text-white p-1 pr-3 pl-3 rounded-xl border border-amber-400 drop-shadow-lg shadow-inner shadow-amber-200/40 hover:bg-amber-400">Create New</Link>}
+      <div className="flex justify-center py-4 gap-1 ">
+        {admin && <Link to="create" className="bg-green-700 text-white p-1 px-6 py-2  rounded-xl border-2 border-green-400">Create New</Link>}
         <Navbar
           setSelectedFilters={setSelectedFilters}
           filterList={filterList}
@@ -238,9 +238,9 @@ export default function Inventory() {
       </div>
       <div className="flex justify-center w-full max-h-[700px] drop-shadow-xl z-0">
         <div className="overflow-y-scroll lg:w-3/4 md:w-full md:mx-8 border-2 border-slate-400 rounded-lg">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed ">
-            <thead className="sticky top-0 z-3 text-xs text-gray-500 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b-2 border-slate-600">
-              <tr className="rounded-t-lg ">
+          <table className="w-full text-lg text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
+            <thead className="sticky top-0 z-3 text-sm text-gray-500 uppercase bg-gray-50 dark:bg-slate-500 dark:text-gray-400 border-b-2 border-slate-600">
+              <tr className="rounded-t-lg">
                 <th scope="col" className={`text-center pl-6 py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
                   Brand
                 </th>
@@ -261,13 +261,7 @@ export default function Inventory() {
               {filamentList.map((filament) => (
                 <tr
                   key={filament.id}
-                  className={`w-full ${
-                    filament._count.rolls > WARNING_AMOUNT
-                      ? "dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-600"
-                      : filament._count.rolls > CRITICAL_AMOUNT
-                      ? "bg-yellow-400 text-black hover:bg-yellow-300"
-                      : "bg-red-400 text-black hover:bg-red-300"
-                  } border-b border-gray-200 `}
+                  className={`w-full hover:bg-slate-600 bg-slate-800 even:bg-slate-700 h-12`}
                   onClick={() => handleItemClick(filament.id)}
                 >
                   <td className="text-center">
@@ -276,17 +270,20 @@ export default function Inventory() {
                   <td className="text-center">
                     <p>{filament.material}</p>
                   </td>
-                  <td className={`flex justify-center`}>
+                  <td className={`flex justify-center py-2`}>
                     <Badge>{filament.color}</Badge>
                   </td>
                   <td className="text-center">
-                    <p>{filament._count.rolls }</p>
+                    <p className={`${
+                    filament._count.rolls > WARNING_AMOUNT
+                      ? "text-gray-400"
+                      : filament._count.rolls > CRITICAL_AMOUNT
+                      ? "text-yellow-400"
+                      : "text-red-400"
+                  }`}>{filament._count.rolls }</p>
                   </td>
-                  {admin && <td className="flex justify-center">
-                    <Form method="post">
-                      <input type="hidden" name="id" value={filament.id}/>
-                      <button name="_action" value="delete"><TrashIcon className="size-6"/></button>
-                    </Form>
+                  {admin && <td className="flex justify-center ">
+                    <button className="hover:cursor-pointer  hover:bg-slate-300 hover:border-2 hover:rounded-lg hover:p-1" onClick={(e) => {e.stopPropagation(); handleDeleteClick(filament);}}><TrashIcon className="size-6 text-red-500 -mb-1"/></button>
                   </td>}
                 </tr>
               ))}
@@ -294,8 +291,8 @@ export default function Inventory() {
           </table>
         </div>
       </div>
-      <Outlet /> */}
-       <div className="mt-0 lg:mt-15" style={{ alignSelf: "start" }}>
+      <Outlet />
+       {/* <div className="mt-0 lg:mt-15" style={{ alignSelf: "start" }}>
       <div className="flex justify-center py-4 gap-2">
         {admin && <Link to="create" className="bg-amber-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-amber-400">Create New</Link>}
         <Navbar setSelectedFilters={() => {}} filterList={() => {}} brands={brands} materials={materials} colors={colors} list={{}} filterVisible={false} setFilterVisible={() => {}} />
@@ -327,7 +324,7 @@ export default function Inventory() {
             </tbody>
           </table>
         </div>
-      </div>
+      </div> */}
       {modalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50">
           <div className="bg-white border-3 border-slate-300 p-6 text-black rounded-lg shadow-xl text-center">
@@ -344,8 +341,8 @@ export default function Inventory() {
           </div>
         </div>
       )}
-      <Outlet />
-    </div>
+      {/* <Outlet /> */}
+    {/* </div> */}
     </div>
   );
 }

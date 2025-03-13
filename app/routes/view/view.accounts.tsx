@@ -10,7 +10,7 @@ export const loader = async ({ request }: LoaderFunctionArgs ) => {
     const session = await userSession.parse(request.headers.get("Cookie")) || {};
     if( session.admin ){
         const allAccounts = await getAllUsers();
-        return { allAccounts };
+        return { allAccounts, session };
     }
     if(!session.username) return redirect("..")
     return {};
@@ -42,13 +42,18 @@ export const action = async ({ request }: ActionFunctionArgs ) => {
 }
 
 export default function Accounts () {
-    const { allAccounts } = useLoaderData<typeof loader>();
-    console.log(allAccounts)
-    const navigate = useNavigate();
+    const { allAccounts, session } = useLoaderData<typeof loader>();
+    const accounts = allAccounts?.filter(user => user.username !== session.username)
     const [showEdit, setShowEdit] = useState(false);
     const [selectedAccount, setSelectedAccount] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
     const actionData = useActionData();
+
+    function phoneNumber(phone: number | string){
+        const stringPhone = phone.toString();
+        const formatted = `(${stringPhone.slice(0,3)}) ${stringPhone.slice(3,6)}-${stringPhone.slice(6,10)}`
+        return formatted
+    }
 
     useEffect(() => {
         if(actionData){
@@ -58,11 +63,12 @@ export default function Accounts () {
     }, [actionData])
 
     function handleClick(id: number){
-        setShowEdit(!showEdit);
-        const localId = allAccounts[id].id;
-        const secret = (allAccounts?.find(account => account.id === localId))
-        setSelectedAccount(secret)
-        console.log(secret)
+        setShowEdit((prev) => !prev);
+        console.log(accounts)
+        const local = accounts?.find(account => account.id === id)
+        // const secret = (accounts?.find(account => account.id === localId))
+        setSelectedAccount(local)
+        console.log(local)
         
         // navigate(`./${id}/jobs`);
     }
@@ -101,35 +107,35 @@ export default function Accounts () {
     return (
         <div className="flex-col w-full px-10 items-center justify-center">
             <div className="relative md:w-full lg:w-1/2 flex-col mt-20  overflow-scroll no-scrollbar text-slate-300 bg-gray-700 shadow-md rounded-xl bg-clip-border border-2 border-slate-400">
-            {/* <table className="w-full text-center table-auto min-w-max text-white">
-                <thead >
-                    <tr className="text-slate-300 border-b border-slate-300 bg-gray-900">
-                        <th className="p-4">
+            <table className="w-full text-center text-white text-xl">
+                <thead className="sticky top-0 bg-gray-50 dark:bg-gray-500 border-b-2 border-slate-600" >
+                    <tr className="text-center px-4">
+                        <th className="py-3">
                             Username
                         </th>
-                        <th className="p-4">
+                        <th className="">
                             Email
                         </th>
-                        <th className="p-4">
+                        <th className="">
                             Phone
                         </th>
-                        <th className="p-4">
+                        <th className="">
                             Edit
                         </th>
                     </tr>
                 </thead>
-            {allAccounts?.length && (
-                allAccounts.map((account, index) => {
+            {accounts?.length && (
+                accounts.map((account, index) => {
                     return(
-                    <tr key={account.id} className={`text-center ${index < allAccounts.length -1 ? 'border-b-2 border-slate-400 ' : ''} hover:cursor-pointer hover:bg-slate-500`}>
-                        <td className="p-2">
+                    <tr key={account.id} className={`text-center py-3 even:bg-slate-700 bg-slate-800 ${index < accounts.length -1 ? 'border-b-2 border-slate-400 ' : ''} hover:cursor-pointer hover:bg-slate-500`}>
+                        <td className="text-center p-2">
                             {account.username}
                         </td>
-                        <td className="p-2">
+                        <td className="text-center p-2">
                             {account.email}
                         </td>
-                        <td className="p-2">
-                            {account.phone}
+                        <td className="text-center p-2">
+                            {phoneNumber(account.phone)}
                         </td>
                         <td className="flex justify-center p-2 self-center">
                             <button name="_action" value="edit" type="submit" onClick={() => handleClick(account.id)} >
@@ -139,8 +145,8 @@ export default function Accounts () {
                     </tr>
                 )})
             )}
-            </table> */}
-            <table className="w-full text-center text-white text-xl">
+            </table>
+            {/* <table className="w-full text-center text-white text-xl">
                 <thead className="sticky top-0 bg-gray-50 dark:bg-gray-500 border-b-2 border-slate-600">
                 {table.getHeaderGroups().map(headerGroup => (
                     <tr key={headerGroup.id}>
@@ -163,7 +169,7 @@ export default function Accounts () {
                 </tr>
               ))}
             </tbody>
-            </table>
+            </table> */}
             </div>
             {showEdit && <div className="md:w-full lg:w-1/2 mt-5 py-5 rounded-xl bg-slate-700 border-2 border-slate-400">
                 <Form method="POST">
@@ -175,8 +181,8 @@ export default function Accounts () {
                     <div className="flex w-full justify-around text-xl">
                         <button onClick={() => {
                             setModalOpen(true);
-                        }} className=" px-4 py-4 rounded-xl border-2 border-red-700 bg-red-600 ">Delete User Account</button>
-                        <button name="_action" value="otpauth" type="submit" className=" px-4 py-2 rounded-xl border-2 border-green-700 bg-green-600 ">Show OTPAuth QR</button>
+                        }} className=" px-4 py-4 rounded-xl border-2 border-red-700 bg-red-600 hover:bg-red-500 hover:cursor-pointer">Delete User Account</button>
+                        <button name="_action" value="otpauth" type="submit" className=" px-4 py-2 rounded-xl border-2 border-green-700 bg-green-600 hover:bg-green-500 hover:cursor-pointer">Show OTPAuth QR</button>
                     </div>
                 </Form>
                 </div>}
@@ -191,7 +197,7 @@ export default function Accounts () {
                             <input type="hidden" name="userId" value={selectedAccount?.id} />
                             <button name="_action" value="delete" className="bg-red-600 text-white px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-red-400">Delete</button>
                         </Form>
-                        <button onClick={() => setModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg">Cancel</button>
+                        <button onClick={() => setModalOpen(false)} className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-300 hover:cursor-pointer">Cancel</button>
                         </div>
                     </div>
                     </div>

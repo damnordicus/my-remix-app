@@ -2,14 +2,15 @@ import { ReactNode } from "react";
 
 export default function Badge({children, size}: {children: ReactNode, size?: number}) {
     let pillDetails = '';
-    const BG_COLORS: string[] = ["RED","ORANGE","AMBER","YELLOW","LIME","GREEN","EMERALD","TEAL","CYAN","SKY","BLUE","INDIGO","VIOLET","PURPLE","FUCSHIA","PINK","ROSE","SLATE","GRAY","ZINC","NEUTRAL","STONE"]
+    const BG_COLORS: string[] = ["BLACK", "WHITE", "RED","ORANGE","AMBER","YELLOW","LIME","GREEN","EMERALD","TEAL","CYAN","SKY","BLUE","INDIGO","VIOLET","PURPLE","FUCSHIA","PINK","ROSE","SLATE","GRAY","ZINC","NEUTRAL","STONE"]
 
+    const text = String(children).toUpperCase();
    
-    //const foundColor = BG_COLORS.find(color => color === children)?.toLowerCase() ?? 'gray';
+    const foundColor = BG_COLORS.find(color => text.includes(color)) || "SLATE";
 
     //pillDetails = `text-${'black'} bg-${(foundColor === 'black' || foundColor === 'white') ? foundColor : `${foundColor}-400`} border-${foundColor}-300 p-1`;
 
-    switch(children){
+    switch(foundColor){
         case 'BLACK':
             pillDetails = 'text-white bg-black border-gray-500/40 p-1';
             break;
@@ -26,7 +27,7 @@ export default function Badge({children, size}: {children: ReactNode, size?: num
             pillDetails = 'text-gray-400 bg-white border-gray-300 p-1';
             break;
         case 'RED':
-            pillDetails = 'text-red-800 bg-red-500 border-red-600 p-1';
+            pillDetails = 'text-black bg-red-500 border-red-600 p-1';
             break;
         case 'YELLOW':
             pillDetails = 'text-yellow-600 bg-yellow-200 border-yellow-300 p-1';
@@ -43,13 +44,19 @@ export default function Badge({children, size}: {children: ReactNode, size?: num
         case 'PINK':
             pillDetails = 'bg-pink-500 border-pink-700 text-white p-1';
             break;
+        case 'CYAN':
+            pillDetails = 'bg-cyan-500 border-cyan-700 text-black p-1';
+            break;
+        case 'INDIGO':
+            pillDetails = 'bg-indigo-500 borer-indigo-700 text-white p-1';
+            break;
         default:
             pillDetails = 'bg-slate-800 border-slate-700 text-lg text-slate-300';
             break;
         
     }
     return (
-        <div className={`rounded-full text-center text-sm border-4 ${size ? 'h-[25px] w-[80px]' : 'h-[35px] w-[200px]'} ${pillDetails}`}>
+        <div className={`rounded-full text-center py-1 text-sm border-4 ${size ? 'h-[25px] w-[80px]' : 'h-[35px] w-[200px]'} ${pillDetails}`}>
             {children === 'RAINBOW' ? (
                 <>
                     <span className=" text-red-500">R</span>
