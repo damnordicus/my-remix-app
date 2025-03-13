@@ -1,10 +1,12 @@
 import { QrCodeIcon } from "@heroicons/react/24/outline";
-import { ActionFunctionArgs, redirect } from "react-router";
+import { ActionFunctionArgs, redirect, useSubmit } from "react-router";
 import { Form, Link, useActionData, useFetcher, useMatches, useNavigate } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { addRollToFilament, createNewRoll } from "~/services/filament.server";
 import toast from "react-hot-toast";
+import { E } from "node_modules/@faker-js/faker/dist/airline-BcEu2nRk";
+import { e } from "node_modules/react-router/dist/development/route-data-BmvbmBej.mjs";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
@@ -28,7 +30,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
       // console.log('id: ', id, ' weight: ', weight, ' price: ', price, ' newId: ', newId)
       const addToFilament = await addRollToFilament(id);
-      const addNewRoll = await createNewRoll(weight, price, id, quantity, new URL(request.url).origin);
+      const addNewRoll = await createNewRoll(weight, price, id, quantity, new URL(request.url).origin, showThrobber);
 
       // const response = await fetch( new URL(request.url).origin + '/api/generate', {
       //   method:"POST",
@@ -39,6 +41,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       // });
   
       // const result = await response.json();
+      if(addNewRoll.error){
+        return {error: addNewRoll.error}
+      }
       return { successfull: quantity, errors: [] };
     } catch (e) {
       console.error(e);
@@ -61,6 +66,18 @@ const base64ToUint8Array = (base64: string): Uint8Array => {
 
   return bytes;
 };
+
+export function showThrobber(show) {
+  console.log('here', typeof document)
+  if (typeof document !== "undefined") {
+    const throbber = document.getElementById("throbber");
+    if (throbber) {
+      throbber.classList.toggle("hidden", !show);
+    }
+  }
+}
+
+
 export function useDownloadFetcher() {
   const fetcher = useFetcher();
 
@@ -103,6 +120,8 @@ export default function SelectedItem() {
   const actionData = useActionData<typeof action>();
   const [newId, setNewId] = useState<null | string>(null);
   const navigate = useNavigate();
+  const [ loading, setLoading ] = useState(false);
+  const submit = useSubmit();
 
   const fetcher = useDownloadFetcher();
 
@@ -121,9 +140,12 @@ export default function SelectedItem() {
       setNewId(actionData.newId)
       toast.success(`Printing QR for: ${newId}`);
     } 
+    if(actionData && actionData.error){
+      toast.error(actionData.error)
+    }
   }, [actionData]);
 
-  function handleSave() {
+  function handleSave(e) {
     // e.preventDefault();
     // //console.log('submitting');
     // e.currentTarget.submit();
@@ -132,7 +154,11 @@ export default function SelectedItem() {
     //   action: 'success'
     // }});
     // // navigate('..'
-    // // )
+    // // 
+    // 
+    setLoading(true);
+    e.currentTarget.submit(setLoading);
+    //submit("addRoll")
   }
 
   if (selectedFilament === null) {
@@ -192,6 +218,7 @@ export default function SelectedItem() {
             <QrCodeIcon className="size-7 mr-1" /> Print
           </button>
         </div>
+        {loading && <div id="throbber" className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>}
       </Form>
       </div>
     );

@@ -231,5 +231,7 @@ type JiraIssueMap = Map<
     creator: JiraIssueFields["creator"];
     summary: JiraIssueFields["summary"];
     printer: JiraIssueFields["customfield_10063"]
-  }
+    
+  },
+  string,
 >;

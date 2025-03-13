@@ -84,7 +84,8 @@ export async function getUserIssues(username: string) {
     const json = (await response.json()) as JiraIssuesResponse;
     return issuesArrayToMap(json.issues);
   }
-  throw new Error(`There was an error fetching the issues. ${response.status}`);
+  return {error: "Couldn't connect to Jira"}
+  //throw new Error(`There was an error fetching the issues. ${response.status}`);
 }
 
 function issuesArrayToMap(issues: JiraIssuesResponse["issues"]): JiraIssueMap {

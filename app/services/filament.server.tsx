@@ -357,8 +357,11 @@ export async function addRollToFilament(id: number){
   })
 }
 
-export async function createNewRoll(weight: number, price: number, id: number, quantity: number, url: string){
-  console.log(url)
+
+
+export async function createNewRoll(weight: number, price: number, id: number, quantity: number, url: string, showThrobber: Function){
+  const TIMEOUT = 5000;
+  showThrobber(true);
   const rolls = await Promise.all(
     Array.from({length: quantity}, () => 
     prisma.roll.create({
@@ -375,18 +378,37 @@ export async function createNewRoll(weight: number, price: number, id: number, q
 
   const qrCodes = rolls.map(roll => roll.barcode)
   console.log(qrCodes)
+  try{
 
   // Send a single print job with all QR codes
   for(const roll of qrCodes){
-    await fetch(`${url}/api/generate`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: new URLSearchParams({newId: roll}),
-  });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {controller.abort(); showThrobber(false);}, TIMEOUT);
+    try{
+        const response = await fetch(`${url}/api/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({newId: roll}),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+        if(!response.ok) return {error: "Problem with printer"}
+      }catch(error){
+        if(error.name === "AbortError"){
+          throw new Error("Request timed out");
+        }else {
+          throw error;
+        }
+      }
+    }
+  }catch(error){
+    return{error: error.message}
+  } finally{
+    
   }
-  
 
   return { rolls };
 }
