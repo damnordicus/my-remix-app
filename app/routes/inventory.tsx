@@ -224,7 +224,7 @@ export default function Inventory() {
   return (
     <div className=" mt-0 lg:mt-15" style={{alignSelf: "start"}}>
       <div className="flex justify-center py-4 gap-1 ">
-        {admin && <Link to="create" className="bg-green-700 text-white p-1 px-6 py-2  rounded-xl border-2 border-green-400">Create New</Link>}
+        {admin && <Link to="create" className="bg-green-700 text-white p-1 px-6 py-2  rounded-xl border-2 border-green-400 hover:bg-green-500">Create New</Link>}
         <Navbar
           setSelectedFilters={setSelectedFilters}
           filterList={filterList}
@@ -239,7 +239,7 @@ export default function Inventory() {
       <div className="flex justify-center w-full max-h-[700px] drop-shadow-xl z-0">
         <div className="overflow-y-scroll lg:w-3/4 md:w-full md:mx-8 border-2 border-slate-400 rounded-lg">
           <table className="w-full text-lg text-left rtl:text-right text-gray-500 dark:text-gray-400 table-fixed">
-            <thead className="sticky top-0 z-3 text-sm text-gray-500 uppercase bg-gray-50 dark:bg-slate-500 dark:text-gray-400 border-b-2 border-slate-600">
+            <thead className="sticky top-0 z-3 text-lg text-gray-500 uppercase bg-gray-50 dark:bg-slate-500 dark:text-gray-300 border-b-2 border-slate-600">
               <tr className="rounded-t-lg">
                 <th scope="col" className={`text-center pl-6 py-3 ${admin ? 'w-1/5': 'w-1/4'}`}>
                   Brand
@@ -273,17 +273,17 @@ export default function Inventory() {
                   <td className={`flex justify-center py-2`}>
                     <Badge>{filament.color}</Badge>
                   </td>
-                  <td className="text-center">
-                    <p className={`${
+                  <td className="text-center ">
+                    <p className={`flex justify-center items-center mx-auto ${
                     filament._count.rolls > WARNING_AMOUNT
                       ? "text-gray-400"
                       : filament._count.rolls > CRITICAL_AMOUNT
-                      ? "text-yellow-400"
-                      : "text-red-400"
+                      ? "text-yellow-800 w-[40px] h-[40px] rounded-lg bg-yellow-400 border-2 border-yellow-500"
+                      : "text-red-800 w-[40px] h-[40px] rounded-lg bg-red-400 border-2 border-red-500"
                   }`}>{filament._count.rolls }</p>
                   </td>
                   {admin && <td className="flex justify-center ">
-                    <button className="hover:cursor-pointer  hover:bg-slate-300 hover:border-2 hover:rounded-lg hover:p-1" onClick={(e) => {e.stopPropagation(); handleDeleteClick(filament);}}><TrashIcon className="size-6 text-red-500 -mb-1"/></button>
+                    <button className="hover:cursor-pointer  hover:bg-slate-300 hover:border-2 hover:rounded-lg hover:p-1" onClick={(e) => {e.stopPropagation(); handleDeleteClick(filament);}}><TrashIcon className="size-6 text-slate-400 -mb-1"/></button>
                   </td>}
                 </tr>
               ))}

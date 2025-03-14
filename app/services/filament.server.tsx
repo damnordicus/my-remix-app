@@ -8,6 +8,9 @@ export async function getAllFilaments() {
     // orderBy:{
     //   stock_level: 'asc'
     // }
+    where:{
+      isDeleted: false,
+    },
     select: {
       id: true,
       brand: true,
@@ -357,81 +360,103 @@ export async function addRollToFilament(id: number){
   })
 }
 
-
-
-export async function createNewRoll(weight: number, price: number, id: number, quantity: number, url: string, showThrobber: Function){
+export async function createNewRoll(
+  weight: number,
+  price: number,
+  id: number,
+  quantity: number,
+  url: string,
+  showThrobber: any
+) {
   const TIMEOUT = 5000;
   showThrobber(true);
+
+  // Create rolls in parallel
   const rolls = await Promise.all(
-    Array.from({length: quantity}, () => 
-    prisma.roll.create({
-    data:{
-      barcode: uuidv4(),
-      weight,
-      price,
-      filamentId: id,
-      purchase_date: new Date(Date.now()),
-      inUse: false,
-    }
-  })
-  ));
+    Array.from({ length: quantity }, () =>
+      prisma.roll.create({
+        data: {
+          barcode: uuidv4(),
+          weight,
+          price,
+          filamentId: id,
+          purchase_date: new Date(),
+          inUse: false,
+        },
+      })
+    )
+  );
 
-  const qrCodes = rolls.map(roll => roll.barcode)
-  console.log(qrCodes)
-  try{
+  const qrCodes = rolls.map((roll) => roll.barcode);
+  console.log(qrCodes);
 
-  // Send a single print job with all QR codes
-  for(const roll of qrCodes){
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {controller.abort(); showThrobber(false);}, TIMEOUT);
-    try{
-        const response = await fetch(`${url}/api/generate`, {
+  // Fire off print jobs immediately
+  const fetchPromises = qrCodes.map((roll) => {
+    return new Promise((resolve) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+        resolve({ error: "Request timed out", roll });
+      }, TIMEOUT);
+
+      fetch(`${url}/api/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: new URLSearchParams({newId: roll}),
+        body: new URLSearchParams({ newId: roll }),
         signal: controller.signal,
-      });
+      })
+        .then((response) => {
+          clearTimeout(timeoutId);
+          if (!response.ok) {
+            resolve({ error: "Problem with printer", roll });
+          } else {
+            resolve({ success: true, roll });
+          }
+        })
+        .catch((error) => {
+          resolve({ error: error.message, roll });
+        });
+    });
+  });
 
-      clearTimeout(timeoutId);
-        if(!response.ok) return {error: "Problem with printer"}
-      }catch(error){
-        if(error.name === "AbortError"){
-          throw new Error("Request timed out");
-        }else {
-          throw error;
-        }
-      }
-    }
-  }catch(error){
-    return{error: error.message}
-  } finally{
-    showThrobber(false);
-  }
+  // Run fetch requests without waiting for completion
+  const results = await Promise.allSettled(fetchPromises);
+  console.log("Print results:", results);
+
+  // Delay the throbber update to make sure it triggers UI re-render
+  setTimeout(() => {console.log("false"); showThrobber(false);}, 0);
 
   return { rolls };
 }
+
+
+
+
 
 // Delete a filament
 export async function deleteFilament(id: number) {
   console.log('id: ',id)
 
-  const deleteRolls = await prisma.roll.deleteMany({
-    where:{
-      filament:{
-        id,
-      },
-    },
-  });
+  // const deleteRolls = await prisma.roll.deleteMany({
+  //   where:{
+  //     filament:{
+  //       id,
+  //     },
+  //   },
+  // });
 
-  const deleteFilament = await prisma.filament.deleteMany({
+  const deleteFilament = await prisma.filament.updateMany({
     where:{
       id,
     },
+    data:{
+      isDeleted: true,
+    }
   });
 
-  return {deleteRolls, deleteFilament};
+  return {deleteFilament};
 }
 
 export async function getColorsByMaterial( material: string){
@@ -600,20 +625,23 @@ export async function createUser({actualUsername, email, phone, secret, admin}: 
 
 export async function deleteUserAccount(userId: number){
 
-  const removeJobs = await prisma.job.deleteMany({
-    where:{
-      userId,
-    }
-  });
+  // const removeJobs = await prisma.job.deleteMany({
+  //   where:{
+  //     userId,
+  //   }
+  // });
 
-  if(removeJobs){
-    return await prisma.user.delete({
+  // if(removeJobs){
+    return await prisma.user.update({
     where:{
       id: userId,
+    },
+    data:{
+      isDeleted: true,
     }
     })
-  }
-  return {message: "Could not remove users jobs"};
+  // }
+  // return {message: "Could not remove users jobs"};
   
 }
 

@@ -14,6 +14,7 @@ model Filament {
   color         String
   diameter      Float
   stock_level   Int?
+  isDeleted  Boolean @default(false)
 
   @@index([id])
   rolls Roll[]
@@ -37,6 +38,7 @@ model User {
   secret String
   phone String
   email String
+  isDeleted Boolean @default(false)
   admin Boolean @default(false)
   jobs Job[]
 }

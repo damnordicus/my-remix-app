@@ -142,6 +142,7 @@ export default function SelectedItem() {
     if(actionData && actionData.error){
       toast.error(actionData.error)
     }
+    setLoading(false);
   }, [actionData]);
 
   function handleSave(e) {
@@ -157,6 +158,7 @@ export default function SelectedItem() {
     // 
     setLoading(true);
     e.currentTarget.submit(setLoading);
+    setTimeout(() => setLoading(false), 5000)
     //submit("addRoll")
   }
 

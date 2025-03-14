@@ -90,9 +90,9 @@ export default function PrintJob() {
               </div>
               <div className="flex-col w-full justify-center text-center px-4 gap-2">
                 <input type="hidden" name="from" value={from} />
-              <button type="submit" name="_action" value="submit" className="rounded-xl border-2 border-amber-400/60 bg-amber-600 hover:cursor-pointer hover:border-amber-600/60 hover:bg-amber-400 hover:text-amber-900 w-full py-2 mt-6 mb-2 text-white">
+              {getUsers.length > 0 && <button type="submit" name="_action" value="submit" className="rounded-xl border-2 border-amber-400/60 bg-amber-600 hover:cursor-pointer hover:border-amber-600/60 hover:bg-amber-400 hover:text-amber-900 w-full py-2 mt-6 mb-2 text-white">
                 Login
-              </button>
+              </button>}
               <div>
               <span className="text-sm">Don't have an account?</span><span> <Link to="../register" className=" pl-2 text-white">Sign Up!</Link></span>
               </div>

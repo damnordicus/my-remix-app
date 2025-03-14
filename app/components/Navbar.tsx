@@ -37,7 +37,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
     <nav className="navbar relative">
       <button
         onClick={() => setFilterVisible((prev) => !prev)}
-        className="bg-amber-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-amber-400 "
+        className="bg-amber-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-amber-400 hover:cursor-pointer hover:bg-amber-400"
       >
         Filter
       </button>
@@ -106,14 +106,14 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
           <button
             type="button"
             onClick={filterList}
-            className="bg-amber-500 text-white py-2 px-4 rounded-xl shadow-xl border-2 border-amber-600"
+            className="bg-amber-500 text-white py-2 px-4 rounded-xl shadow-xl border-2 border-amber-600 hover:cursor-pointer hover:bg-amber-400"
           >
             Apply Filters
           </button>
           <button
             type="button"
             onClick={() => setFilterVisible(false)}
-            className="bg-red-500 text-white py-2 px-4 ml-2 rounded-xl shadow-xl border-2 border-red-600"
+            className="bg-red-500 text-white py-2 px-4 ml-2 rounded-xl shadow-xl border-2 border-red-600 hover:cursor-pointer hover:bg-red-400"
           >
             Cancel
           </button>

@@ -24,19 +24,19 @@ export default function Badge({children, size}: {children: ReactNode, size?: num
             pillDetails = 'text-purple-800 bg-purple-400 border-purple-500 p-1';
             break;
         case 'WHITE':
-            pillDetails = 'text-gray-400 bg-white border-gray-300 p-1';
+            pillDetails = 'text-gray-900 bg-white border-gray-300 p-1';
             break;
         case 'RED':
             pillDetails = 'text-black bg-red-500 border-red-600 p-1';
             break;
         case 'YELLOW':
-            pillDetails = 'text-yellow-600 bg-yellow-200 border-yellow-300 p-1';
+            pillDetails = 'text-yellow-900 bg-yellow-200 border-yellow-300 p-1';
             break;
         case 'GREEN':
-            pillDetails = 'text-green-800 bg-green-400 border-green-500 p-1';
+            pillDetails = 'text-green-900 bg-green-400 border-green-500 p-1';
             break;
         case 'ORANGE':
-            pillDetails = 'text-orange-800 bg-orange-400 border-orange-500 p-1';
+            pillDetails = 'text-orange-900 bg-orange-400 border-orange-500 p-1';
             break;
         case 'RAINBOW':
             pillDetails = 'bg-slate-800 border-slate-700 text-lg ';

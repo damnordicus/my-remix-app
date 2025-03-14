@@ -1,9 +1,7 @@
-import { BriefcaseIcon, CameraIcon, ClipboardDocumentListIcon, HomeIcon, PlusIcon, UserIcon } from "@heroicons/react/24/outline";
+import { BriefcaseIcon, CameraIcon, ClipboardDocumentListIcon, PlusIcon, UserIcon } from "@heroicons/react/24/outline";
 import React from "react";
-import { Form, Link, LoaderFunctionArgs, NavLink, useLoaderData } from "react-router";
-import { userSession } from "~/services/cookies.server";
+import { Link } from "react-router";
 import NavButton from "./NavButton";
-import Inventory from "~/routes/inventory";
 
 // export const loader = async({request}: LoaderFunctionArgs) => {
 //   const session = await userSession.parse(request.headers.get("Cookie")) || {};

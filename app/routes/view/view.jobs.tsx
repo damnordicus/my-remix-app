@@ -10,7 +10,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if(!session.username) return redirect("..")
   const result = await getUserIssues(session.username);
   if(result.error){
-    console.log('r: ',result.error)
+    // console.log('r: ',result.error)
      return {error: result.error};
   }
   return { result };
@@ -18,7 +18,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function AllJobs() {
   const  result  = useLoaderData<typeof loader>();
-  console.log('result: ', result)
   if(result.error){
     return (
       <div className="relative top-15">
@@ -29,13 +28,13 @@ export default function AllJobs() {
 
     return (
       <div className="mt-0 lg:mt-15 h-screen items-center justify-center">
-      <div className={`relative lg:top-15 max-h-[calc(100vh-80px)] lg:w-4/5  grid grid-cols-1 gap-2 p-8 mx-auto lg:border-2 lg:border-slate-400 rounded-lg ${result.result.size > 5 ? 'overflow-y-scroll' : ''} lg:drop-shadow-xl lg:bg-slate-600/60`}>
-        {result.result.size === 0 && <div className="col-span-1 flex justify-center text-2xl gap-2 py-2 bg-slate-500/60 backdrop-blur-sm border-2 border-slate-500 rounded-lg"><p>You don't have any jobs.</p> <Link to="../job/create" className=""><p className="underline text-blue-300 italic"> Print something?</p></Link></div>}
-        {Array.from(result.result.entries())
+      <div className={`relative lg:top-15 max-h-[calc(100vh-80px)] lg:w-4/5 gap-2 p-8 mx-auto lg:border-2 lg:border-slate-400 rounded-lg ${result.result.size > 5 ? 'overflow-y-scroll' : ''} drop-shadow-xl lg:bg-slate-600/60`}>
+        {result.result.size === 0 && <div className="text-center text-2xl py-2"><p>You don&apos;t have any jobs. <Link to="../job/create" className="underline text-blue-300 italic">Print something? </Link></p></div>}
+        {result.result.size > 0 && Array.from(result.result.entries())
           .sort(([_, a], [__, b]) => +a.priority.id - +b.priority.id)
           .map(([id, issue]) => {
-            console.log(id, issue);
-            console.log(issue.userId);
+            // console.log(id, issue);
+            // console.log(issue.userId);
             let priorityColorClass = "";
             
             switch (issue.priority.id) {
@@ -61,7 +60,7 @@ export default function AllJobs() {
               return (
               <div
               key=""
-              className={`h-35 border-2 grid ${priorityColorClass}  rounded-2xl shadow-lg shadow-slate-800`}
+              className={`grid gird-cols-1 h-35 border-2 ${priorityColorClass}  rounded-2xl shadow-lg shadow-slate-800`}
               >
                 <div className="bg-gradient-to-br from-gray-600 to-gray-800 ml-3 rounded-e-2xl">
                   <div className="flex w-full justify-between items-center">
