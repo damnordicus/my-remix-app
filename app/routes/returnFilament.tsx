@@ -1,12 +1,9 @@
 import { CameraIcon } from "@heroicons/react/24/outline";
 import { ActionFunction, Form, Link, LoaderFunction, redirect } from "react-router";
-import { json, useFetcher, useLoaderData, useNavigate } from "react-router";
-import { CameraEnhancer } from "dynamsoft-camera-enhancer";
-import { BarcodeReader } from "dynamsoft-javascript-barcode";
+import { useFetcher, useLoaderData, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import BarcodeScanner from "~/components/BarcodeScanner";
-import { getAllMaterials, getFilamentByBarcode, pullFromStockByBarcode, returnFilamentToStock } from "~/services/filament.server";
-import Barcode from "~/routes/barcode";
+import { getAllMaterials, returnFilamentToStock } from "~/services/filament.server";
+import { redirectWithError, redirectWithSuccess } from "remix-toast";
 
 export const loader: LoaderFunction = async ({ request }) => {
 
@@ -29,8 +26,8 @@ export const action: ActionFunction = async ({ request }) => {
     // const parsed = JSON.parse(decoded);
     const result = await returnFilamentToStock(barcodeObject, +weight);
     if(result.success)
-      return redirect("../inventory")
-    return redirect("../?fail=return")
+      return redirectWithSuccess("../inventory", "Roll returned to stock!")
+    return redirectWithError("../inventory", "Error returning roll to stock.")
   }
   else {
     return null;
@@ -89,7 +86,7 @@ export default function  ReturnToStock() {
   return (
     <>
       <div className="min-h-screen flex justify-center items-center">
-        <div className="flex w-2/3 justify-center bg-slate-600/60 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-8">
+        <div className="flex md:w-2/3 lg:w-1/3 justify-center bg-slate-600/60 backdrop-blur-sm border-2 border-slate-500 rounded-xl p-8">
           <Form className="flex flex-col items-center gap-4 w-full" method="post" >
             <input type="hidden" name="_action" value="submit"/>
             <p className="text-amber-500 text-xl mb-4">
@@ -102,7 +99,7 @@ export default function  ReturnToStock() {
               type="text"
               placeholder="Barcode"
               name="barcode"
-              value={scannedBarcode}
+              defaultValue={scannedBarcode}
               required
             />
             <Link to="../barcode"><div className="px-2 py-1 ml-2 bg-amber-500 rounded-xl border-2 border-amber-600"><CameraIcon className="size-7  text-amber-700"/></div></Link>
@@ -114,7 +111,7 @@ export default function  ReturnToStock() {
               className="w-full p-2 border border-slate-500 rounded-lg bg-slate-800"
               placeholder="Estimated weight (g)"
               name="weight"
-              value={filament?.weight_grams ? `${filament.weight_grams} g` : null}
+              value={filament?.weight_grams ? `${filament.weight_grams} g` : ''}
               required
             />
             <button

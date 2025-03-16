@@ -12,6 +12,7 @@ import { getAllFilaments, getAllBrands, getAllColors, getAllMaterials, createFil
 import { userSession } from "~/services/cookies.server";
 import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table'
 import { e } from "node_modules/react-router/dist/development/route-data-BmvbmBej.mjs";
+import { ToastContainer } from "react-toastify";
 
 export const loader = async ({request}: LoaderFunctionArgs) => {
   const session = (await userSession.parse(request.headers.get("Cookie"))) || {};
@@ -182,49 +183,10 @@ export default function Inventory() {
     setModalOpen(true);
   }
 
-  const columns = useMemo(() => [
-    {
-      accessorKey: 'brand',
-      header: 'Brand',
-      cell: info => info.getValue(),
-    },
-    {
-      accessorKey: 'material',
-      header: 'Material',
-      cell: info => info.getValue(),
-    },
-    {
-      accessorKey: 'color',
-      header: 'Color',
-      cell: info => <Badge>{info.getValue()}</Badge>,
-    },
-    {
-      accessorKey: '_count.rolls',
-      header: 'Stock',
-      cell: info => info.getValue(),
-    },
-    admin && {
-      accessorKey: 'delete',
-      header: 'Delete',
-      cell: ({ row }) => (
-        
-          <button name="_action" value="delete" className="hover:cursor-pointer hover:bg-slate-300 hover:border-2 hover:rounded-lg hover:p-1" onClick={(e) => {e.stopPropagation(); handleDeleteClick(row.original);}}><TrashIcon className="size-6" /></button>
-        
-      ),
-    }
-  ].filter(Boolean), [admin]);
-
-  const table = useReactTable({
-    data: filaments,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-
   return (
     <div className=" mt-0 lg:mt-15" style={{alignSelf: "start"}}>
       <div className="flex justify-center py-4 gap-1 ">
-        {admin && <Link to="create" className="bg-green-700 text-white p-1 px-6 py-2  rounded-xl border-2 border-green-400 hover:bg-green-500">Create New</Link>}
+        {admin && <Link to="create" className="bg-slate-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-gray-400 hover:cursor-pointer hover:bg-green-600">Create New</Link>}
         <Navbar
           setSelectedFilters={setSelectedFilters}
           filterList={filterList}
@@ -292,39 +254,7 @@ export default function Inventory() {
         </div>
       </div>
       <Outlet />
-       {/* <div className="mt-0 lg:mt-15" style={{ alignSelf: "start" }}>
-      <div className="flex justify-center py-4 gap-2">
-        {admin && <Link to="create" className="bg-amber-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-amber-400">Create New</Link>}
-        <Navbar setSelectedFilters={() => {}} filterList={() => {}} brands={brands} materials={materials} colors={colors} list={{}} filterVisible={false} setFilterVisible={() => {}} />
-      </div>
-      <div className="flex justify-center w-full max-h-[700px] drop-shadow-xl">
-        <div className="overflow-y-scroll no-scrollbar lg:w-3/4 md:w-full md:mx-8 border-2 border-slate-400 rounded-lg">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="sticky top-0 bg-gray-50 dark:bg-slate-400  text-white text-lg">
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id} className="text-center py-3">
-                      {flexRender(header.column.columnDef.header?.toUpperCase(), header.getContext())}
-                    </th>
-                  ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {table.getRowModel().rows.map(row => (
-                <tr key={row.id} className="hover:bg-gray-600 cursor-pointer bg-slate-900 even:bg-slate-800 text-lg" onClick={() => navigate(`/inventory/${row.original.id}`)}>
-                  {row.getVisibleCells().map(cell => (
-                    <td key={cell.id} className={`text-center py-2 ${cell.id.endsWith('_color') ? 'flex justify-center' : ''}`}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div> */}
+      
       {modalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50">
           <div className="bg-white border-3 border-slate-300 p-6 text-black rounded-lg shadow-xl text-center">
@@ -341,8 +271,6 @@ export default function Inventory() {
           </div>
         </div>
       )}
-      {/* <Outlet /> */}
-    {/* </div> */}
     </div>
   );
 }

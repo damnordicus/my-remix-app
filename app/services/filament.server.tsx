@@ -1,6 +1,7 @@
 import { prisma } from "~/utils/db.server";
 
 import { v4 as uuidv4 } from "uuid";
+import { redirectWithSuccess } from "remix-toast";
 
 // Fetch all filaments
 export async function getAllFilaments() {
@@ -105,10 +106,10 @@ export async function returnFilamentToStock(barcode: string, weight: number) {
     },
    });
 
-   return {success: true, message: "Roll successfully returned to stock!"};
+   return {success: true};
   }catch(e){
     console.error(e);
-    return { success: false, message: "An error occured while updating the filament."};
+    return { success: false};
     // return {};
   }
 }

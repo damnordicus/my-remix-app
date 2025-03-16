@@ -37,7 +37,7 @@ const Navbar = ({setSelectedFilters, filterList, brands, materials, colors, list
     <nav className="navbar relative">
       <button
         onClick={() => setFilterVisible((prev) => !prev)}
-        className="bg-amber-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-amber-400 hover:cursor-pointer hover:bg-amber-400"
+        className="bg-slate-600 text-white p-1 px-6 py-2  rounded-xl border-2 border-slate-400 hover:cursor-pointer hover:bg-amber-600"
       >
         Filter
       </button>

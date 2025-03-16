@@ -27,9 +27,9 @@ export default function Profile () {
                     {profileData?.admin && <CheckBadgeIcon className="size-5.5 text-blue-500 self-center"/>}
                 </div>
                 <div className="flex w-full justify-center gap-2">
-                    {profileData.admin && <Link to={"../view/accounts"} className="px-4 py-2 bg-amber-600 border-2 border-amber-400 rounded-xl">View All Users</Link>}
+                    {profileData.admin && <Link to={"../view/accounts"} className="px-4 py-2 bg-slate-500 border-2 border-slate-400 rounded-xl hover:cursor-pointer hover:bg-amber-600">View All Users</Link>}
                     <Form method="POST" action="../logout">
-                        <button type="submit" name="_action" value="submit" className="bg-red-500 px-4 py-1.5 text-lg rounded-xl border-2 border-red-400 text-white hover:bg-red-400 hover:cursor-pointer">Log out</button>
+                        <button type="submit" name="_action" value="submit" className="bg-slate-500 px-4 py-1.5 text-lg rounded-xl border-2 border-slate-400 text-white hover:bg-red-500 hover:cursor-pointer">Log out</button>
                     </Form>
                 </div>
             </div>

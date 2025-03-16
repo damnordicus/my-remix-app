@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import toast from "react-hot-toast";
 import { ClientLoaderFunctionArgs, LoaderFunctionArgs, Outlet, useLoaderData, useNavigate, useSearchParams } from "react-router";
 import Layout from "~/components/Layout";
 import MainButton from "~/components/MainButton";
@@ -14,56 +13,6 @@ export const loader = async({request}: LoaderFunctionArgs) => {
 export default function Index() {
   const [searchParams, setSearchParams ] = useSearchParams();
   const {user, admin} = useLoaderData<typeof loader>();
-
-  useEffect(() => {
-    switch(searchParams.get("success")){
-      case "job":
-        toast.success("Print job created!");
-        setTimeout(() => {
-          setSearchParams({}, {replace: true});
-        }, 2000);
-        break;
-      case "return":
-        toast.success("Filament returned!");
-        setTimeout(() => {
-          setSearchParams({}, { replace: true});
-        }, 2000);
-        break;
-      case "newuser":
-        toast.success("User Registered!");
-        setTimeout(() => {
-          setSearchParams({}, {replace: true});
-        }, 2000);
-        break;
-      case "rollCreate":
-        toast.success("Filamnent profile created!");
-        setTimeout(() => {
-          setSearchParams({}, {replace: true});
-        }, 2000);
-        break;
-    }
-
-    switch(searchParams.get("fail")){
-      case "job":
-        toast.error("Print job not created!");
-        setTimeout(() => {
-          setSearchParams({}, {replace: true});
-        }, 2000);
-        break;
-      case "return":
-        toast.error("Could not return filament!");
-        setTimeout(() => {
-          setSearchParams({}, { replace: true});
-        }, 2000);
-        break;
-      case "newuser":
-        toast.error("User not created!");
-        setTimeout(() => {
-          setSearchParams({}, {replace: true});
-        }, 2000);
-        break;
-    }
-  }, [searchParams]);
 
   const navigate = useNavigate();
   
@@ -90,6 +39,7 @@ export default function Index() {
     //     </>}
     //   </div>   
     // </div>
-    <></>
+    <>
+    </>
   );
 }

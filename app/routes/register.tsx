@@ -1,4 +1,4 @@
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { ActionFunctionArgs, Form, redirect, useSearchParams } from "react-router";
 import { checkEmail, checkPhone, checkUsername, createUser } from "~/services/filament.server";
 import { v4 as uuidv4 } from "uuid";

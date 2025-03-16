@@ -23,11 +23,12 @@ import {
   getFilamentByBarcode,
   getUserIdByUsername,
 } from "~/services/filament.server";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import { userSession } from "~/services/cookies.server";
 import { Route } from "./+types/create";
 import { Filament } from "@prisma/client";
 import { createJiraBody, createJiraIssue } from "~/utils/jira.service";
+import { redirectWithError, redirectWithSuccess } from "remix-toast";
 
 type FilamentBarcodes = {
   filament: Filament;
@@ -121,13 +122,13 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const newJob = await createJiraIssue(job)
 
-    return redirect("../inventory");
+    return redirectWithSuccess("../inventory", "Job created!");
   }
   // if(action === "cancel"){
     console.log("here")
   //   return redirect("/");
   // }
-  return redirect("/");
+  return redirectWithError("/", "Error creating job.");
 }
 
 export default function PrintJobForm({
@@ -407,7 +408,7 @@ export default function PrintJobForm({
                 <div className="grid grid-cols-2 w-full">
                   <Link
                     to={`../barcode?from=job/create&${searchParams.toString()}`}
-                    className="bg-amber-500 w-fit px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 justify-self-end -mr-6"
+                    className="bg-amber-500 w-fit px-2 rounded-xl py-1 border-2 border-amber-600 text-amber-900 justify-self-end -mr-6 hover:bg-amber-300 hover:cursor-pointer"
                   >
                     <CameraIcon className="size-8" />
                   </Link>
@@ -441,13 +442,13 @@ export default function PrintJobForm({
               className={`rounded-xl border-2 px-4 py-2 text-black ${
                 selectedFilament?.length === 0
                   ? "border-gray-400 bg-gray-400 cursor-not-allowed"
-                  : "border-amber-600 bg-amber-500"
+                  : "border-amber-600 bg-amber-500 hover:cursor-pointer hover:bg-amber-300"
               }`}
             >
               Submit Job
             </button>
             <Link to="/"
-              className={`rounded-xl border-2 px-4 py-2 border-red-400 bg-red-600 hover:cursor-pointer`}
+              className={`rounded-xl border-2 px-4 py-2 border-red-400 bg-red-600 hover:cursor-pointer hover:bg-red-400`}
               >
               Cancel
             </Link>

@@ -1,6 +1,6 @@
 import { error } from "console";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { data, Form, Link, Navigate, Outlet, redirect, useActionData, useFetcher, useLoaderData, useNavigate } from "react-router";
 import CheckboxGroup from "~/components/CheckboxGroup";
 import { userSession } from "~/services/cookies.server";

@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import toast from "react-hot-toast";
+import {toast} from "react-toastify";
 import { Link, LoaderFunctionArgs, redirect, useLoaderData, useNavigate } from "react-router";
 import Navbar from "~/components/Navbar";
 import { userSession } from "~/services/cookies.server";
 import { getUserIssues } from "~/utils/jira.service";
+import { redirectWithError } from "remix-toast";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const session = await userSession.parse(request.headers.get("Cookie"));
@@ -11,20 +12,13 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const result = await getUserIssues(session.username);
   if(result.error){
     // console.log('r: ',result.error)
-     return {error: result.error};
+     return redirectWithError("../inventory", "Couldn't connect to Jira");
   }
   return { result };
 };
 
 export default function AllJobs() {
   const  result  = useLoaderData<typeof loader>();
-  if(result.error){
-    return (
-      <div className="relative top-15">
-        Couldn't connect to Jira :(
-      </div>
-    );
-  }else{
 
     return (
       <div className="mt-0 lg:mt-15 h-screen items-center justify-center">
@@ -87,5 +81,5 @@ export default function AllJobs() {
       </div>
     </div>
   );
-}
+
 }
